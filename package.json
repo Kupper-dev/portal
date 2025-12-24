@@ -27,7 +27,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^15.1.4",
-    "patch-package": "^8.0.1",
     "typescript": "^5",
     "wrangler": "^4.56.0"
   }
