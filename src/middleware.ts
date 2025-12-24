@@ -5,8 +5,13 @@ import { type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
     try {
         return await auth0.middleware(request);
-    } catch (error) {
-        console.error("Auth0 Middleware Error:", error);
+    } catch (error: any) {
+        console.error("Auth0 Middleware Error:", {
+            message: error.message,
+            code: error.code,
+            cause: error.cause,
+            stack: error.stack
+        });
         throw error;
     }
 }
