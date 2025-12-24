@@ -5,7 +5,7 @@ const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID || '';
 const AUTH0_CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET || '';
 const AUTH0_SECRET = process.env.AUTH0_SECRET || '';
 const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
-const ORIGIN = process.env.AUTH0_BASE_URL?.replace(/\/$/, '') || '';
+const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
 const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
 
 export async function login(request: Request): Promise<Response> {
