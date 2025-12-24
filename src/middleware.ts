@@ -4,15 +4,19 @@ import { login, callback, logout, getSession } from './lib/auth-edge';
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    console.log(`[Middleware] Path: ${pathname}, URL: ${request.url}`);
 
     // Handle Auth Routes
     if (pathname.endsWith('/auth/login')) {
+        console.log('[Middleware] Handling Login');
         return login(request);
     }
     if (pathname.endsWith('/auth/callback')) {
+        console.log('[Middleware] Handling Callback');
         return callback(request);
     }
     if (pathname.endsWith('/auth/logout')) {
+        console.log('[Middleware] Handling Logout');
         return logout(request);
     }
 
@@ -21,6 +25,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/app') && !pathname.includes('/auth/')) {
         const session = await getSession(request);
         if (!session) {
+            console.log('[Middleware] No session, redirecting to login');
             // Redirect to login
             const loginUrl = new URL('/app/auth/login', request.url);
             return NextResponse.redirect(loginUrl);
@@ -32,8 +37,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // Match /app routes and auth routes.
-        // We can exclude assertions like static assets here if we want, but explicit positive matching is safer for this new flow.
-        '/app/:path*',
+        // Verify ALL paths to debug 404
+        '/((?!_next/static|_next/image|favicon.ico).*)',
     ],
 };
