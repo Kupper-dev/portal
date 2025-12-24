@@ -1,97 +1,91 @@
-import { handlePodioHookVerification } from '../lib/podio-sync';
-import dotenv from 'dotenv';
+import 'dotenv/config'; // Load env vars immediately
+import { PODIO_APPS } from '../lib/generated-podio-config';
+import { SimplePodioClient } from '../lib/podio-sync';
 import path from 'path';
 
-// Load environment variables from .env if running locally
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
+// Use correct webhook URL
 const TARGET_URL = 'https://kupper-34ef94.webflow.io/app/api/webhooks/podio';
 
-// Simple Podio Client for One-off Scripts (using podio-js implies Node environment, which is fine here)
-// However, to keep it simple and dependency-free matching our lib, I'll use raw fetch or the simple client class if I exported it.
-// Since I didn't export SimplePodioClient from lib/podio-sync.ts, I will inline a basic version or import if I can.
-// Actually, I can just copy the specific logic needed for registration.
+async function registerHooksForApp(app: typeof PODIO_APPS[0]) {
+    console.log(`\n-----------------------------------`);
+    console.log(`Processing App: ${app.name} (${app.appId})...`);
 
-const PODIO_AUTH_ENDPOINT = 'https://api.podio.com/oauth/token';
-const PODIO_API_BASE = 'https://api.podio.com';
-
-async function authenticate(appId: string, appToken: string) {
-    const body = new URLSearchParams({
-        grant_type: 'app',
-        app_id: appId,
-        app_token: appToken,
-        client_id: process.env.PODIO_CLIENT_ID!,
-        client_secret: process.env.PODIO_CLIENT_SECRET!
-    });
-
-    const res = await fetch(PODIO_AUTH_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body
-    });
-
-    if (!res.ok) {
-        throw new Error(`Auth failed: ${await res.text()}`);
+    if (!app.token) {
+        console.warn(`Skipping ${app.name} - No Token found.`);
+        return;
     }
 
-    const data = await res.json();
-    return data.access_token;
+    try {
+        const client = new SimplePodioClient({
+            authType: 'app',
+            clientId: process.env.PODIO_CLIENT_ID!,
+            clientSecret: process.env.PODIO_CLIENT_SECRET!,
+            appId: app.appId,
+            appToken: app.token
+        });
+
+        await client.authenticate();
+        console.log('Authenticated.');
+
+        const hookTypes = ['item.create', 'item.update', 'item.delete'];
+
+        for (const type of hookTypes) {
+            await registerHook(client, app.appId, type);
+        }
+
+    } catch (err: any) {
+        console.error(`Error processing ${app.name}:`, err.message || err);
+    }
 }
 
-async function registerHook(accessToken: string, appId: string, type: string) {
-    console.log(`Checking existing hooks for App ${appId} (${type})...`);
+async function registerHook(client: SimplePodioClient, appId: number, type: string) {
+    console.log(`[${type}] Checking existing hooks...`);
 
-    // 1. Get existing hooks
-    const listRes = await fetch(`${PODIO_API_BASE}/hook/app/${appId}/`, {
-        headers: { Authorization: `OAuth2 ${accessToken}` }
-    });
-
-    if (!listRes.ok) throw new Error(`List hooks failed: ${await listRes.text()}`);
-    const hooks: any[] = await listRes.json();
+    // List existing hooks
+    // Endpoint: /hook/app/{app_id}/
+    let hooks: any[] = [];
+    try {
+        const res = await client.request('GET', `/hook/app/${appId}/`);
+        hooks = res || [];
+    } catch (err) {
+        console.error('Failed to list hooks', err);
+        return;
+    }
 
     const existing = hooks.find((h: any) => h.url === TARGET_URL && h.type === type);
+
     if (existing) {
         if (existing.status === 'active') {
-            console.log(`Hook already active: ${existing.hook_id}`);
-            return existing.hook_id;
+            console.log(`[${type}] Hook already active (ID: ${existing.hook_id}). Skipping.`);
+            return;
         } else {
-            console.log(`Hook exists but INACTIVE (${existing.hook_id}). Deleting to recreate...`);
-            await fetch(`${PODIO_API_BASE}/hook/${existing.hook_id}`, {
-                method: 'DELETE',
-                headers: { Authorization: `OAuth2 ${accessToken}` }
-            });
+            console.log(`[${type}] Hook inactive (ID: ${existing.hook_id}). Deleting to recreate.`);
+            await client.request('DELETE', `/hook/${existing.hook_id}`);
         }
     }
 
-    // 2. Create new hook
-    console.log(`Creating new hook for ${type} -> ${TARGET_URL}...`);
-    const createRes = await fetch(`${PODIO_API_BASE}/hook/app/${appId}/`, {
-        method: 'POST',
-        headers: {
-            Authorization: `OAuth2 ${accessToken}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+    console.log(`[${type}] Creating new hook -> ${TARGET_URL}...`);
+    try {
+        const created = await client.request('POST', `/hook/app/${appId}/`, {
             url: TARGET_URL,
             type: type
-        })
-    });
+        });
 
-    if (!createRes.ok) throw new Error(`Create hook failed: ${await createRes.text()}`);
-    const data = await createRes.json();
-    console.log(`Hook created! ID: ${data.hook_id}`);
+        const hookId = created.hook_id;
+        console.log(`[${type}] Hook Created! ID: ${hookId}`);
 
-    // 3. Trigger Verification (Podio sends a POST to the URL)
-    console.log(`Requesting verification for hook ${data.hook_id}...`);
-    const verifyRes = await fetch(`${PODIO_API_BASE}/hook/${data.hook_id}/verify/request`, {
-        method: 'POST',
-        headers: { Authorization: `OAuth2 ${accessToken}` }
-    });
+        // Trigger verification
+        console.log(`[${type}] Requesting verification...`);
+        try {
+            await client.request('POST', `/hook/${hookId}/verify/request`);
+            console.log(`[${type}] Verification requested.`);
+        } catch (vErr) {
+            console.warn(`[${type}] Verification trigger warning:`, vErr);
+        }
 
-    if (!verifyRes.ok) console.warn(`Verification request warning: ${await verifyRes.text()}`);
-    else console.log('Verification email/request sent.');
-
-    return data.hook_id;
+    } catch (cErr: any) {
+        console.error(`[${type}] Create failed:`, cErr.message || cErr);
+    }
 }
 
 async function main() {
@@ -100,28 +94,13 @@ async function main() {
         process.exit(1);
     }
 
-    const APPS = [
-        { name: 'Customers', id: process.env.PODIO_APP_ID_CUSTOMERS, token: process.env.PODIO_APP_TOKEN_CUSTOMERS },
-        { name: 'Students', id: process.env.PODIO_APP_ID_STUDENTS, token: process.env.PODIO_APP_TOKEN_STUDENTS }
-    ];
+    console.log(`Registering Webhooks for ${PODIO_APPS.length} apps...`);
 
-    for (const app of APPS) {
-        if (!app.id || !app.token) {
-            console.warn(`Skipping ${app.name} - missing ID or Token`);
-            continue;
-        }
-
-        try {
-            console.log(`\nProcessing ${app.name}...`);
-            const token = await authenticate(app.id, app.token);
-
-            await registerHook(token, app.id, 'item.create');
-            await registerHook(token, app.id, 'item.update');
-
-        } catch (error) {
-            console.error(`Error processing ${app.name}:`, error);
-        }
+    for (const app of PODIO_APPS) {
+        await registerHooksForApp(app);
     }
+
+    console.log('\nDone.');
 }
 
 main();

@@ -1,43 +1,89 @@
 import { getSupabaseAdmin } from './supabase';
+import { getAppConfig, PODIO_APPS } from './generated-podio-config';
 
-// Define Podio App Configs mapping
-const PODIO_CONFIG = {
-    customers: {
-        appId: process.env.PODIO_APP_ID_CUSTOMERS,
-        appToken: process.env.PODIO_APP_TOKEN_CUSTOMERS
-    },
-    students: {
-        appId: process.env.PODIO_APP_ID_STUDENTS,
-        appToken: process.env.PODIO_APP_TOKEN_STUDENTS
-    }
-};
+// Define the shape of a Podio item as we expect it from the API
+export interface PodioItem {
+    item_id: number;
+    app_item_id: number;
+    app: {
+        app_id: number;
+        url_label: string;
+        item_name: string;
+    };
+    created_on: string;
+    last_event_on: string;
+    fields: PodioField[];
+}
+
+interface PodioField {
+    external_id: string;
+    type: string;
+    label: string;
+    values: any[];
+}
 
 /**
  * Lightweight Podio Client for Cloudflare Workers
  * Replaces 'podio-js' to avoid Node.js runtime incompatibility (setImmediate, etc.)
  */
-class SimplePodioClient {
-    private authType: string;
+export class SimplePodioClient {
+    private authType: 'app' | 'user';
     private clientId: string;
     private clientSecret: string;
+    private appId?: number;
+    private appToken?: string;
     private accessToken: string | null = null;
+    private userRefreshToken?: string;
+    private userEmail?: string;
+    private userPassword?: string;
     private apiBase = 'https://api.podio.com';
 
-    constructor(options: { authType: string, clientId: string, clientSecret: string }) {
-        this.authType = options.authType;
-        this.clientId = options.clientId;
-        this.clientSecret = options.clientSecret;
+    constructor(config: {
+        authType: 'app' | 'user',
+        clientId: string,
+        clientSecret: string,
+        appId?: number,
+        appToken?: string
+    }) {
+        this.authType = config.authType;
+        this.clientId = config.clientId;
+        this.clientSecret = config.clientSecret;
+        this.appId = config.appId;
+        this.appToken = config.appToken;
     }
 
     async authenticateWithApp(appId: number, appToken: string) {
-        const body = new URLSearchParams({
-            grant_type: 'app',
-            app_id: appId.toString(),
-            app_token: appToken,
+        this.authType = 'app';
+        this.appId = appId;
+        this.appToken = appToken;
+        return this.authenticate();
+    }
+
+    async authenticateWithRefreshToken(refreshToken: string): Promise<any> {
+        this.authType = 'user';
+        this.userRefreshToken = refreshToken;
+        return this.performAuth(new URLSearchParams({
+            grant_type: 'refresh_token',
+            refresh_token: refreshToken,
             client_id: this.clientId,
             client_secret: this.clientSecret
-        });
+        }));
+    }
 
+    async authenticateWithPassword(username: string, password: string): Promise<any> {
+        this.authType = 'user';
+        this.userEmail = username;
+        this.userPassword = password;
+        return this.performAuth(new URLSearchParams({
+            grant_type: 'password',
+            username: username,
+            password: password,
+            client_id: this.clientId,
+            client_secret: this.clientSecret
+        }));
+    }
+
+    private async performAuth(body: URLSearchParams): Promise<any> {
         const res = await fetch(`${this.apiBase}/oauth/token`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -46,79 +92,147 @@ class SimplePodioClient {
 
         if (!res.ok) {
             const err = await res.text();
-            throw new Error(`Podio Auth Failed: ${res.status} ${err}`);
+            throw new Error(`Podio Auth Failed: ${res.status} ${res.statusText} - ${err}`);
         }
 
         const data = await res.json();
         this.accessToken = data.access_token;
+        if (data.refresh_token) {
+            this.userRefreshToken = data.refresh_token;
+        }
+        return data;
+    }
+
+    async authenticate() {
+        if (this.authType === 'app') {
+            if (!this.appId || !this.appToken) {
+                throw new Error('App ID and Token required for app auth');
+            }
+            return this.performAuth(new URLSearchParams({
+                grant_type: 'app',
+                app_id: this.appId.toString(),
+                app_token: this.appToken,
+                client_id: this.clientId,
+                client_secret: this.clientSecret
+            }));
+        }
+    }
+
+    async get(path: string): Promise<any> {
+        return this.request('GET', path);
+    }
+
+    async post(path: string, body: any): Promise<any> {
+        return this.request('POST', path, body);
+    }
+
+    async put(path: string, body: any): Promise<any> {
+        return this.request('PUT', path, body);
+    }
+
+    async delete(path: string): Promise<any> {
+        return this.request('DELETE', path);
     }
 
     async request(method: string, path: string, body?: any): Promise<any> {
         if (!this.accessToken) {
-            throw new Error('Not authenticated');
+            // Try to auto-authenticate
+            if (this.authType === 'app') {
+                await this.authenticate();
+            } else if (this.authType === 'user' && this.userRefreshToken) {
+                await this.authenticateWithRefreshToken(this.userRefreshToken);
+            } else {
+                throw new Error('Not authenticated and cannot auto-auth');
+            }
         }
 
         // Adjust path to ensure it starts with /
         const endpoint = path.startsWith('/') ? path : `/${path}`;
         const url = `${this.apiBase}${endpoint}`;
 
-        const options: RequestInit = {
-            method: method,
-            headers: {
-                'Authorization': `OAuth2 ${this.accessToken}`,
-                'Content-Type': 'application/json'
-            }
+        const headers: Record<string, string> = {
+            'Authorization': `OAuth2 ${this.accessToken}`,
+            'Accept': 'application/json'
         };
 
         if (body) {
-            options.body = JSON.stringify(body);
+            headers['Content-Type'] = 'application/json';
         }
+
+        const options: RequestInit = {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : undefined
+        };
 
         const res = await fetch(url, options);
 
-        // Handle void responses (like verification)
+        // Handle void responses 
         if (res.status === 204 || (res.status === 200 && res.headers.get('content-length') === '0')) {
             return;
         }
 
-        if (!res.ok) {
-            const err = await res.text();
-            // Try to parse error json if possible
-            try {
-                const jsonErr = JSON.parse(err);
-                if (method === 'GET' && res.status === 404) return null; // Standardize 404 as null for fetch logic
-                throw { body: jsonErr, status: res.status };
-            } catch (e) {
-                if (res.status === 404) return null;
-                throw new Error(`Podio Request Failed: ${res.status} ${err}`);
+        if (res.status === 401) {
+            console.log('Token expired, retrying...');
+            this.accessToken = null;
+            if (this.authType === 'app') {
+                await this.authenticate();
+            } else if (this.authType === 'user' && this.userRefreshToken) {
+                await this.authenticateWithRefreshToken(this.userRefreshToken);
             }
+
+            // Update token in header and retry
+            (options.headers as any)['Authorization'] = `OAuth2 ${this.accessToken}`;
+            const retryRes = await fetch(url, options);
+            if (!retryRes.ok) {
+                const err = await retryRes.text();
+                throw new Error(`Request failed after retry: ${retryRes.status} ${err}`);
+            }
+            return retryRes.json();
         }
 
-        return await res.json();
+        if (!res.ok) {
+            const err = await res.text();
+            // Standardize 404
+            if (res.status === 404) return null;
+            throw new Error(`Podio Request Failed: ${res.status} ${err}`);
+        }
+
+        return res.json();
     }
 }
 
-async function getPodioAppClient(appName: 'customers' | 'students') {
-    // Config read lazily to support local scripts where dotenv loads after import
-    const appId = appName === 'customers' ? process.env.PODIO_APP_ID_CUSTOMERS : process.env.PODIO_APP_ID_STUDENTS;
-    const appToken = appName === 'customers' ? process.env.PODIO_APP_TOKEN_CUSTOMERS : process.env.PODIO_APP_TOKEN_STUDENTS;
+/**
+ * Get an authenticated Podio client for a specific App ID.
+ * Looks up the token from generated config.
+ */
+export async function getPodioAppClient(appId: number) {
+    const clientId = process.env.PODIO_CLIENT_ID;
+    const clientSecret = process.env.PODIO_CLIENT_SECRET;
 
-    if (!appId || !appToken) {
-        throw new Error(`Missing configuration for Podio App: ${appName}`);
+    if (!clientId || !clientSecret) {
+        throw new Error('PODIO_CLIENT_ID or PODIO_CLIENT_SECRET not set');
     }
 
-    if (!process.env.PODIO_CLIENT_ID || !process.env.PODIO_CLIENT_SECRET) {
-        throw new Error('Missing PODIO_CLIENT_ID or PODIO_CLIENT_SECRET');
+    const appConfig = getAppConfig(appId);
+    if (!appConfig) {
+        throw new Error(`App ID ${appId} not found in generated config.`);
     }
 
-    const podio = new SimplePodioClient({
+    if (!appConfig.token) {
+        throw new Error(`App Token missing for App ID ${appId} (${appConfig.name}). Please check .env or config.`);
+    }
+
+    const client = new SimplePodioClient({
         authType: 'app',
-        clientId: process.env.PODIO_CLIENT_ID,
-        clientSecret: process.env.PODIO_CLIENT_SECRET
+        clientId,
+        clientSecret,
+        appId: appConfig.appId,
+        appToken: appConfig.token
     });
 
-    await podio.authenticateWithApp(parseInt(appId), appToken);
-    return podio;
+    await client.authenticate();
+    return client;
 }
 
 // ----------------------------------------------------------------------
@@ -127,292 +241,211 @@ async function getPodioAppClient(appName: 'customers' | 'students') {
 
 export async function handlePodioHookVerification(hookId: string, code: string) {
     console.log(`Verifying hook ${hookId} with code ${code}...`);
-    try {
-        // We can use any app client to verify, assuming the hook belongs to one of them.
-        // Let's try customers first.
-        const podio = await getPodioAppClient('customers');
-        await podio.request('POST', `/hook/${hookId}/verify/validate`, { code });
-        console.log(`Hook ${hookId} verified successfully (via Customers App).`);
-        return true;
-    } catch (error) {
-        // Fallback to students if needed
+
+    // We don't know which app this hook belongs to. We have to try all configured apps.
+    // This is potential brute force but acceptable for rare verification events.
+
+    // Optimization: If we had hook mapping, it would be better.
+    // For now, try each app in config.
+
+    let verified = false;
+    for (const app of PODIO_APPS) {
+        if (!app.token) continue; // Skip unconfigured apps
+
         try {
-            console.log(`Verification failed with Customers App, trying Students App...`);
-            const podio = await getPodioAppClient('students');
+            console.log(`Trying to verify with App: ${app.name} (${app.appId})...`);
+            const podio = await getPodioAppClient(app.appId);
             await podio.request('POST', `/hook/${hookId}/verify/validate`, { code });
-            console.log(`Hook ${hookId} verified successfully (via Students App).`);
-            return true;
-        } catch (err2) {
-            console.error(`Failed to verify hook ${hookId} with both apps.`, err2);
-            throw error;
+            console.log(`Hook ${hookId} verified successfully with App: ${app.name}`);
+            verified = true;
+            break;
+        } catch (err) {
+            // Check if error is related to "Hook not found" (404) or "Invalid code".
+            // If 404, it means hook doesn't belong to this app.
+            // If 403, maybe auth error.
+            // verifying next app.
         }
     }
+
+    if (!verified) {
+        console.error(`Failed to verify hook ${hookId} with ANY configured app.`);
+        throw new Error('Hook verification failed for all apps');
+    }
+    return true;
 }
 
-async function fetchPodioItem(itemId: number): Promise<{ app: 'customers' | 'students', data: any } | null> {
-    // 1. Try Customers App
-    try {
-        const podio = await getPodioAppClient('customers');
-        const item = await podio.request('GET', `/item/${itemId}`);
-        const expectedId = parseInt(process.env.PODIO_APP_ID_CUSTOMERS!);
+/**
+ * Fetch a Podio item. 
+ * If webhookAppId is provided, we use that directly.
+ * Otherwise we search.
+ */
+async function fetchPodioItem(itemId: number, webhookAppId?: number): Promise<{ appConfig: typeof PODIO_APPS[0], data: any } | null> {
 
-        if (item && item.app.app_id === expectedId) {
-            return { app: 'customers', data: item };
+    // If we know the app ID from webhook, use it directly (Efficiency)
+    if (webhookAppId) {
+        try {
+            const podio = await getPodioAppClient(webhookAppId);
+            const item = await podio.request('GET', `/item/${itemId}`);
+            const config = getAppConfig(webhookAppId);
+            if (item && config) {
+                return { appConfig: config, data: item };
+            }
+        } catch (err) {
+            console.error(`Failed to fetch item ${itemId} using webhook app ID ${webhookAppId}`, err);
         }
-    } catch (err: any) {
-        // Ignore 404/403 or mismatch
+        return null; // Don't fall through to search if explicit ID failed? Or should we?
+        // Usually explicit ID is correct.
     }
 
-    // 2. Try Students App
-    try {
-        const podio = await getPodioAppClient('students');
-        const item = await podio.request('GET', `/item/${itemId}`);
-        const expectedId = parseInt(process.env.PODIO_APP_ID_STUDENTS!);
+    // Fallback: Search all apps
+    for (const app of PODIO_APPS) {
+        if (!app.token) continue;
 
-        if (item && item.app.app_id === expectedId) {
-            return { app: 'students', data: item };
+        try {
+            // Optimization: We could check if we have a client cached? 
+            // But for now new client instance is fine.
+            const podio = await getPodioAppClient(app.appId);
+            const item = await podio.request('GET', `/item/${itemId}`);
+
+            if (item && item.app.app_id === app.appId) {
+                return { appConfig: app, data: item };
+            }
+        } catch (err) {
+            // Ignore mismatch/404
         }
-    } catch (err: any) {
-        // Ignore
     }
 
-    console.warn(`Could not fetch Podio Item ${itemId} from configured Apps.`);
+    console.warn(`Could not fetch Podio Item ${itemId} from any configured Apps.`);
     return null;
 }
 
-export async function syncPodioToSupabase(itemId: number, type: 'item.create' | 'item.update') {
+export async function syncPodioToSupabase(
+    itemId: number,
+    type: 'item.create' | 'item.update',
+    webhookAppId?: number,
+    existingItemData?: any
+) {
     const supabase = getSupabaseAdmin();
     console.log(`Syncing Podio Item ${itemId} to Supabase...`);
 
-    // 1. Fetch from Podio
-    // Note: We don't know which app the item belongs to just from the hook, 
-    // strictly speaking, unless we track hook IDs. But fetching by ID works uniquely across apps usually? 
-    // actually, item_id is unique across Podio.
-    const result = await fetchPodioItem(itemId);
+    let result: { appConfig: typeof PODIO_APPS[0], data: any } | null = null;
+
+    if (existingItemData && webhookAppId) {
+        const appConfig = PODIO_APPS.find(a => a.appId === webhookAppId);
+        if (appConfig) {
+            result = { appConfig, data: existingItemData };
+        }
+    }
+
+    if (!result) {
+        result = await fetchPodioItem(itemId, webhookAppId);
+    }
     if (!result) {
         console.error(`Item ${itemId} not found in supported Apps.`);
         return;
     }
 
-    const { app, data } = result;
-    console.log(`Identified Item ${itemId} as belonging to ${app} app.`);
+    const { appConfig, data } = result;
+    console.log(`Identified Item ${itemId} as belonging to '${appConfig.urlLabel}' (${appConfig.name}).`);
 
-    // 2. Map Data
-    const mappedData = mapPodioItemToSupabase(app, data);
+    // Map Data
+    const mappedData = mapPodioItemToSupabase(appConfig, data);
 
-    // 3. Upsert to Supabase
+    // Upsert to Supabase
+    // We assume table name matches urlLabel (e.g. 'customers', 'students') - sanitized
+    const tableName = appConfig.name.replace(/-/g, '_').toLowerCase(); // Basic sanitization matching migration
+
     const { error } = await supabase
-        .from(app) // 'customers' or 'students' table
-        .upsert(mappedData, { onConflict: 'podio_item_id' }); // Use podio_item_id as unique key
+        .from(tableName)
+        .upsert(mappedData, { onConflict: 'podio_item_id' });
 
     if (error) {
-        console.error(`Error syncing to Supabase table ${app}:`, error);
+        console.error(`Error syncing to Supabase table ${tableName}:`, error);
     } else {
-        console.log(`Successfully synced Item ${itemId} to ${app}.`);
+        console.log(`Successfully synced Item ${itemId} to table ${tableName}.`);
     }
 }
 
-function mapPodioItemToSupabase(app: 'customers' | 'students', item: any) {
-    // Podio fields are arrays of values.
-    // Helper to get text value (first value)
+function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
+    // Generic Helper to get text value
     const getVal = (externalId: string) => {
         const field = item.fields.find((f: any) => f.external_id === externalId);
-        return field?.values?.[0]?.value || null;
-    };
+        if (!field) return null;
+        if (field.type === 'date') return field.values?.[0]?.start;
+        // If value is object with 'value' prop (like money, duration, etc)
+        // If it is category, values[0].value.text might be what we want? 
+        // Or values[0].value.id?
+        // Let's try to be smart or generic.
 
-    // Helper for category ID (int) - For Category fields
-    const getCatId = (externalId: string) => {
-        const field = item.fields.find((f: any) => f.external_id === externalId);
-        return field?.values?.[0]?.value?.id || null;
-    };
+        const firstVal = field.values?.[0];
+        if (!firstVal) return null;
 
-    // Helper for Category Text - sometimes we want the text label
-    const getCatText = (externalId: string) => {
-        const field = item.fields.find((f: any) => f.external_id === externalId);
-        return field?.values?.[0]?.value?.text || null;
-    };
+        if (firstVal.value && typeof firstVal.value === 'object') {
+            if (firstVal.value.text) return firstVal.value.text; // Category/App ref
+            if (firstVal.value.name) return firstVal.value.name; // Contact
+            // Map/Location
+        }
 
-    // Helper for calculation/money if needed, usually value is just 'value'
-    // Helper for Phone (often return formatted string or we pick one)
-    const getPhone = (externalId: string) => {
-        const field = item.fields.find((f: any) => f.external_id === externalId);
-        // Phone fields have type (work, mobile, etc) and value
-        return field?.values?.[0]?.value || null;
-    };
-
-    // Helper for Email
-    const getEmail = (externalId: string) => {
-        const field = item.fields.find((f: any) => f.external_id === externalId);
-        return field?.values?.[0]?.value || null;
-    };
-
-    // Helper for Location (Address)
-    const getAddress = (externalId: string) => {
-        const field = item.fields.find((f: any) => f.external_id === externalId);
-        // Location can be complex string or struct. Usually value is the full string formatted.
-        return field?.values?.[0]?.value || null;
-    };
-
-    // Helper for date
-    const getDate = (externalId: string) => {
-        const field = item.fields.find((f: any) => f.external_id === externalId);
-        // Date fields usually have 'start'
-        return field?.values?.[0]?.start || null;
-    };
-
-    // Auth0 ID is often stored in a text field
-    // Check for 'auth0id' or 'auth0-id' or 'externalid'
-    const getAuth0Id = () => {
-        let val = getVal('auth0id');
-        if (!val) val = getVal('auth0-id');
-        if (!val) val = getVal('externalid'); // Sometimes named externalid
-        return val;
+        return firstVal.value || null;
     };
 
     // Base mapping
     const mapped: any = {
-        // id: item.item_id, // Let Supabase generate UUID
         podio_item_id: item.item_id,
         podio_app_item_id: item.app_item_id,
         last_updated_at: new Date().toISOString(),
-        // last_event_on: new Date().toISOString() // We could update this
     };
 
-    // App-specific mapping
-    if (app === 'customers') {
-        mapped.name = getVal('title') || item.title; // Fallback to item title
-        mapped.email = getEmail('email');
-        mapped.recipient = getVal('recipient');
-        mapped.phone = getPhone('phone');
-        mapped.address = getAddress('address');
-        mapped.whatsapp = getVal('whatsapp'); // Calculation or Text
-        mapped.type = getCatText('type'); // Store text for easier reading, or ID if preferred. Schema says text. 
-        mapped.auth0id = getAuth0Id();
-    } else if (app === 'students') {
-        mapped.name = getVal('title') || getVal('name') || item.title;
-        mapped.email = getEmail('email');
-        mapped.phone = getPhone('phone');
-        // mapped.grade = getCatText('grade') || getCatText('level'); // Assuming Level might be Grade
-        mapped.level = getCatText('level');
-        mapped.progress = getVal('progress'); // Progress bar is usually int/float
-        mapped.status = getCatText('status');
-        mapped.auth0id = getAuth0Id();
+    // Generic Field Mapping
+    // We mapped ALL fields in the migration. 
+    // We should iterate over item.fields and mapping them to column names.
+    // The migration used sanitized external_id as column name.
+
+    for (const field of item.fields) {
+        // Sanitize external_id to match migration column naming
+        // .replace(/[^a-z0-9]/gi, '_').toLowerCase()
+        const colName = field.external_id.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+        // Extract value
+        let value = null;
+        const v = field.values?.[0];
+        if (v) {
+            if (field.type === 'category') {
+                value = v.value?.text || v.value?.id; // Prefer text for readability? Or ID? Schema said category.
+                // In migration, I usually made them Text or Integer? 
+                // Let's check schema types. Migration used 'text' mostly.
+                if (v.value?.text) value = v.value.text;
+            } else if (field.type === 'app') {
+                value = v.value?.item_id; // Store Reference ID? Or Title? 
+                // Usually we store the relation ID.
+            } else if (field.type === 'contact') {
+                value = v.value?.name;
+            } else if (field.type === 'date') {
+                value = v.start;
+            } else if (field.type === 'location') {
+                value = v.value; // Address string
+            } else if (field.type === 'money') {
+                value = v.value; // usage of currency?
+            } else {
+                value = v.value;
+            }
+        }
+
+        if (value !== null && value !== undefined) {
+            mapped[colName] = value;
+        }
     }
+
+    // Explicit overrides if needed (e.g. auth0id) - but generic loop handles 'auth0id' external_id too.
 
     return mapped;
 }
 
 // ----------------------------------------------------------------------
-// Outbound Logic (Supabase -> Podio)
+// Outbound Logic Placeholder for Multi-App (Commented out for now or simplified)
 // ----------------------------------------------------------------------
-
+/*
 export async function syncPendingItems() {
-    const supabase = getSupabaseAdmin();
-    console.log('Starting Outbound Sync...');
-
-    const tables = ['customers', 'students'] as const;
-
-    for (const table of tables) {
-        // We only push items that have 'podio_item_id' NULL (create) or marked for update?
-        // Usually we define a sync_status column in Supabase for this. 
-        // Note: The migration didn't strictly add 'sync_status' to 'students', 
-        // but it might inherit or we need to add it if we want outbound sync.
-        // For now, let's assume we are focusing on inbound. 
-        // But the previous code had outbound logic. 
-        // Let's keep it but check if columns exist.
-
-        // Check if sync_status exists? we can just try select.
-        const { data: items, error } = await supabase
-            .from(table)
-            .select('*')
-            .eq('sync_status', 'pending'); // Ensure your tables have this column if you use this.
-
-        if (error) {
-            // Probably column doesn't exist on 'students' yet unless we added it in migration?
-            // The migration SQL I saw didn't explicitly add 'sync_status' to students.
-            // So this might fail for students.
-            if (error.code === '42703') { // Undefined column
-                console.warn(`Skipping outbound sync for ${table} (missing sync_status column)`);
-                continue;
-            }
-            console.error(`Error fetching pending ${table}:`, error);
-            continue;
-        }
-
-        for (const item of items || []) {
-            try {
-                console.log(`Syncing ${table} item ${item.id} to Podio...`);
-                const existingPodioId = item.id; // Using OK as mapped
-
-                // If it's a new item from Supabase, podio_item_id (id) might be some temp generated one?
-                // Actually, if we create in Supabase first, we need a way to store the Podio ID back.
-                // The current schema uses 'id' as PRIMARY KEY = Podio Item ID. 
-                // This means creating in Supabase first is tricky unless we allow non-podio IDs initially.
-                // For now, let's assume this is strictly for updating existing items or we handle ID generation elsewhere.
-
-                // If we are just updating Podio:
-                const podioId = await pushToPodio(table, item, typeof item.id === 'number' ? item.id : null);
-
-                // Update Supabase
-                await supabase
-                    .from(table)
-                    .update({
-                        sync_status: 'synced',
-                        // id: podioId // Can't easily change PK
-                        last_event_on: new Date().toISOString()
-                    })
-                    .eq('id', item.id);
-
-                console.log(`Synced ${table} item ${item.id}. Podio ID: ${podioId}`);
-            } catch (err) {
-                console.error(`Failed to sync ${table} item ${item.id}:`, err);
-                await supabase
-                    .from(table)
-                    .update({ sync_status: 'failed' })
-                    .eq('id', item.id);
-            }
-        }
-    }
+    // Need to implement generic outbound sync iterating PODIO_APPS
 }
-
-async function pushToPodio(
-    appName: 'customers' | 'students',
-    itemData: any,
-    existingPodioId: number | null
-): Promise<number | null> {
-    try {
-        const podio = await getPodioAppClient(appName);
-        const appId = parseInt(PODIO_CONFIG[appName].appId!);
-
-        // Map fields based on App Name
-        const fields: any = {};
-
-        if (appName === 'customers') {
-            if (itemData.name) fields['title'] = itemData.name;
-            if (itemData.email) fields['email'] = [{ "type": "work", "value": itemData.email }];
-            if (itemData.recipient) fields['recipient'] = itemData.recipient;
-            if (itemData.phone) fields['phone'] = [{ "type": "mobile", "value": itemData.phone }];
-            // etc.
-        } else if (appName === 'students') {
-            if (itemData.name) fields['title'] = itemData.name;
-            if (itemData.email) fields['email'] = [{ "type": "work", "value": itemData.email }];
-            if (itemData.level) fields['level'] = parseInt(itemData.level); // Or text? Categories valid by ID or Text usually opt?
-            // Podio update with text for category is tricky, usually needs Option ID. 
-            // Providing text sometimes works if exact match? 
-            // Recommendation: Use IDs for write if possible. For now, leave simple.
-        }
-
-        if (existingPodioId) {
-            // Update
-            await podio.request('PUT', `/item/${existingPodioId}`, { fields });
-            return existingPodioId;
-        } else {
-            // Create
-            const response = await podio.request('POST', `/app/${appId}/item`, { fields });
-            return response.item_id;
-        }
-    } catch (error: any) {
-        console.error(`Error pushing to Podio (${appName}):`, error?.body || error);
-        throw error;
-    }
-}
+*/

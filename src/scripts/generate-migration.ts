@@ -39,22 +39,28 @@ async function main() {
 
         sql += `-- Table: ${tableName} (Podio App ID: ${app.app_id})\n`;
         sql += `CREATE TABLE IF NOT EXISTS ${tableName} (\n`;
-        sql += `  id BIGINT PRIMARY KEY, -- Podio Item ID\n`;
-        sql += `  podio_app_item_id INT, -- Ref to app_item_id usually\n`;
-        sql += `  created_at TIMESTAMPTZ DEFAULT now(),\n`;
-        sql += `  last_event_on TIMESTAMPTZ,\n`;
-        sql += `  updated_at TIMESTAMPTZ DEFAULT now()\n`;
+        // podio-sync.ts expects podio_item_id as the primary key for upserts
+        sql += `  podio_item_id BIGINT PRIMARY KEY,\n`;
+        sql += `  id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref\n`;
+        sql += `  podio_app_item_id INT, -- User-facing 'App Item ID'\n`;
+        sql += `  created_at TIMESTAMPTZ,\n`;
+        sql += `  updated_at TIMESTAMPTZ,\n`; // Podio's 'last_event_on' usually maps here
+        sql += `  last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp\n`;
         sql += `);\n\n`;
 
         // Now generate ALTER statements to ensure columns exist
-        const fields = app.full_def.fields;
+        // And we might need to alter existing tables from 'id' PK to 'podio_item_id' PK if they were created differently?
+        // For now, let's assume we are adding new tables or columns.
 
-        for (const field of fields) {
+        const fields = app.full_def ? app.full_def.fields : app.fields; // Adapt to structure
+
+        for (const field of fields || []) {
             if (field.status === 'deleted') continue;
             if (!field.external_id) continue;
 
             const columnName = sanitize(field.external_id);
-            if (columnName === 'id') continue;
+            // Skip reserved columns we handle manually above
+            if (['id', 'podio_item_id', 'created_at', 'updated_at', 'last_updated_at'].includes(columnName)) continue;
 
             const pgType = TYPE_MAPPING[field.type] || 'text';
 
@@ -67,7 +73,9 @@ async function main() {
         sql += '\n';
     }
 
-    console.log(sql);
+    const OUTPUT_FILE = path.join(process.cwd(), 'supabase/migrations/pending_migration.sql');
+    await fs.writeFile(OUTPUT_FILE, sql);
+    console.log(`Migration generated at ${OUTPUT_FILE}`);
 }
 
 main().catch(console.error);
