@@ -5,6 +5,7 @@ import { getAppConfig, PODIO_APPS } from './generated-podio-config';
 export interface PodioItem {
     item_id: number;
     app_item_id: number;
+    app_item_id_formatted?: string;
     app: {
         app_id: number;
         url_label: string;
@@ -393,6 +394,7 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
     const mapped: any = {
         podio_item_id: item.item_id,
         podio_app_item_id: item.app_item_id,
+        podio_formatted_id: item.app_item_id_formatted,
         last_updated_at: new Date().toISOString(),
     };
 

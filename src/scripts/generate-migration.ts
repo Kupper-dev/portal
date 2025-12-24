@@ -43,14 +43,29 @@ async function main() {
         sql += `  podio_item_id BIGINT PRIMARY KEY,\n`;
         sql += `  id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref\n`;
         sql += `  podio_app_item_id INT, -- User-facing 'App Item ID'\n`;
+        sql += `  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)\n`;
         sql += `  created_at TIMESTAMPTZ,\n`;
         sql += `  updated_at TIMESTAMPTZ,\n`; // Podio's 'last_event_on' usually maps here
         sql += `  last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp\n`;
         sql += `);\n\n`;
 
         // Now generate ALTER statements to ensure columns exist
-        // And we might need to alter existing tables from 'id' PK to 'podio_item_id' PK if they were created differently?
-        // For now, let's assume we are adding new tables or columns.
+        // Explicitly check for metadata columns that might be missing on existing tables
+        const metadataCols = [
+            { name: 'podio_item_id', type: 'BIGINT' },
+            { name: 'podio_app_item_id', type: 'INT' },
+            { name: 'podio_formatted_id', type: 'TEXT' },
+            { name: 'created_at', type: 'TIMESTAMPTZ' },
+            { name: 'updated_at', type: 'TIMESTAMPTZ' },
+            { name: 'last_updated_at', type: 'TIMESTAMPTZ' }
+        ];
+
+        for (const col of metadataCols) {
+            sql += `DO $$\nBEGIN\n`;
+            sql += `  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = '${tableName}' AND column_name = '${col.name}') THEN\n`;
+            sql += `    ALTER TABLE ${tableName} ADD COLUMN "${col.name}" ${col.type};\n`;
+            sql += `  END IF;\nEND$$;\n`;
+        }
 
         const fields = app.full_def ? app.full_def.fields : app.fields; // Adapt to structure
 
