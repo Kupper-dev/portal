@@ -409,27 +409,35 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
         const colName = field.external_id.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
         // Extract value
-        let value = null;
-        const v = field.values?.[0];
-        if (v) {
-            if (field.type === 'category') {
-                value = v.value?.text || v.value?.id; // Prefer text for readability? Or ID? Schema said category.
-                // In migration, I usually made them Text or Integer? 
-                // Let's check schema types. Migration used 'text' mostly.
-                if (v.value?.text) value = v.value.text;
-            } else if (field.type === 'app') {
-                value = v.value?.item_id; // Store Reference ID? Or Title? 
-                // Usually we store the relation ID.
+        let value: any = null;
+        const values = field.values || [];
+
+        if (values.length > 0) {
+            if (field.type === 'app') {
+                // App Reference: Store Array of Item IDs
+                // Schema type: jsonb
+                value = values.map((v: any) => v.value?.item_id).filter((id: any) => id !== undefined);
             } else if (field.type === 'contact') {
-                value = v.value?.name;
+                // Contact: Store Array of Names (or objects if preferred, but names are easier for AI)
+                // Schema type: jsonb
+                value = values.map((v: any) => v.value?.name).filter((n: any) => n);
+            } else if (field.type === 'category') {
+                // Category: Join multiple values with comma
+                // Schema type: text
+                const cats = values.map((v: any) => v.value?.text || v.value?.id).filter((c: any) => c);
+                value = cats.length > 0 ? cats.join(', ') : null;
             } else if (field.type === 'date') {
-                value = v.start;
+                // Date: usually single, take start of first
+                value = values[0].start;
             } else if (field.type === 'location') {
-                value = v.value; // Address string
+                // Location: take first address
+                value = values[0].value;
             } else if (field.type === 'money') {
-                value = v.value; // usage of currency?
+                // Money: take first value
+                value = values[0].value;
             } else {
-                value = v.value;
+                // Default: take first value
+                value = values[0].value;
             }
         }
 
