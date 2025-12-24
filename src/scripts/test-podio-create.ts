@@ -40,7 +40,7 @@ async function createPodioItem(accessToken: string, appId: string) {
     console.log(`Creating item "${title}" in App ${appId}...`);
 
     const fields = {
-        'title': title,
+        'name': title,
         // Add email to satisfy potential requirements if needed, mainly for customers
         'email': [{ 'type': 'work', 'value': `test-${Date.now()}@example.com` }]
     };
