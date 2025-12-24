@@ -20,6 +20,8 @@ export const auth0 = new Auth0Client({
     clientId: process.env.AUTH0_CLIENT_ID,
     clientSecret: process.env.AUTH0_CLIENT_SECRET,
     secret: process.env.AUTH0_SECRET,
-    // Explicitly map AUTH0_BASE_URL to appBaseUrl
-    appBaseUrl: process.env.AUTH0_BASE_URL,
+    // Explicitly fix common misconfiguration:
+    // SDK recommends APP_BASE_URL to be the ROOT (origin) when using useBasePath/Next.js basePath.
+    // We strip any path (like /app) from the env var to ensure we pass only the origin.
+    appBaseUrl: process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : undefined,
 });
