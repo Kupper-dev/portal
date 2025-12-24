@@ -51,7 +51,7 @@ async function main() {
     }
 
     const client = new SimplePodioClient({
-        authType: 'password',
+        authType: 'user',
         clientId,
         clientSecret
     });
