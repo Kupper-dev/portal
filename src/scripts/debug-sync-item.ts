@@ -6,7 +6,7 @@ import path from 'path';
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 async function main() {
-    const itemId = 3222156856;
+    const itemId = 3222160179;
     console.log(`Debugging Sync for Item ID: ${itemId}`);
 
     try {

@@ -51,8 +51,16 @@ async function registerHook(accessToken: string, appId: string, type: string) {
 
     const existing = hooks.find((h: any) => h.url === TARGET_URL && h.type === type);
     if (existing) {
-        console.log(`Hook already exists: ${existing.hook_id}`);
-        return existing.hook_id;
+        if (existing.status === 'active') {
+            console.log(`Hook already active: ${existing.hook_id}`);
+            return existing.hook_id;
+        } else {
+            console.log(`Hook exists but INACTIVE (${existing.hook_id}). Deleting to recreate...`);
+            await fetch(`${PODIO_API_BASE}/hook/${existing.hook_id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `OAuth2 ${accessToken}` }
+            });
+        }
     }
 
     // 2. Create new hook
