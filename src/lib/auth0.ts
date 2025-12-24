@@ -1,5 +1,5 @@
 import { Auth0Client } from '@auth0/nextjs-auth0/server';
-import { linkUserIdentity } from './identity-linker';
+
 
 const domainInput = process.env.AUTH0_ISSUER_BASE_URL;
 // Strip https:// or http:// if present in domain to satisfy SDK 'domain' expectation
@@ -24,4 +24,9 @@ export const auth0 = new Auth0Client({
     // SDK recommends APP_BASE_URL to be the ROOT (origin) when using useBasePath/Next.js basePath.
     // We strip any path (like /app) from the env var to ensure we pass only the origin.
     appBaseUrl: process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : undefined,
+    routes: {
+        callback: '/app/auth/callback',
+        login: '/app/auth/login',
+        logout: '/app/auth/logout'
+    }
 });
