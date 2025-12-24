@@ -1,0 +1,1534 @@
+[
+  {
+    "app_name": "Customers",
+    "app_id": 30429788,
+    "fields": [
+      {
+        "field_id": 273431868,
+        "external_id": "title",
+        "type": "text",
+        "label": "name",
+        "config": {
+          "default_value": null,
+          "delta": 0,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "name",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": false
+        }
+      },
+      {
+        "field_id": 273689461,
+        "external_id": "name",
+        "type": "text",
+        "label": "name",
+        "config": {
+          "default_value": null,
+          "delta": 0,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "name",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273431882,
+        "external_id": "recipient",
+        "type": "text",
+        "label": "recipient",
+        "config": {
+          "default_value": null,
+          "delta": 1,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "recipient",
+          "mapping": null,
+          "required": true,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273431883,
+        "external_id": "phone",
+        "type": "phone",
+        "label": "phone",
+        "config": {
+          "default_value": null,
+          "delta": 2,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "phone",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "possible_types": [
+              "home",
+              "main",
+              "mobile",
+              "other",
+              "private_fax",
+              "work",
+              "work_fax"
+            ],
+            "call_link_scheme": "callto"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273431884,
+        "external_id": "email",
+        "type": "email",
+        "label": "email",
+        "config": {
+          "default_value": null,
+          "delta": 3,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "email",
+          "mapping": null,
+          "required": true,
+          "settings": {
+            "include_in_cc": false,
+            "include_in_bcc": false,
+            "possible_types": [
+              "home",
+              "other",
+              "work"
+            ]
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273431886,
+        "external_id": "type",
+        "type": "category",
+        "label": "type",
+        "config": {
+          "default_value": null,
+          "delta": 4,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "type",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "options": [
+              {
+                "id": 1,
+                "status": "active",
+                "text": "customer",
+                "color": "B5E3FF"
+              },
+              {
+                "id": 2,
+                "status": "active",
+                "text": "business",
+                "color": "C8C8C8"
+              },
+              {
+                "id": 3,
+                "status": "deleted",
+                "text": "staff",
+                "color": "DCEBD8"
+              },
+              {
+                "id": 4,
+                "status": "deleted",
+                "text": "student",
+                "color": "DCEBD8"
+              },
+              {
+                "id": 5,
+                "status": "deleted",
+                "text": "super_admin",
+                "color": "DCEBD8"
+              },
+              {
+                "id": 6,
+                "status": "active",
+                "text": "business_employee",
+                "color": "DCEBD8"
+              },
+              {
+                "id": 7,
+                "status": "deleted",
+                "text": "student",
+                "color": "DCEBD8"
+              }
+            ],
+            "multiple": false,
+            "display": "inline"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273431885,
+        "external_id": "address",
+        "type": "location",
+        "label": "address",
+        "config": {
+          "default_value": null,
+          "delta": 5,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "address",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "structured": false,
+            "has_map": true
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273431887,
+        "external_id": "calculation",
+        "type": "calculation",
+        "label": "Calculation",
+        "config": {
+          "default_value": null,
+          "delta": 6,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "Calculation",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "unit": null,
+            "decimals": 2,
+            "time": null,
+            "calendar": null,
+            "color": null,
+            "expression": null,
+            "script": null,
+            "return_type": "number"
+          },
+          "unique": false,
+          "visible": false
+        }
+      },
+      {
+        "field_id": 273431888,
+        "external_id": "whatsapp",
+        "type": "calculation",
+        "label": "whatsapp",
+        "config": {
+          "default_value": null,
+          "delta": 6,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "whatsapp",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "unit": null,
+            "decimals": null,
+            "time": null,
+            "calendar": null,
+            "color": null,
+            "expression": null,
+            "script": "var phone = @[phone](field_273431883) && @[phone](field_273431883).length ? @[phone](field_273431883)[0].value : \"\";\n\nif (phone) {\n    var cleaned = phone.split(\" \").join(\"\"); // remove spaces\n    if (cleaned.length === 10) {\n        \"52\" + cleaned;\n    } else {\n        cleaned;\n    }\n} else {\n    \"\";\n}\n",
+            "return_type": "text"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 275201953,
+        "external_id": "externalid",
+        "type": "text",
+        "label": "external_id",
+        "config": {
+          "default_value": null,
+          "delta": 7,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "external_id",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "large",
+            "format": "html"
+          },
+          "unique": false,
+          "visible": false
+        }
+      },
+      {
+        "field_id": 275212807,
+        "external_id": "auth0id",
+        "type": "text",
+        "label": "auth0_id",
+        "config": {
+          "default_value": null,
+          "delta": 7,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "auth0_id",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": true
+        }
+      }
+    ],
+    "full_def": {
+      "app_id": 30429788,
+      "config": {
+        "allow_attachments": true,
+        "allow_comments": true,
+        "allow_create": true,
+        "allow_edit": true,
+        "allow_tags": false,
+        "app_item_id_padding": 2,
+        "app_item_id_prefix": "C00",
+        "approved": false,
+        "calendar_color_category_field_id": null,
+        "default_view": "table",
+        "description": null,
+        "disable_notifications": true,
+        "external_id": null,
+        "fivestar": false,
+        "fivestar_label": null,
+        "icon": "138.png",
+        "icon_id": 138,
+        "item_name": "customer",
+        "name": "customers ",
+        "rsvp": false,
+        "rsvp_label": null,
+        "show_app_item_id": true,
+        "silent_creates": true,
+        "silent_edits": true,
+        "tasks": [],
+        "thumbs": false,
+        "thumbs_label": null,
+        "type": "standard",
+        "usage": null,
+        "yesno": false,
+        "yesno_label": null
+      },
+      "current_revision": 17,
+      "default_view_id": null,
+      "fields": [
+        {
+          "config": {
+            "default_value": null,
+            "delta": 0,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "name",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": false
+          },
+          "external_id": "title",
+          "field_id": 273431868,
+          "label": "name",
+          "status": "deleted",
+          "type": "text"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 0,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "name",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "name",
+          "field_id": 273689461,
+          "label": "name",
+          "status": "active",
+          "type": "text"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 1,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "recipient",
+            "mapping": null,
+            "required": true,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "recipient",
+          "field_id": 273431882,
+          "label": "recipient",
+          "status": "active",
+          "type": "text"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 2,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "phone",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "possible_types": [
+                "home",
+                "main",
+                "mobile",
+                "other",
+                "private_fax",
+                "work",
+                "work_fax"
+              ],
+              "call_link_scheme": "callto"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "phone",
+          "field_id": 273431883,
+          "label": "phone",
+          "status": "active",
+          "type": "phone"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 3,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "email",
+            "mapping": null,
+            "required": true,
+            "settings": {
+              "include_in_cc": false,
+              "include_in_bcc": false,
+              "possible_types": [
+                "home",
+                "other",
+                "work"
+              ]
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "email",
+          "field_id": 273431884,
+          "label": "email",
+          "status": "active",
+          "type": "email"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 4,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "type",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "options": [
+                {
+                  "id": 1,
+                  "status": "active",
+                  "text": "customer",
+                  "color": "B5E3FF"
+                },
+                {
+                  "id": 2,
+                  "status": "active",
+                  "text": "business",
+                  "color": "C8C8C8"
+                },
+                {
+                  "id": 3,
+                  "status": "deleted",
+                  "text": "staff",
+                  "color": "DCEBD8"
+                },
+                {
+                  "id": 4,
+                  "status": "deleted",
+                  "text": "student",
+                  "color": "DCEBD8"
+                },
+                {
+                  "id": 5,
+                  "status": "deleted",
+                  "text": "super_admin",
+                  "color": "DCEBD8"
+                },
+                {
+                  "id": 6,
+                  "status": "active",
+                  "text": "business_employee",
+                  "color": "DCEBD8"
+                },
+                {
+                  "id": 7,
+                  "status": "deleted",
+                  "text": "student",
+                  "color": "DCEBD8"
+                }
+              ],
+              "multiple": false,
+              "display": "inline"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "type",
+          "field_id": 273431886,
+          "label": "type",
+          "status": "active",
+          "type": "category"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 5,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "address",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "structured": false,
+              "has_map": true
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "address",
+          "field_id": 273431885,
+          "label": "address",
+          "status": "active",
+          "type": "location"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 6,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "Calculation",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "unit": null,
+              "decimals": 2,
+              "time": null,
+              "calendar": null,
+              "color": null,
+              "expression": null,
+              "script": null,
+              "return_type": "number"
+            },
+            "unique": false,
+            "visible": false
+          },
+          "external_id": "calculation",
+          "field_id": 273431887,
+          "label": "Calculation",
+          "status": "deleted",
+          "type": "calculation"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 6,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "whatsapp",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "unit": null,
+              "decimals": null,
+              "time": null,
+              "calendar": null,
+              "color": null,
+              "expression": null,
+              "script": "var phone = @[phone](field_273431883) && @[phone](field_273431883).length ? @[phone](field_273431883)[0].value : \"\";\n\nif (phone) {\n    var cleaned = phone.split(\" \").join(\"\"); // remove spaces\n    if (cleaned.length === 10) {\n        \"52\" + cleaned;\n    } else {\n        cleaned;\n    }\n} else {\n    \"\";\n}\n",
+              "return_type": "text"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "whatsapp",
+          "field_id": 273431888,
+          "label": "whatsapp",
+          "status": "active",
+          "type": "calculation"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 7,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "external_id",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "large",
+              "format": "html"
+            },
+            "unique": false,
+            "visible": false
+          },
+          "external_id": "externalid",
+          "field_id": 275201953,
+          "label": "external_id",
+          "status": "deleted",
+          "type": "text"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 7,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "auth0_id",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "auth0id",
+          "field_id": 275212807,
+          "label": "auth0_id",
+          "status": "active",
+          "type": "text"
+        }
+      ],
+      "integration": null,
+      "is_default": false,
+      "item_accounting_info": {
+        "org_id": 3738643,
+        "limit": 100,
+        "count": 38,
+        "percent": 38
+      },
+      "layouts": {
+        "badge_v2": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273689461,
+              "type": "field"
+            },
+            "content": {
+              "id": 273431885,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273431886,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273431888,
+              "type": "field"
+            },
+            "details_3": {
+              "id": "last_edit_by",
+              "type": "virtual"
+            },
+            "footer_1": {
+              "id": "created_on",
+              "type": "virtual"
+            },
+            "footer_2": {
+              "id": "created_by",
+              "type": "virtual"
+            },
+            "footer_3": {
+              "id": "comment_count",
+              "type": "virtual"
+            }
+          }
+        },
+        "badge": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273689461,
+              "type": "field"
+            },
+            "content": {
+              "id": 273431885,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273431886,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273431888,
+              "type": "field"
+            },
+            "details_3": {
+              "id": "last_edit_by",
+              "type": "virtual"
+            },
+            "footer_1": {
+              "id": "created_on",
+              "type": "virtual"
+            },
+            "footer_2": {
+              "id": "created_by",
+              "type": "virtual"
+            },
+            "footer_3": {
+              "id": "comment_count",
+              "type": "virtual"
+            }
+          }
+        },
+        "relationship": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273689461,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273431886,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273431884,
+              "type": "field"
+            },
+            "details_3": null,
+            "details_4": null
+          }
+        },
+        "card": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273689461,
+              "type": "field"
+            },
+            "content": {
+              "id": 273431885,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273431886,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273431888,
+              "type": "field"
+            },
+            "details_3": {
+              "id": "last_edit_by",
+              "type": "virtual"
+            }
+          }
+        }
+      },
+      "link": "https://podio.com/kupper/panel/apps/customers",
+      "link_add": "https://podio.com/kupper/panel/apps/customers/items/new",
+      "original": null,
+      "original_revision": null,
+      "owner": {
+        "image": null,
+        "last_seen_on": "2025-12-21 01:59:13",
+        "link": "https://podio.com/users/76956485",
+        "org_id": null,
+        "profile_id": 271176238,
+        "type": "user",
+        "space_id": null,
+        "user_id": 76956485,
+        "avatar": null,
+        "name": "Kupper Mx"
+      },
+      "rights": [
+        "add_hook",
+        "view",
+        "add_task",
+        "subscribe",
+        "view_structure",
+        "add_item"
+      ],
+      "sharefile_vault_url": null,
+      "space_id": 10448753,
+      "status": "active",
+      "subscribed": false,
+      "url_add": "https://podio.com/kupper/panel/apps/customers/items/new",
+      "url": "https://podio.com/kupper/panel/apps/customers",
+      "url_label": "customers",
+      "token": null,
+      "mailbox": null
+    }
+  },
+  {
+    "app_name": "Students",
+    "app_id": 30432041,
+    "fields": [
+      {
+        "field_id": 273457209,
+        "external_id": "title",
+        "type": "text",
+        "label": "name",
+        "config": {
+          "default_value": null,
+          "delta": 0,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "name",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": false
+        }
+      },
+      {
+        "field_id": 273747624,
+        "external_id": "name",
+        "type": "text",
+        "label": "name",
+        "config": {
+          "default_value": null,
+          "delta": 0,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "name",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273457211,
+        "external_id": "signindate",
+        "type": "date",
+        "label": "sign_in_date",
+        "config": {
+          "default_value": null,
+          "delta": 1,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "sign_in_date",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "calendar": false,
+            "end": "enabled",
+            "time": "enabled",
+            "color": "DCEBD8"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273457212,
+        "external_id": "phone",
+        "type": "phone",
+        "label": "phone",
+        "config": {
+          "default_value": null,
+          "delta": 2,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "phone",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "possible_types": [
+              "home",
+              "main",
+              "mobile",
+              "other",
+              "private_fax",
+              "work",
+              "work_fax"
+            ],
+            "call_link_scheme": "callto"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273457214,
+        "external_id": "progress",
+        "type": "progress",
+        "label": "Progress",
+        "config": {
+          "default_value": null,
+          "delta": 3,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "Progress",
+          "mapping": null,
+          "required": false,
+          "settings": null,
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273457213,
+        "external_id": "email",
+        "type": "email",
+        "label": "email",
+        "config": {
+          "default_value": null,
+          "delta": 4,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "email",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "include_in_cc": false,
+            "include_in_bcc": false,
+            "possible_types": [
+              "home",
+              "other",
+              "work"
+            ]
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273457731,
+        "external_id": "status",
+        "type": "category",
+        "label": "status",
+        "config": {
+          "default_value": null,
+          "delta": 5,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "status",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "options": [
+              {
+                "id": 1,
+                "status": "active",
+                "text": "active",
+                "color": "DCEBD8"
+              },
+              {
+                "id": 2,
+                "status": "active",
+                "text": "archived",
+                "color": "DCEBD8"
+              },
+              {
+                "id": 3,
+                "status": "active",
+                "text": "waiting payment",
+                "color": "DCEBD8"
+              }
+            ],
+            "multiple": false,
+            "display": "inline"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 273457210,
+        "external_id": "level",
+        "type": "category",
+        "label": "level",
+        "config": {
+          "default_value": null,
+          "delta": 6,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "level",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "options": [
+              {
+                "id": 1,
+                "status": "active",
+                "text": "a1",
+                "color": "DCEBD8"
+              }
+            ],
+            "multiple": false,
+            "display": "inline"
+          },
+          "unique": false,
+          "visible": true
+        }
+      },
+      {
+        "field_id": 275216662,
+        "external_id": "auth0id",
+        "type": "text",
+        "label": "auth0_id",
+        "config": {
+          "default_value": null,
+          "delta": 7,
+          "description": null,
+          "hidden": false,
+          "hidden_create_view_edit": false,
+          "label": "auth0_id",
+          "mapping": null,
+          "required": false,
+          "settings": {
+            "size": "small",
+            "format": "plain"
+          },
+          "unique": false,
+          "visible": true
+        }
+      }
+    ],
+    "full_def": {
+      "app_id": 30432041,
+      "config": {
+        "allow_attachments": true,
+        "allow_comments": true,
+        "allow_create": true,
+        "allow_edit": true,
+        "allow_tags": false,
+        "app_item_id_padding": 2,
+        "app_item_id_prefix": "student0",
+        "approved": false,
+        "calendar_color_category_field_id": null,
+        "default_view": "badge",
+        "description": null,
+        "disable_notifications": true,
+        "external_id": null,
+        "fivestar": false,
+        "fivestar_label": null,
+        "icon": "354.png",
+        "icon_id": 354,
+        "item_name": "student",
+        "name": "students",
+        "rsvp": false,
+        "rsvp_label": null,
+        "show_app_item_id": true,
+        "silent_creates": true,
+        "silent_edits": true,
+        "tasks": [],
+        "thumbs": false,
+        "thumbs_label": null,
+        "type": "standard",
+        "usage": null,
+        "yesno": false,
+        "yesno_label": null
+      },
+      "current_revision": 5,
+      "default_view_id": null,
+      "fields": [
+        {
+          "config": {
+            "default_value": null,
+            "delta": 0,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "name",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": false
+          },
+          "external_id": "title",
+          "field_id": 273457209,
+          "label": "name",
+          "status": "deleted",
+          "type": "text"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 0,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "name",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "name",
+          "field_id": 273747624,
+          "label": "name",
+          "status": "active",
+          "type": "text"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 1,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "sign_in_date",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "calendar": false,
+              "end": "enabled",
+              "time": "enabled",
+              "color": "DCEBD8"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "signindate",
+          "field_id": 273457211,
+          "label": "sign_in_date",
+          "status": "active",
+          "type": "date"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 2,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "phone",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "possible_types": [
+                "home",
+                "main",
+                "mobile",
+                "other",
+                "private_fax",
+                "work",
+                "work_fax"
+              ],
+              "call_link_scheme": "callto"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "phone",
+          "field_id": 273457212,
+          "label": "phone",
+          "status": "active",
+          "type": "phone"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 3,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "Progress",
+            "mapping": null,
+            "required": false,
+            "settings": null,
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "progress",
+          "field_id": 273457214,
+          "label": "Progress",
+          "status": "active",
+          "type": "progress"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 4,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "email",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "include_in_cc": false,
+              "include_in_bcc": false,
+              "possible_types": [
+                "home",
+                "other",
+                "work"
+              ]
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "email",
+          "field_id": 273457213,
+          "label": "email",
+          "status": "active",
+          "type": "email"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 5,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "status",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "options": [
+                {
+                  "id": 1,
+                  "status": "active",
+                  "text": "active",
+                  "color": "DCEBD8"
+                },
+                {
+                  "id": 2,
+                  "status": "active",
+                  "text": "archived",
+                  "color": "DCEBD8"
+                },
+                {
+                  "id": 3,
+                  "status": "active",
+                  "text": "waiting payment",
+                  "color": "DCEBD8"
+                }
+              ],
+              "multiple": false,
+              "display": "inline"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "status",
+          "field_id": 273457731,
+          "label": "status",
+          "status": "active",
+          "type": "category"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 6,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "level",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "options": [
+                {
+                  "id": 1,
+                  "status": "active",
+                  "text": "a1",
+                  "color": "DCEBD8"
+                }
+              ],
+              "multiple": false,
+              "display": "inline"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "level",
+          "field_id": 273457210,
+          "label": "level",
+          "status": "active",
+          "type": "category"
+        },
+        {
+          "config": {
+            "default_value": null,
+            "delta": 7,
+            "description": null,
+            "hidden": false,
+            "hidden_create_view_edit": false,
+            "label": "auth0_id",
+            "mapping": null,
+            "required": false,
+            "settings": {
+              "size": "small",
+              "format": "plain"
+            },
+            "unique": false,
+            "visible": true
+          },
+          "external_id": "auth0id",
+          "field_id": 275216662,
+          "label": "auth0_id",
+          "status": "active",
+          "type": "text"
+        }
+      ],
+      "integration": null,
+      "is_default": false,
+      "item_accounting_info": {
+        "org_id": 3738643,
+        "limit": 100,
+        "count": 38,
+        "percent": 38
+      },
+      "layouts": {
+        "badge_v2": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273747624,
+              "type": "field"
+            },
+            "content": {
+              "id": 273457211,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273457731,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273457214,
+              "type": "field"
+            },
+            "details_3": {
+              "id": "last_edit_by",
+              "type": "virtual"
+            },
+            "footer_1": {
+              "id": "created_on",
+              "type": "virtual"
+            },
+            "footer_2": {
+              "id": "created_by",
+              "type": "virtual"
+            },
+            "footer_3": {
+              "id": "comment_count",
+              "type": "virtual"
+            }
+          }
+        },
+        "badge": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273747624,
+              "type": "field"
+            },
+            "content": {
+              "id": 273457211,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273457731,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273457214,
+              "type": "field"
+            },
+            "details_3": {
+              "id": "last_edit_by",
+              "type": "virtual"
+            },
+            "footer_1": {
+              "id": "created_on",
+              "type": "virtual"
+            },
+            "footer_2": {
+              "id": "created_by",
+              "type": "virtual"
+            },
+            "footer_3": {
+              "id": "comment_count",
+              "type": "virtual"
+            }
+          }
+        },
+        "relationship": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273747624,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273457731,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273457211,
+              "type": "field"
+            },
+            "details_3": null,
+            "details_4": null
+          }
+        },
+        "card": {
+          "default": true,
+          "fields": {
+            "header": {
+              "id": 273747624,
+              "type": "field"
+            },
+            "content": {
+              "id": 273457211,
+              "type": "field"
+            },
+            "details_1": {
+              "id": 273457731,
+              "type": "field"
+            },
+            "details_2": {
+              "id": 273457214,
+              "type": "field"
+            },
+            "details_3": {
+              "id": "last_edit_by",
+              "type": "virtual"
+            }
+          }
+        }
+      },
+      "link": "https://podio.com/kupper/panel/apps/students",
+      "link_add": "https://podio.com/kupper/panel/apps/students/items/new",
+      "original": null,
+      "original_revision": null,
+      "owner": {
+        "image": null,
+        "last_seen_on": "2025-12-21 01:59:13",
+        "link": "https://podio.com/users/76956485",
+        "org_id": null,
+        "profile_id": 271176238,
+        "type": "user",
+        "space_id": null,
+        "user_id": 76956485,
+        "avatar": null,
+        "name": "Kupper Mx"
+      },
+      "rights": [
+        "subscribe",
+        "view",
+        "add_task",
+        "add_item",
+        "view_structure",
+        "add_hook"
+      ],
+      "sharefile_vault_url": null,
+      "space_id": 10448753,
+      "status": "active",
+      "subscribed": false,
+      "url_add": "https://podio.com/kupper/panel/apps/students/items/new",
+      "url": "https://podio.com/kupper/panel/apps/students",
+      "url_label": "students",
+      "token": null,
+      "mailbox": null
+    }
+  }
+]
