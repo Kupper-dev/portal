@@ -70,8 +70,8 @@ async function main() {
         fs.writeFileSync(OUTPUT_FILE, JSON.stringify(allApps, null, 2));
         console.log(`Saved app list to ${OUTPUT_FILE}`);
 
-    } catch (error) {
-        console.error('Discovery failed:', error.message);
+    } catch (error: any) {
+        console.error('Discovery failed:', error.message || error);
         if (error.response) {
             console.error('Response data:', error.response.data);
         } else {
