@@ -24,7 +24,7 @@ export default async function Home() {
             <div>
               <p>Welcome, <strong>{session.user.name}</strong> ({session.user.email})</p>
               <br />
-              <a className={styles.primary} href="/app/auth/logout">
+              <a className={styles.primary} href="/app/api/auth/logout">
                 Logout
               </a>
               <pre style={{ textAlign: 'left', marginTop: '20px', background: '#f0f0f0', padding: '10px', borderRadius: '5px' }}>
@@ -32,7 +32,7 @@ export default async function Home() {
               </pre>
             </div>
           ) : (
-            <a className={styles.primary} href="/app/auth/login">
+            <a className={styles.primary} href="/app/api/auth/login">
               Login with Auth0
             </a>
           )}
