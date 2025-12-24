@@ -1,3 +1,6 @@
+import { Auth0Client } from '@auth0/nextjs-auth0/server';
+import { linkUserIdentity } from './identity-linker';
+
 // Helper to safely log secret details without leaking full value
 const debugSecret = (name: string, val?: string) => {
     if (!val) return 'MISSING';
