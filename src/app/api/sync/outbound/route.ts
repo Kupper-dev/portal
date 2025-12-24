@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { syncPendingItems } from '@/lib/podio-sync';
 
 // Fetch-based custom client works in Edge
-export const runtime = 'edge';
+// export const runtime = 'edge';
 
 export async function POST() {
     try {
