@@ -1,4 +1,4 @@
-```typescript
+
 import { auth0 } from "./lib/auth0";
 import { type NextRequest } from "next/server";
 
