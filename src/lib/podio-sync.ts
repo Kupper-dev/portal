@@ -227,7 +227,11 @@ function mapPodioItemToSupabase(app: 'customers' | 'students', item: any) {
     // App-specific mapping
     if (app === 'customers') {
         mapped.email = getVal('email');
-        // mapped.type = getCatId('type'); 
+        mapped.recipient = getVal('recipient');
+        mapped.phone = getVal('phone');
+        mapped.address = getVal('address');
+        mapped.whatsapp = getVal('whatsapp');
+        mapped.type = getCatId('type');
     } else {
         mapped.email = getVal('email');
     }
