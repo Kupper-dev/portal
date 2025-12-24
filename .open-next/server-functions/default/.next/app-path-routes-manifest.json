@@ -1,0 +1,8 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/sync/outbound/route": "/api/sync/outbound",
+  "/api/webhooks/podio/route": "/api/webhooks/podio",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/"
+}

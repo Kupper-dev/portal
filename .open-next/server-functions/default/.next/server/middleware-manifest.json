@@ -1,0 +1,66 @@
+{
+  "version": 3,
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge/chunks/[root-of-the-server]__cfc6ad0d._.js",
+        "server/edge/chunks/node_modules_next_dist_0fab4f13._.js",
+        "server/edge/chunks/_913fd0da._.js",
+        "server/edge/chunks/node_modules_35922f58._.js",
+        "server/edge/chunks/turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_adf2b65a.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^\\/app(?:\\/(_next\\/data\\/[^/]{1,}))?(?:\\/((?!_next\\/static|_next\\/image|favicon.ico|sitemap.xml|robots.txt).*))(\\\\.json)?[\\/#\\?]?$",
+          "originalSource": "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "3DViFtHCUdBZAzGwn75GT",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "4pO2Cx3XPFcvqwzbovv7nnCVchu9zBwEGBEnN+b11Fc=",
+        "__NEXT_PREVIEW_MODE_ID": "5c79ed5ec4a22e80ff43a30444f44eb0",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "cbe60cfc64d600848611df3e4ad055a606de798db58a74040f914e5c6398a052",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "2c84f026e9dbf2ba0bef6a74e125bcd729047252af73a160d95fff33b6d84deb"
+      }
+    }
+  },
+  "sortedMiddleware": [
+    "/"
+  ],
+  "functions": {
+    "/api/sync/outbound/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "required-server-files.js",
+        "server/server-reference-manifest.js",
+        "server/app/api/sync/outbound/route_client-reference-manifest.js",
+        "server/edge/chunks/_next-internal_server_app_api_sync_outbound_route_actions_03540bed.js",
+        "server/edge/chunks/[root-of-the-server]__28a79d13._.js",
+        "server/edge/chunks/node_modules_next_dist_6e5bde9b._.js",
+        "server/edge/chunks/turbopack-node_modules_next_dist_esm_build_templates_edge-wrapper_62353bae.js"
+      ],
+      "name": "app/api/sync/outbound/route",
+      "page": "/api/sync/outbound/route",
+      "matchers": [
+        {
+          "regexp": "^/api/sync/outbound(?:/)?$",
+          "originalSource": "/api/sync/outbound"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "3DViFtHCUdBZAzGwn75GT",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "4pO2Cx3XPFcvqwzbovv7nnCVchu9zBwEGBEnN+b11Fc=",
+        "__NEXT_PREVIEW_MODE_ID": "5c79ed5ec4a22e80ff43a30444f44eb0",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "cbe60cfc64d600848611df3e4ad055a606de798db58a74040f914e5c6398a052",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "2c84f026e9dbf2ba0bef6a74e125bcd729047252af73a160d95fff33b6d84deb"
+      }
+    }
+  }
+}
