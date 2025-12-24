@@ -2,7 +2,16 @@ import { auth0 } from "./lib/auth0";
 import { type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-    return await auth0.middleware(request);
+    console.log("Middleware Request URL:", request.url);
+    console.log("AUTH0_BASE_URL env:", process.env.AUTH0_BASE_URL);
+    console.log("AUTH0_ISSUER_BASE_URL env:", process.env.AUTH0_ISSUER_BASE_URL);
+
+    try {
+        return await auth0.middleware(request);
+    } catch (error) {
+        console.error("Auth0 Middleware Error:", error);
+        throw error;
+    }
 }
 
 export const config = {
