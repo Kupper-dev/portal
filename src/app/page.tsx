@@ -1,13 +1,22 @@
-import { auth0 } from "@/lib/auth0";
+import { cookies } from 'next/headers';
+import { verifyToken } from "@/lib/auth-edge";
 import styles from "./page.module.css";
-
 import { linkUserIdentity } from "@/lib/identity-linker";
 
 export default async function Home() {
-  const session = await auth0.getSession();
+  const cookieStore = await cookies();
+  const token = cookieStore.get('app_session')?.value;
+  let user = null;
+
+  if (token) {
+    user = await verifyToken(token);
+  }
+
+  const session = user ? { user } : null;
 
   if (session) {
     try {
+      // Identity linking expects a session object
       await linkUserIdentity(session);
     } catch (error) {
       console.error("Failed to link identity:", error);
@@ -22,7 +31,7 @@ export default async function Home() {
         <div className={styles.ctas}>
           {session ? (
             <div>
-              <p>Welcome, <strong>{session.user.name}</strong> ({session.user.email})</p>
+              <p>Welcome, <strong>{session.user.name as string}</strong> ({session.user.email as string})</p>
               <br />
               <a className={styles.primary} href="/app/auth/logout">
                 Logout
