@@ -1,11 +1,8 @@
+```typescript
 import { auth0 } from "./lib/auth0";
 import { type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-    console.log("Middleware Request URL:", request.url);
-    console.log("AUTH0_BASE_URL env:", process.env.AUTH0_BASE_URL);
-    console.log("AUTH0_ISSUER_BASE_URL env:", process.env.AUTH0_ISSUER_BASE_URL);
-
     try {
         return await auth0.middleware(request);
     } catch (error) {
