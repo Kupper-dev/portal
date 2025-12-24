@@ -14,12 +14,16 @@ The application uses a `basePath` of `/app` in `next.config.ts`. However, the `@
 Explicitly configure the `routes` in the `Auth0Client` initialization in `src/lib/auth0.ts`.
 
 ```typescript
-export const auth0 = new Auth0Client({
-    // ... other config
+// 1. Ensure appBaseUrl includes the basePath (/app)
+    appBaseUrl: process.env.AUTH0_BASE_URL 
+        ? `${new URL(process.env.AUTH0_BASE_URL).origin}/app` 
+        : undefined,
+
+    // 2. Use relative paths for routes (SDK appends them to appBaseUrl)
     routes: {
-        callback: '/app/auth/callback',
-        login: '/app/auth/login',
-        logout: '/app/auth/logout'
+        callback: '/auth/callback',
+        login: '/auth/login',
+        logout: '/auth/logout'
     }
 });
 ```

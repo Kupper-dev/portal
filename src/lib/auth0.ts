@@ -20,13 +20,14 @@ export const auth0 = new Auth0Client({
     clientId: process.env.AUTH0_CLIENT_ID,
     clientSecret: process.env.AUTH0_CLIENT_SECRET,
     secret: process.env.AUTH0_SECRET,
-    // Explicitly fix common misconfiguration:
-    // SDK recommends APP_BASE_URL to be the ROOT (origin) when using useBasePath/Next.js basePath.
-    // We strip any path (like /app) from the env var to ensure we pass only the origin.
-    appBaseUrl: process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : undefined,
+    // Ensure appBaseUrl includes the basePath (/app) so that the SDK generates correct absolute URLs
+    // and correctly matches the middleware request paths.
+    appBaseUrl: process.env.AUTH0_BASE_URL
+        ? `${new URL(process.env.AUTH0_BASE_URL).origin}/app`
+        : undefined,
     routes: {
-        callback: '/app/auth/callback',
-        login: '/app/auth/login',
-        logout: '/app/auth/logout'
+        callback: '/auth/callback',
+        login: '/auth/login',
+        logout: '/auth/logout'
     }
 });
