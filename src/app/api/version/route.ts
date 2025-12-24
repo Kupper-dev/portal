@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     return NextResponse.json({
-        version: '1.0.2-patched',
+        version: '1.0.3-downgrade-compat',
         timestamp: new Date().toISOString(),
-        message: 'If you see this, the setImmediate patch worked.',
+        message: 'Testing old compatibility flags.',
     });
 }
