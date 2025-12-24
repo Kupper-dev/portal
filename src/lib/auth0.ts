@@ -1,12 +1,25 @@
 import { Auth0Client } from '@auth0/nextjs-auth0/server';
 import { linkUserIdentity } from './identity-linker';
 
-// Initializing with empty object allowing the SDK to automatically load 
-// configuration from environment variables:
-// - AUTH0_ISSUER_BASE_URL (URL)
-// - AUTH0_CLIENT_ID
-// - AUTH0_CLIENT_SECRET
-// - AUTH0_SECRET
-// - AUTH0_BASE_URL
-console.log("Auth0Client initializing...");
-export const auth0 = new Auth0Client({});
+const domainInput = process.env.AUTH0_ISSUER_BASE_URL;
+// Strip https:// or http:// if present in domain to satisfy SDK 'domain' expectation
+const domain = domainInput?.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+console.log("Auth0 Config Check:", {
+    rawDomain: domainInput,
+    formattedDomain: domain,
+    hasClientId: !!process.env.AUTH0_CLIENT_ID,
+    // Avoid logging full secrets, just presence
+    hasClientSecret: !!process.env.AUTH0_CLIENT_SECRET,
+    hasSecret: !!process.env.AUTH0_SECRET,
+    appBaseUrl: process.env.AUTH0_BASE_URL,
+});
+
+export const auth0 = new Auth0Client({
+    domain: domain,
+    clientId: process.env.AUTH0_CLIENT_ID,
+    clientSecret: process.env.AUTH0_CLIENT_SECRET,
+    secret: process.env.AUTH0_SECRET,
+    // Explicitly map AUTH0_BASE_URL to appBaseUrl
+    appBaseUrl: process.env.AUTH0_BASE_URL,
+});
