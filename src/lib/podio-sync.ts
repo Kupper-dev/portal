@@ -99,8 +99,11 @@ class SimplePodioClient {
 }
 
 async function getPodioAppClient(appName: 'customers' | 'students') {
-    const config = PODIO_CONFIG[appName];
-    if (!config.appId || !config.appToken) {
+    // Config read lazily to support local scripts where dotenv loads after import
+    const appId = appName === 'customers' ? process.env.PODIO_APP_ID_CUSTOMERS : process.env.PODIO_APP_ID_STUDENTS;
+    const appToken = appName === 'customers' ? process.env.PODIO_APP_TOKEN_CUSTOMERS : process.env.PODIO_APP_TOKEN_STUDENTS;
+
+    if (!appId || !appToken) {
         throw new Error(`Missing configuration for Podio App: ${appName}`);
     }
 
@@ -114,7 +117,7 @@ async function getPodioAppClient(appName: 'customers' | 'students') {
         clientSecret: process.env.PODIO_CLIENT_SECRET
     });
 
-    await podio.authenticateWithApp(parseInt(config.appId), config.appToken);
+    await podio.authenticateWithApp(parseInt(appId), appToken);
     return podio;
 }
 
@@ -153,6 +156,7 @@ async function fetchPodioItem(itemId: number): Promise<{ app: 'customers' | 'stu
         const item = await podio.request('GET', `/item/${itemId}`);
         if (item) return { app: 'customers', data: item };
     } catch (err: any) {
+        console.error('Error fetching from Customers:', err);
         // Ignore 404/403
     }
 
@@ -162,6 +166,7 @@ async function fetchPodioItem(itemId: number): Promise<{ app: 'customers' | 'stu
         const item = await podio.request('GET', `/item/${itemId}`);
         if (item) return { app: 'students', data: item };
     } catch (err: any) {
+        console.error('Error fetching from Students:', err);
         // Ignore
     }
 
