@@ -154,16 +154,24 @@ async function fetchPodioItem(itemId: number): Promise<{ app: 'customers' | 'stu
     try {
         const podio = await getPodioAppClient('customers');
         const item = await podio.request('GET', `/item/${itemId}`);
-        if (item) return { app: 'customers', data: item };
+        const expectedId = parseInt(process.env.PODIO_APP_ID_CUSTOMERS!);
+
+        if (item && item.app.app_id === expectedId) {
+            return { app: 'customers', data: item };
+        }
     } catch (err: any) {
-        // Ignore 404/403
+        // Ignore 404/403 or mismatch
     }
 
     // 2. Try Students App
     try {
         const podio = await getPodioAppClient('students');
         const item = await podio.request('GET', `/item/${itemId}`);
-        if (item) return { app: 'students', data: item };
+        const expectedId = parseInt(process.env.PODIO_APP_ID_STUDENTS!);
+
+        if (item && item.app.app_id === expectedId) {
+            return { app: 'students', data: item };
+        }
     } catch (err: any) {
         // Ignore
     }
@@ -195,7 +203,7 @@ export async function syncPodioToSupabase(itemId: number, type: 'item.create' | 
     // 3. Upsert to Supabase
     const { error } = await supabase
         .from(app) // 'customers' or 'students' table
-        .upsert(mappedData, { onConflict: 'id' }); // 'id' is our PK in Supabase (which maps to podio item_id)
+        .upsert(mappedData, { onConflict: 'podio_item_id' }); // Use podio_item_id as unique key
 
     if (error) {
         console.error(`Error syncing to Supabase table ${app}:`, error);
@@ -263,9 +271,10 @@ function mapPodioItemToSupabase(app: 'customers' | 'students', item: any) {
 
     // Base mapping
     const mapped: any = {
-        id: item.item_id, // We use Podio Item ID as PK
+        // id: item.item_id, // Let Supabase generate UUID
+        podio_item_id: item.item_id,
         podio_app_item_id: item.app_item_id,
-        updated_at: new Date().toISOString(),
+        last_updated_at: new Date().toISOString(),
         // last_event_on: new Date().toISOString() // We could update this
     };
 
