@@ -41,8 +41,11 @@ async function createPodioItem(accessToken: string, appId: string) {
 
     const fields = {
         'name': title,
-        // Add email to satisfy potential requirements if needed, mainly for customers
-        'email': [{ 'type': 'work', 'value': `test-${Date.now()}@example.com` }]
+        'email': [{ 'type': 'work', 'value': `test-${Date.now()}@example.com` }],
+        'recipient': 'Test Recipient',
+        'address': '123 Test St, Silicon Valley, CA',
+        'phone': [{ 'type': 'mobile', 'value': '+15550199' }],
+        'whatsapp': '525540000000'
     };
 
     const res = await fetch(`${PODIO_API_BASE}/item/app/${appId}/`, {
