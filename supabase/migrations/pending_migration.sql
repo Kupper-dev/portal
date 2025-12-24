@@ -5,11 +5,48 @@ CREATE TABLE IF NOT EXISTS customers (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE customers ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE customers ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE customers ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'created_at') THEN
+    ALTER TABLE customers ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'updated_at') THEN
+    ALTER TABLE customers ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE customers ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'customers' AND column_name = 'name') THEN
@@ -64,11 +101,48 @@ CREATE TABLE IF NOT EXISTS devices (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE devices ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE devices ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE devices ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'created_at') THEN
+    ALTER TABLE devices ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'updated_at') THEN
+    ALTER TABLE devices ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE devices ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'devices' AND column_name = 'customer') THEN
@@ -123,11 +197,48 @@ CREATE TABLE IF NOT EXISTS services (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE services ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE services ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE services ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'created_at') THEN
+    ALTER TABLE services ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'updated_at') THEN
+    ALTER TABLE services ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE services ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'services' AND column_name = 'customer') THEN
@@ -242,11 +353,48 @@ CREATE TABLE IF NOT EXISTS service_or_spare_part (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'created_at') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'updated_at') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'description') THEN
@@ -301,11 +449,48 @@ CREATE TABLE IF NOT EXISTS store (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE store ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE store ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE store ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'created_at') THEN
+    ALTER TABLE store ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'updated_at') THEN
+    ALTER TABLE store ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE store ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'store' AND column_name = 'customer') THEN
@@ -486,11 +671,48 @@ CREATE TABLE IF NOT EXISTS gamer (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE gamer ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE gamer ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE gamer ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'created_at') THEN
+    ALTER TABLE gamer ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'updated_at') THEN
+    ALTER TABLE gamer ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE gamer ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gamer' AND column_name = 'customer') THEN
@@ -617,11 +839,48 @@ CREATE TABLE IF NOT EXISTS acquired_devices (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE acquired_devices ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE acquired_devices ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE acquired_devices ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'created_at') THEN
+    ALTER TABLE acquired_devices ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'updated_at') THEN
+    ALTER TABLE acquired_devices ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE acquired_devices ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'acquired_devices' AND column_name = 'customer') THEN
@@ -688,11 +947,48 @@ CREATE TABLE IF NOT EXISTS quotations (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE quotations ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE quotations ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE quotations ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'created_at') THEN
+    ALTER TABLE quotations ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'updated_at') THEN
+    ALTER TABLE quotations ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE quotations ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'quotations' AND column_name = 'customer') THEN
@@ -765,11 +1061,48 @@ CREATE TABLE IF NOT EXISTS plans (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE plans ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE plans ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE plans ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'created_at') THEN
+    ALTER TABLE plans ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'updated_at') THEN
+    ALTER TABLE plans ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE plans ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'plans' AND column_name = 'customer') THEN
@@ -878,11 +1211,48 @@ CREATE TABLE IF NOT EXISTS invoices (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE invoices ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE invoices ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE invoices ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'created_at') THEN
+    ALTER TABLE invoices ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'updated_at') THEN
+    ALTER TABLE invoices ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE invoices ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'invoices' AND column_name = 'customer') THEN
@@ -967,11 +1337,48 @@ CREATE TABLE IF NOT EXISTS appointments (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE appointments ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE appointments ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE appointments ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'created_at') THEN
+    ALTER TABLE appointments ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'updated_at') THEN
+    ALTER TABLE appointments ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE appointments ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'customer') THEN
@@ -1020,11 +1427,48 @@ CREATE TABLE IF NOT EXISTS tickets (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE tickets ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE tickets ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE tickets ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'created_at') THEN
+    ALTER TABLE tickets ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'updated_at') THEN
+    ALTER TABLE tickets ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE tickets ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'tickets' AND column_name = 'customer') THEN
@@ -1133,11 +1577,48 @@ CREATE TABLE IF NOT EXISTS students (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE students ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE students ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE students ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'created_at') THEN
+    ALTER TABLE students ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'updated_at') THEN
+    ALTER TABLE students ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE students ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'students' AND column_name = 'name') THEN
@@ -1192,11 +1673,48 @@ CREATE TABLE IF NOT EXISTS courses (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE courses ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE courses ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE courses ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'created_at') THEN
+    ALTER TABLE courses ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'updated_at') THEN
+    ALTER TABLE courses ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE courses ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'courses' AND column_name = 'coursename') THEN
@@ -1239,11 +1757,48 @@ CREATE TABLE IF NOT EXISTS classes (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE classes ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE classes ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE classes ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'created_at') THEN
+    ALTER TABLE classes ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'updated_at') THEN
+    ALTER TABLE classes ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE classes ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'classes' AND column_name = 'name') THEN
@@ -1286,11 +1841,48 @@ CREATE TABLE IF NOT EXISTS enrollments (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE enrollments ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE enrollments ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE enrollments ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'created_at') THEN
+    ALTER TABLE enrollments ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'updated_at') THEN
+    ALTER TABLE enrollments ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE enrollments ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'enrollments' AND column_name = 'student') THEN
@@ -1333,11 +1925,48 @@ CREATE TABLE IF NOT EXISTS chapters (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE chapters ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE chapters ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE chapters ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'created_at') THEN
+    ALTER TABLE chapters ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'updated_at') THEN
+    ALTER TABLE chapters ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE chapters ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'chapters' AND column_name = 'name') THEN
@@ -1350,11 +1979,48 @@ CREATE TABLE IF NOT EXISTS technicians (
   podio_item_id BIGINT PRIMARY KEY,
   id BIGINT, -- Internal sequential DB id if needed, but podio_item_id is better unique ref
   podio_app_item_id INT, -- User-facing 'App Item ID'
+  podio_formatted_id TEXT, -- Formatted App Item ID (e.g. S0001)
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   last_updated_at TIMESTAMPTZ DEFAULT now() -- Internal sync timestamp
 );
 
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'podio_item_id') THEN
+    ALTER TABLE technicians ADD COLUMN "podio_item_id" BIGINT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'podio_app_item_id') THEN
+    ALTER TABLE technicians ADD COLUMN "podio_app_item_id" INT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'podio_formatted_id') THEN
+    ALTER TABLE technicians ADD COLUMN "podio_formatted_id" TEXT;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'created_at') THEN
+    ALTER TABLE technicians ADD COLUMN "created_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'updated_at') THEN
+    ALTER TABLE technicians ADD COLUMN "updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'last_updated_at') THEN
+    ALTER TABLE technicians ADD COLUMN "last_updated_at" TIMESTAMPTZ;
+  END IF;
+END$$;
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'technicians' AND column_name = 'title') THEN
