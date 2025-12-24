@@ -1,0 +1,12 @@
+diff --git a/node_modules/unenv/dist/runtime/polyfill/timers.mjs b/node_modules/unenv/dist/runtime/polyfill/timers.mjs
+index b879507..7859856 100644
+--- a/node_modules/unenv/dist/runtime/polyfill/timers.mjs
++++ b/node_modules/unenv/dist/runtime/polyfill/timers.mjs
+@@ -1,6 +1,6 @@
+ import { setImmediate, clearImmediate } from "node:timers";
+ if (!globalThis.setImmediate) {
+-	globalThis.setImmediate = setImmediate;
++	try { try { globalThis.setImmediate = setImmediate; } catch (e) {} } catch (e) {}
+ }
+ if (!globalThis.clearImmediate) {
+ 	globalThis.clearImmediate = clearImmediate;

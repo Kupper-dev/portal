@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node src/scripts/patch-unenv.js && next build",
+    "build": "next build",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "lint": "eslint",
-    "postinstall": "node src/scripts/patch-unenv.js"
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.14.0",
@@ -24,6 +24,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^15.1.6",
+    "patch-package": "^8.0.1",
     "typescript": "^5",
     "wrangler": "^4.56.0"
   }
