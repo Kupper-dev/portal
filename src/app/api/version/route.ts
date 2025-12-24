@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     return NextResponse.json({
-        version: '1.0.6-patch-package',
+        version: '1.0.7-force-patch',
         timestamp: new Date().toISOString(),
-        message: 'Fixed via patch-package.',
+        message: 'Forced patch in build script.',
     });
 }
