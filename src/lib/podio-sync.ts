@@ -442,10 +442,13 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
 }
 
 // ----------------------------------------------------------------------
-// Outbound Logic Placeholder for Multi-App (Commented out for now or simplified)
+// Outbound Logic Placeholder for Multi-App
 // ----------------------------------------------------------------------
-/*
+
 export async function syncPendingItems() {
-    // Need to implement generic outbound sync iterating PODIO_APPS
+    // Placeholder: This functionality was originally designed for a single app.
+    // We need to implement generic outbound sync iterating PODIO_APPS if needed.
+    // For now, returning empty success to satisfy build and API route.
+    console.log('Outbound sync not yet fully implemented for multi-app.');
+    return { synced: 0, message: 'Not implemented for multi-app' };
 }
-*/
