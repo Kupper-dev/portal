@@ -17,13 +17,11 @@ export async function createPodioCustomer(email: string, name: string, auth0Id: 
 
         // Construct fields
         const fields: Record<string, any> = {
-            'title': name, // 'name' text field usually used as title? Or explicitly 'name'. 
-            // In migration, column is 'name'. External ID 'name'.
-            // Podio item create expects {'fields': {'external_id': value, ...}}
             'name': name,
             'email': [{ 'type': 'home', 'value': email }], // Email field usually expects specific structure
             'auth0id': auth0Id,
-            'type': 'Customer' // assuming this is a category or text field? Migration says 'text'.
+            'type': 1 // Customer (Option ID: 1)
+
             // If it's a category, we might need the ID or exact text option matching.
             // Requirement says: "Create item in Podio Customers App with type = customer."
             // If 'type' is a category, passing string might fail if not exact match or if it requires Option ID.

@@ -4,13 +4,16 @@ import { getSupabaseAdmin } from './supabase';
 
 export async function linkUserIdentity(session: any, loginType: 'portal' | 'student' = 'portal') {
     const user = session.user;
-    const email = user.email;
+    const rawEmail = user.email;
     const auth0Id = user.sub;
 
-    if (!email || !auth0Id) {
+    if (!rawEmail || !auth0Id) {
         console.error('Missing email or sub in session');
         return session;
     }
+
+    // Normalize email to ensure consistent matching
+    const email = rawEmail.toLowerCase().trim();
 
     const supabase = getSupabaseAdmin();
 
