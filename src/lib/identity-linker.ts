@@ -21,16 +21,36 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
 
     // FLOW 1: PORTAL (Customers / Business)
     if (loginType === 'portal') {
-        // 1. Check Customers Table
-        const { data: customer } = await supabase
+        // 1. Try Lookup by Auth0 ID (Most Reliable)
+        let { data: customer } = await supabase
             .from('customers')
             .select('id, auth0_id, type')
-            .eq('email', email)
-            .single();
+            .eq('auth0_id', auth0Id)
+            .maybeSingle();
+
+        // 2. Fallback: Lookup by Email
+        if (!customer) {
+            const { data: customerByEmail } = await supabase
+                .from('customers')
+                .select('id, auth0_id, type')
+                .eq('email', email)
+                .maybeSingle();
+
+            if (customerByEmail) {
+                console.log(`[IdentityLinker] Found customer by email (Auth0 ID missing/changed)`);
+                customer = customerByEmail;
+                // Update Auth0 ID to match current session
+                await supabase
+                    .from('customers')
+                    .update({ auth0_id: auth0Id, sync_status: 'synced' })
+                    .eq('id', customer.id);
+            }
+        }
 
         if (customer) {
             console.log(`[IdentityLinker] Found existing customer: ${customer.id}`);
-            // If Found, Sync Auth0 ID if missing or changed
+            // Ensure Auth0 ID is synced (if we found by ID, it is. If by email, we just updated it above).
+            // But double check just in case.
             if (customer.auth0_id !== auth0Id) {
                 await supabase
                     .from('customers')
@@ -40,15 +60,8 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
             return session;
         }
 
-        // 2. If Not Found -> Create New Customer
+        // 3. If Not Found -> Create New Customer
         console.log(`[IdentityLinker] Creating new Customer in Podio & Supabase`);
-
-        // Optimistic Write: We want to write to Supabase immediately for UI, 
-        // but we also need Podio ID. 
-        // Best approach: Create in Podio first (await), then Supabase.
-        // Or Parallel?
-        // If Podio fails, we might still want them in Supabase but with error status?
-        // Let's await Podio to ensure consistency as per "Sync Engine" requirements usually implying Podio is master.
 
         const podioItemId = await createPodioCustomer(email, user.name || email, auth0Id);
 
@@ -62,14 +75,33 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
         });
 
     }
-
     // FLOW 2: STUDENTS
     else if (loginType === 'student') {
-        const { data: student } = await supabase
+        // 1. Try Lookup by Auth0 ID
+        let { data: student } = await supabase
             .from('students')
             .select('id, auth0_id')
-            .eq('email', email)
-            .single();
+            .eq('auth0_id', auth0Id)
+            .maybeSingle();
+
+        // 2. Fallback: Lookup by Email
+        if (!student) {
+            const { data: studentByEmail } = await supabase
+                .from('students')
+                .select('id, auth0_id')
+                .eq('email', email)
+                .maybeSingle();
+
+            if (studentByEmail) {
+                console.log(`[IdentityLinker] Found student by email (Auth0 ID missing/changed)`);
+                student = studentByEmail;
+                // Update Auth0 ID
+                await supabase
+                    .from('students')
+                    .update({ auth0_id: auth0Id, sync_status: 'synced' })
+                    .eq('id', student.id);
+            }
+        }
 
         if (student) {
             console.log(`[IdentityLinker] Found existing student: ${student.id}`);
@@ -82,6 +114,7 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
             return session;
         }
 
+        // 3. Create New Student
         console.log(`[IdentityLinker] Creating new Student in Podio & Supabase`);
         const podioItemId = await createPodioStudent(email, user.name || email, auth0Id);
 
