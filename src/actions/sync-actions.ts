@@ -15,7 +15,7 @@ export async function createCustomerOptimistic(data: { name: string; email: stri
     const { data: record, error } = await supabase.from('customers').insert({
         name: data.name,
         email: data.email,
-        auth0_id: data.user_id, // Link immediately
+        auth0id: data.user_id, // Link immediately (Correct column name)
         type: 1, // Default Customer
         sync_status: 'pending'
     }).select().single();
