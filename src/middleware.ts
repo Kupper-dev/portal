@@ -6,10 +6,19 @@ export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     console.log(`[Middleware] Path: ${pathname}, URL: ${request.url}`);
 
+
     // Handle Auth Routes
     if (pathname.endsWith('/auth/login')) {
-        console.log('[Middleware] Handling Login');
-        return login(request);
+        console.log('[Middleware] Handling Login (Default Portal)');
+        return login(request, 'portal');
+    }
+    if (pathname.endsWith('/auth/login/portal')) {
+        console.log('[Middleware] Handling Login (Portal)');
+        return login(request, 'portal');
+    }
+    if (pathname.endsWith('/auth/login/student')) {
+        console.log('[Middleware] Handling Login (Student)');
+        return login(request, 'student');
     }
     if (pathname.endsWith('/auth/callback')) {
         console.log('[Middleware] Handling Callback');

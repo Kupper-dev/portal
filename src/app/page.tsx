@@ -14,10 +14,12 @@ export default async function Home() {
 
   const session = user ? { user } : null;
 
+  const loginType = cookieStore.get('app_login_type')?.value || 'portal';
+
   if (session) {
     try {
       // Identity linking expects a session object
-      await linkUserIdentity(session);
+      await linkUserIdentity(session, loginType as 'portal' | 'student');
     } catch (error) {
       console.error("Failed to link identity:", error);
     }

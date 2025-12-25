@@ -8,7 +8,8 @@ const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
 const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
 const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
 
-export async function login(request: Request): Promise<Response> {
+
+export async function login(request: Request, type: 'portal' | 'student' = 'portal'): Promise<Response> {
     const state = crypto.randomUUID();
     const url = new URL(`https://${AUTH0_DOMAIN}/authorize`);
     url.searchParams.set('client_id', AUTH0_CLIENT_ID);
@@ -17,11 +18,16 @@ export async function login(request: Request): Promise<Response> {
     url.searchParams.set('redirect_uri', REDIRECT_URI);
     url.searchParams.set('state', state);
 
+    if (type === 'student') {
+        // Optional: Add connection or screen_hint if configured
+        // url.searchParams.set('screen_hint', 'signup'); 
+    }
+
     const response = new Response(null, {
         status: 302,
         headers: {
             Location: url.toString(),
-            'Set-Cookie': `auth0_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300`,
+            'Set-Cookie': `auth0_state=${state}:${type}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300`,
         },
     });
     return response;
@@ -33,13 +39,19 @@ export async function callback(request: Request): Promise<Response> {
     const state = url.searchParams.get('state');
 
     const cookieHeader = request.headers.get('Cookie') || '';
-    const storedState = cookieHeader
+    const stateCookie = cookieHeader
         .split(';')
         .find((c) => c.trim().startsWith('auth0_state='))
         ?.split('=')[1];
 
-    if (!code || !state || state !== storedState) {
+    if (!code || !state || !stateCookie) {
         return new Response('Invalid state or missing code', { status: 400 });
+    }
+
+    const [storedState, loginType] = stateCookie.split(':');
+
+    if (state !== storedState) {
+        return new Response('Invalid state mismatch', { status: 400 });
     }
 
     const tokenRes = await fetch(`https://${AUTH0_DOMAIN}/oauth/token`, {
@@ -67,14 +79,29 @@ export async function callback(request: Request): Promise<Response> {
         const user = await verifyToken(id_token);
         if (!user) throw new Error('Verification failed');
 
+        // We can append loginType to session cookie if we want to extract it later
+        // But for now, just setting the session is enough. The identity-linker
+        // might need to know the INTENDED type? 
+        // Actually, identity-linker runs on page load. It doesn't know about login flow type unless we store it.
+        // Let's store it in the session cookie or a separate cookie?
+        // Safest is to rely on email lookup, BUT for new users we need to know where to create them!
+        // So we MUST store loginType in the session or a parallel cookie.
+
+        // Let's append it to the session value or use a claiming approach.
+        // Simple approach: `app_session=ID_TOKEN`
+        // We can set another cookie `app_login_type=student`
+
         const sessionCookie = `app_session=${id_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`;
+        const typeCookie = `app_login_type=${loginType || 'portal'}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`;
+
+        const headers = new Headers();
+        headers.append('Location', `${ORIGIN}${APP_BASE_PATH}`);
+        headers.append('Set-Cookie', sessionCookie);
+        headers.append('Set-Cookie', typeCookie);
 
         return new Response(null, {
             status: 302,
-            headers: {
-                Location: `${ORIGIN}${APP_BASE_PATH}`,
-                'Set-Cookie': sessionCookie
-            }
+            headers: headers
         });
 
     } catch (error) {

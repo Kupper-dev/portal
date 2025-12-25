@@ -1,71 +1,77 @@
-# Auth0 Troubleshooting Guide
+# Auth0 Troubleshooting & Implementation Guide (Webflow Cloud / Edge Runtime)
 
-This document outlines common issues and solutions for the Auth0 integration in the Kupper Portal, specifically regarding deployment to Webflow Cloud and Next.js `basePath` configuration.
+This document outlines the critical issues and solutions for implementing Auth0 on Webflow Cloud (Cloudflare Workers/Edge Runtime).
 
-## 1. Callback URL Mismatch (404 Error on Login)
+> **CRITICAL WARNING:** Do **not** use the official `@auth0/nextjs-auth0` SDK in this environment. It depends on Node.js modules (`crypto`, `buffer`) that cause **502 Bad Gateway** errors at runtime, even with compatibility flags enabled.
+
+## 1. 502 Bad Gateway (Runtime Crash)
 
 **Symptom:**
-After clicking "Login", the user is redirected to Auth0, authenticates successfully, but is redirected back to a 404 page (e.g., `https://site.webflow.io/auth/callback` instead of `/app/auth/callback`).
+The application builds successfully, but clicking "Login" or returning from Auth0 results in a white screen or 502 error. Logs might show "The script will never generate a response".
 
 **Cause:**
-The application uses a `basePath` of `/app` in `next.config.ts`. However, the `@auth0/nextjs-auth0` SDK (v4) does not automatically prepend this `basePath` to the generated callback URL when running in certain environments (like Webflow Cloud) or when `AUTH0_BASE_URL` is ambiguous.
+The `@auth0/nextjs-auth0` SDK (and its dependencies like `openid-client`) relies on Node.js built-ins (`crypto`, `net`) that are incompatible with the strict Edge Runtime used by Webflow Cloud/OpenNext.
+
+**Solution: Manual Edge-Native Flow**
+We implemented a lightweight, zero-dependency manual flow in `src/lib/auth-edge.ts`.
+-   **Dependencies:** `jose` (for JWT verification), `fetch` (standard Web API), `crypto` (standard Web API).
+-   **No Node.js Modules:** Strictly avoided `cookie` (npm), `jsonwebtoken`, or `auth0` SDKs.
+
+## 2. 404 Not Found on Callback
+
+**Symptom:**
+After login, Auth0 redirects to `.../auth/callback` but the app returns 404.
+
+**Cause:**
+1.  **Middleware Matcher:** The Middleware was not configured to intercept the specific callback path, causing the request to fall through to the Next.js router (which didn't have a page there).
+2.  **Base Path Mismatch:** Next.js is configured with `basePath: '/app'`, but the callback URL was missing this prefix (or duplicating it).
 
 **Solution:**
-Explicitly configure the `routes` in the `Auth0Client` initialization in `src/lib/auth0.ts`.
+-   **Broaden Middleware Matcher:** Ensure `src/middleware.ts` matches all paths (e.g., `/((?!_next/static...).*)`) so it can always intercept `/auth/*`.
+-   **Route Interception:** Explicitly check `pathname.endsWith('/auth/callback')` in middleware.
 
+## 3. Double Base Path (`/app/app/auth/callback`)
+
+**Symptom:**
+The callback URL or redirect URL contains `/app` twice (e.g., `https://site.io/app/app/...`).
+
+**Cause:**
+Double concatenation of the base path.
+-   `AUTH0_BASE_URL` was set to `https://site.io/app`.
+-   Code logic was: `const REDIRECT_URI = ${AUTH0_BASE_URL}${APP_BASE_PATH}/auth/callback`.
+-   Result: `/app` + `/app` = `/app/app`.
+
+**Solution:**
+Strictly extract the **origin** from the environment variable using the `URL` API:
 ```typescript
-// 1. Ensure appBaseUrl includes the basePath (/app)
-    appBaseUrl: process.env.AUTH0_BASE_URL 
-        ? `${new URL(process.env.AUTH0_BASE_URL).origin}/app` 
-        : undefined,
-
-    // 2. Use relative paths for routes (SDK appends them to appBaseUrl)
-    routes: {
-        callback: '/auth/callback',
-        login: '/auth/login',
-        logout: '/auth/logout'
-    }
-});
+// src/lib/auth-edge.ts
+const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
+const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
 ```
+This guarantees `ORIGIN` is always just `https://domain.com`, regardless of whether the user included a trailing slash or path.
 
-## 2. Environment Variable Configuration
+## 4. Environment Configuration
 
-**Crucial Variables for Webflow Cloud:**
+### Required Variables
+-   **`AUTH0_SECRET`**: 32+ char random string.
+-   **`AUTH0_BASE_URL`**: The root origin (e.g., `https://kupper-34ef94.webflow.io`).
+-   **`AUTH0_ISSUER_BASE_URL`**: Auth0 Tenant URL (e.g., `https://login.kupper.com.mx`).
+-   **`AUTH0_CLIENT_ID`**: Client ID.
+-   **`AUTH0_CLIENT_SECRET`**: Client Secret.
+-   **`NEXT_PUBLIC_BASE_PATH`**: `/app`.
 
-*   **`AUTH0_SECRET`**: A long, random string (32+ bytes, hex/base64). **Required.**
-*   **`AUTH0_BASE_URL`**: Must be the **root origin** of your deployment, **WITHOUT** the sub-path.
-    *   **Correct:** `https://kupper-34ef94.webflow.io`
-    *   **Incorrect:** `https://kupper-34ef94.webflow.io/app`
-    *   *Note:* The code in `src/lib/auth0.ts` includes logic to strip path components, but it is best practice to set it correctly.
-*   **`AUTH0_ISSUER_BASE_URL`**: The full URL of your Auth0 tenant.
-    *   **Value:** `https://login.kupper.com.mx` (or `https://your-tenant.us.auth0.com`)
-    *   *Note:* The code currently strips `https://` for the `domain` parameter, but standard usage relies on this variable.
-*   **`AUTH0_CLIENT_ID`**: Your Auth0 Client ID.
-*   **`AUTH0_CLIENT_SECRET`**: Your Auth0 Client Secret.
-*   **`NEXT_PUBLIC_BASE_PATH`**: Must be set to `/app`.
+### Auth0 Dashboard Settings
+-   **Allowed Callback URLs:** `https://kupper-34ef94.webflow.io/app/auth/callback`
+-   **Allowed Logout URLs:** `https://kupper-34ef94.webflow.io/app`
+-   **Allowed Web Origins:** `https://kupper-34ef94.webflow.io`
 
-## 3. "Edge Runtime" & Database Errors
+## 5. Security Strategy (Cookies)
 
-**Symptom:**
-Application crashes with "The edge runtime does not support Node.js 'net' module" or similar errors when trying to save a user to Supabase during the callback.
-
-**Cause:**
-`src/middleware.ts` runs on the Edge Runtime. The Supabase client (using `pg` or standard connection pooling) and complex DB logic are often not compatible with the Edge Runtime.
-
-**Solution:**
-Do **not** perform identity linking (saving user to DB) inside the `onCallback` hook in `auth0.ts` or `middleware.ts`.
-Instead, perform this logic in a **Server Component** (e.g., `src/app/page.tsx`).
-
-**Pattern used in this project:**
-1.  Middleware handles the session creation (`auth0.middleware`).
-2.  User lands on `/app` (Home).
-3.  `src/app/page.tsx` checks for a session: `const session = await auth0.getSession();`.
-4.  If a session exists, it calls `await linkUserIdentity(session);` (imported from `src/lib/identity-linker.ts`) to sync the user with Supabase.
-
-## 4. Auth0 Dashboard Configuration
-
-Ensure your Auth0 Application settings match your deployment:
-
-*   **Allowed Callback URLs:** `https://kupper-34ef94.webflow.io/app/auth/callback`
-*   **Allowed Logout URLs:** `https://kupper-34ef94.webflow.io/app`
-*   **Allowed Web Origins:** `https://kupper-34ef94.webflow.io`
+Since we cannot use Node.js cookie parsers:
+-   **Setting Cookies:** Manually construct the `Set-Cookie` header in `src/lib/auth-edge.ts`.
+    -   `HttpOnly; Secure; SameSite=Lax`
+-   **Reading Cookies:**
+    -   **Middleware:** Parse `request.headers.get('Cookie')`.
+    -   **Server Components:** Use `import { cookies } from 'next/headers'`.
+-   **Validation:**
+    -   Use `jose.jwtVerify()` against Auth0's JWKS (`.well-known/jwks.json`) to validate the ID Token stored in the cookie.
