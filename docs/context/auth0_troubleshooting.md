@@ -75,3 +75,34 @@ Since we cannot use Node.js cookie parsers:
     -   **Server Components:** Use `import { cookies } from 'next/headers'`.
 -   **Validation:**
     -   Use `jose.jwtVerify()` against Auth0's JWKS (`.well-known/jwks.json`) to validate the ID Token stored in the cookie.
+
+## 6. Duplicate "Name" Fields in Podio (Ghost Fields)
+
+**Symptom:**
+Items in Podio created via API have duplicate "Name" fields, or data appears in a hidden field while the visible "Name" field remains empty.
+
+**Cause:**
+Podio apps can have multiple fields with similar labels (e.g., "Name"). One might be a legacy field or have a different `external_id` (e.g., `title` vs `name`). Using the wrong ID in the API payload writes data to the wrong field.
+
+**Solution:**
+1.  **Inspect Schema:** Use a script (or `podio_full_schema.json`) to find the exact `external_id` for the visible field.
+    -   *Example:* We found the correct field was `external_id: 'name'`, not `'title'`.
+2.  **Category Fields:** Ensure `category` fields (like `type`) are sent as **integer Option IDs** (e.g., `1`), not string values (`"Customer"`), unless using specific text-matching modes.
+3.  **Strict Typing:** Update `podio-edge.ts` to use these verified IDs.
+
+## 7. Duplicate User Accounts on Login
+
+**Symptom:**
+Logging in repeatedly creates new duplicate rows in Supabase and new Items in Podio, instead of signing into the existing account.
+
+**Cause:**
+1.  **Column Mismatch:** The code was querying `auth0_id`, but the database column was named `auth0id` (no underscore). Queries silently failed or returned null.
+    -   *Result:* Code assumed "User not found" -> Create New.
+2.  **Email Matching:** Relying solely on exact email matches can fail if casing differs (`User@` vs `user@`) or if the ID lookup fails first.
+
+**Solution:**
+1.  **Robust Lookup Strategy (`identity-linker.ts`):**
+    -   **Step 1:** Lookup by `auth0id` (Primary, immutable).
+    -   **Step 2:** Fallback to `email` (normalized to lowercase/trimmed).
+    -   **Step 3:** If found by email but ID is missing, **auto-link** (update) the record with the current `auth0id`.
+2.  **Correct Column Names:** Verify exact DB schema. We renamed usages of `auth0_id` to `auth0id` in all Supabase queries (`select`, `insert`, `update`).
