@@ -64,6 +64,12 @@ export default async function DashboardPage() {
         const user = token ? (await verifyToken(token)) as UserPayload : null;
         const session = user ? { user } : null;
 
+        if (!session || !user) {
+            // Defense in depth: If middleware fails, Page must protect itself.
+            // Using ClientRedirect for consistency with other redirects that were failing
+            return <ClientRedirect destination="/app/auth/login" />;
+        }
+
 
 
         // Link Identity if needed (Client side usually triggers this or specific flow, but keeping here as per previous code)
