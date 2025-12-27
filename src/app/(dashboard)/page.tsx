@@ -1,5 +1,6 @@
 import { verifyToken } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
+import { linkUserIdentity } from "@/lib/identity-linker";
 import { DashboardSection } from '@/devlink';
 import { ServicesDetailsAndStatus } from '@/devlink'; // Example as another type
 
@@ -15,6 +16,18 @@ export default async function DashboardPage() {
     const token = cookieStore.get('app_session')?.value;
     const user = token ? (await verifyToken(token)) as UserPayload : null;
     const session = user ? { user } : null;
+
+    // Link Identity if needed
+    const loginType = cookieStore.get('app_login_type')?.value || 'portal';
+    if (session) {
+        try {
+            // Identity linking expects a session object
+            // This ensures Podio and Auth0 users are synced
+            await linkUserIdentity(session, loginType as 'portal' | 'student');
+        } catch (error) {
+            console.error("Failed to link identity:", error);
+        }
+    }
 
     // Logic to determine User Type from session or metadata
     // Currently defaulting to 'default' if not found
