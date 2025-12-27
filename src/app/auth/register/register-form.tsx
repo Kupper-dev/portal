@@ -7,9 +7,20 @@ import { DevLinkProvider } from '@/devlink'; // Needed? Usually global layout ha
 // If DevLink uses context, we might need provider. But usually for pure components it's fine.
 // Although `interactions.ts` might need context? No, it uses `useInteractions` hook.
 
-export default function RegisterForm() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+interface RegisterFormProps {
+    initialEmail?: string;
+    initialName?: string;
+    initialPicture?: string;
+}
+
+export default function RegisterForm({ initialEmail, initialName, initialPicture }: RegisterFormProps) {
+    // Attempt to split name
+    const parts = (initialName || '').split(' ');
+    const firstNameInit = parts[0] || '';
+    const lastNameInit = parts.slice(1).join(' ') || '';
+
+    const [firstName, setFirstName] = useState(firstNameInit);
+    const [lastName, setLastName] = useState(lastNameInit);
     const [phone, setPhone] = useState('');
     const [companyName, setCompanyName] = useState('');
     const [companySize, setCompanySize] = useState('');

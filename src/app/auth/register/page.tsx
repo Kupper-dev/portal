@@ -1,4 +1,7 @@
 
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth-edge';
+import { redirect } from 'next/navigation';
 import RegisterForm from './register-form';
 
 export const metadata = {
@@ -6,6 +9,24 @@ export const metadata = {
     description: 'Completa tu registro para continuar.'
 };
 
-export default function RegisterPage() {
-    return <RegisterForm />;
+export default async function RegisterPage() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('app_session')?.value;
+
+    if (!token) {
+        redirect('/app/auth/login');
+    }
+
+    const user = await verifyToken(token) as any;
+    if (!user) {
+        redirect('/app/auth/login');
+    }
+
+    return (
+        <RegisterForm
+            initialEmail={user.email}
+            initialName={user.name}
+            initialPicture={user.picture}
+        />
+    );
 }

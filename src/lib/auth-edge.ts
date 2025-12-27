@@ -14,7 +14,8 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
     const url = new URL(`https://${AUTH0_DOMAIN}/authorize`);
     url.searchParams.set('client_id', AUTH0_CLIENT_ID);
     url.searchParams.set('response_type', 'code');
-    url.searchParams.set('scope', 'openid profile email');
+
+    url.searchParams.set('scope', 'openid profile email offline_access');
     url.searchParams.set('redirect_uri', REDIRECT_URI);
     url.searchParams.set('state', state);
 
@@ -73,31 +74,26 @@ export async function callback(request: Request): Promise<Response> {
     }
 
     const tokenData = await tokenRes.json();
-    const { id_token } = tokenData;
+    const { id_token, access_token, refresh_token } = tokenData;
 
     try {
         const user = await verifyToken(id_token);
         if (!user) throw new Error('Verification failed');
 
-        // We can append loginType to session cookie if we want to extract it later
-        // But for now, just setting the session is enough. The identity-linker
-        // might need to know the INTENDED type? 
-        // Actually, identity-linker runs on page load. It doesn't know about login flow type unless we store it.
-        // Let's store it in the session cookie or a separate cookie?
-        // Safest is to rely on email lookup, BUT for new users we need to know where to create them!
-        // So we MUST store loginType in the session or a parallel cookie.
-
-        // Let's append it to the session value or use a claiming approach.
-        // Simple approach: `app_session=ID_TOKEN`
-        // We can set another cookie `app_login_type=student`
-
         const sessionCookie = `app_session=${id_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`;
         const typeCookie = `app_login_type=${loginType || 'portal'}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`;
+        // Store Refresh Token if available
+        const refreshCookie = refresh_token
+            ? `app_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000` // 30 days
+            : '';
 
         const headers = new Headers();
         headers.append('Location', `${ORIGIN}${APP_BASE_PATH}`);
         headers.append('Set-Cookie', sessionCookie);
         headers.append('Set-Cookie', typeCookie);
+        if (refreshCookie) {
+            headers.append('Set-Cookie', refreshCookie);
+        }
 
         return new Response(null, {
             status: 302,
@@ -113,14 +109,17 @@ export async function callback(request: Request): Promise<Response> {
 export async function logout(request: Request): Promise<Response> {
     const logoutUrl = new URL(`https://${AUTH0_DOMAIN}/v2/logout`);
     logoutUrl.searchParams.set('client_id', AUTH0_CLIENT_ID);
-    logoutUrl.searchParams.set('returnTo', `${ORIGIN}${APP_BASE_PATH}`);
+    // Redirect to main homepage (outside /app)
+    logoutUrl.searchParams.set('returnTo', 'https://www.kupper.com.mx');
+
+    const headers = new Headers();
+    headers.append('Location', logoutUrl.toString());
+    headers.append('Set-Cookie', `app_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
+    headers.append('Set-Cookie', `app_refresh_token=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
 
     return new Response(null, {
         status: 302,
-        headers: {
-            Location: logoutUrl.toString(),
-            'Set-Cookie': `app_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
-        }
+        headers: headers
     });
 }
 
