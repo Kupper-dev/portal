@@ -58,116 +58,137 @@ async function getLatestServiceForUser(auth0Id: string, email: string) {
 }
 
 export default async function DashboardPage() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('app_session')?.value;
-    const user = token ? (await verifyToken(token)) as UserPayload : null;
-    const session = user ? { user } : null;
+    try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get('app_session')?.value;
+        const user = token ? (await verifyToken(token)) as UserPayload : null;
+        const session = user ? { user } : null;
 
 
 
-    // Link Identity if needed (Client side usually triggers this or specific flow, but keeping here as per previous code)
-    const loginType = cookieStore.get('app_login_type')?.value || 'portal';
-    if (session) {
-        try {
-            const linkage = await linkUserIdentity(session, loginType as 'portal' | 'student');
-            if (linkage.status === 'incomplete') {
-                // Use client-side redirect to avoid malformed URL issues in Webflow Cloud
-                return <ClientRedirect destination="/app/auth/register" />;
-            }
-        } catch (error: any) {
-            console.error("Failed to link identity:", error);
-            // Re-throw redirect errors so Next.js can handle them
-            if (error?.digest?.includes('NEXT_REDIRECT') || error?.message === 'NEXT_REDIRECT') {
-                throw error;
+        // Link Identity if needed (Client side usually triggers this or specific flow, but keeping here as per previous code)
+        const loginType = cookieStore.get('app_login_type')?.value || 'portal';
+        if (session) {
+            try {
+                const linkage = await linkUserIdentity(session, loginType as 'portal' | 'student');
+                if (linkage.status === 'incomplete') {
+                    // Use client-side redirect to avoid malformed URL issues in Webflow Cloud
+                    return <ClientRedirect destination="/app/auth/register" />;
+                }
+            } catch (error: any) {
+                console.error("Failed to link identity:", error);
+                // Re-throw redirect errors so Next.js can handle them
+                if (error?.digest?.includes('NEXT_REDIRECT') || error?.message === 'NEXT_REDIRECT') {
+                    throw error;
+                }
             }
         }
-    }
 
-    const userType = session?.user?.user_metadata?.podio_type || 'default';
-    const userName = session?.user?.name || "User";
-    const userPicture = session?.user?.picture;
-    const auth0Id = session?.user?.sub;
-    const userEmail = session?.user?.email;
+        const userType = session?.user?.user_metadata?.podio_type || 'default';
+        const userName = session?.user?.name || "User";
+        const userPicture = session?.user?.picture;
+        const auth0Id = session?.user?.sub;
+        const userEmail = session?.user?.email;
 
-    // Fetch Service Data for Standard Users
-    let serviceItem = null;
-    if (auth0Id && userEmail) {
-        // We try to fetch service regardless of type to populate the view if available
-        try {
-            serviceItem = await getLatestServiceForUser(auth0Id, userEmail);
-        } catch (err) {
-            console.error("Failed to fetch service item:", err);
+        // Fetch Service Data for Standard Users
+        let serviceItem = null;
+        if (auth0Id && userEmail) {
+            // We try to fetch service regardless of type to populate the view if available
+            try {
+                serviceItem = await getLatestServiceForUser(auth0Id, userEmail);
+            } catch (err) {
+                console.error("Failed to fetch service item:", err);
+            }
         }
-    }
 
-    // Date formatting helper
-    const formatDate = (dateStr?: string) => {
-        if (!dateStr) return "";
-        return new Date(dateStr).toLocaleDateString('es-MX', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
+        // Date formatting helper
+        const formatDate = (dateStr?: string) => {
+            if (!dateStr) return "";
+            return new Date(dateStr).toLocaleDateString('es-MX', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        };
 
-    return (
-        <div className="flex h-screen w-full bg-gray-50">
-            {/* Sidebar */}
-            <div className="hidden md:block h-full">
-                <Sidebar />
-            </div>
+        return (
+            <div className="flex h-screen w-full bg-gray-50">
+                {/* Sidebar */}
+                <div className="hidden md:block h-full">
+                    <Sidebar />
+                </div>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col h-full overflow-hidden">
-                <Header
-                    userProfilePicture={{ src: userPicture }}
-                    userLogOut={{ options: { href: "/app/auth/logout" } }}
-                // wrapper or style overrides if needed
-                />
+                {/* Main Content */}
+                <div className="flex-1 flex flex-col h-full overflow-hidden">
+                    <Header
+                        userProfilePicture={{ src: userPicture }}
+                        userLogOut={{ options: { href: "/app/auth/logout" } }}
+                    // wrapper or style overrides if needed
+                    />
 
-                <main className="flex-1 overflow-y-auto w-full">
-                    {/* Webflow specific wrapper class */}
-                    <div className="dashboard_section">
-                        <div className="max-w-7xl mx-auto w-full">
-                            <Hero
-                                heroRecipientName={userName}
-                            />
+                    <main className="flex-1 overflow-y-auto w-full">
+                        {/* Webflow specific wrapper class */}
+                        <div className="dashboard_section">
+                            <div className="max-w-7xl mx-auto w-full">
+                                <Hero
+                                    heroRecipientName={userName}
+                                />
 
-                            {/* Debugging Info */}
-                            <div className="hidden">
-                                Debug: Auth0 ID: {auth0Id}, Email: {userEmail}, Service Found: {serviceItem ? 'Yes' : 'No'}
+                                {/* Debugging Info */}
+                                <div className="hidden">
+                                    Debug: Auth0 ID: {auth0Id}, Email: {userEmail}, Service Found: {serviceItem ? 'Yes' : 'No'}
+                                </div>
+
+                                {/* Render ServicesDetailsAndStatus if we have a service item */}
+                                {serviceItem ? (
+                                    <div className="mt-8">
+                                        <ServicesDetailsAndStatus
+                                            servicesDate={formatDate(serviceItem.created_on || serviceItem.created_at)}
+                                            servicesServicePodioItemIdFormatted={serviceItem.podio_formatted_id}
+                                            servicesDiagnosis={serviceItem.diagnosis}
+                                            servicesPrice={serviceItem.price}
+                                            servicesRequestOrIssue={serviceItem.title || serviceItem.request_or_issue}
+                                            servicesObservations={serviceItem.observations}
+
+                                            servicesHourServicesStatusDispositivoRecibido={serviceItem.hour_dispositivo_recibido}
+                                            servicesHourServicesStatusDispositivoEnRevision={serviceItem.hour_dispositivo_en_revision}
+                                            servicesHourServicesStatusIniciaReparacion={serviceItem.hour_inicia_reparacion}
+                                            servicesHourServicesStatusEnviarCodigoDeSeguridad={serviceItem.hour_enviar_codigo_de_seguridad}
+                                            servicesHourServicesStatusDispositivoEntregado={serviceItem.hour_dispositivo_entregado}
+                                            servicesHourServicesStatusEnviarDiagnostico={serviceItem.hour_enviar_diagnostico}
+                                            servicesHourServicesStatusRefaccionesEnCamino={serviceItem.hour_refacciones_en_camino}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="mt-8 p-4 text-center text-gray-500 bg-white rounded shadow">
+                                        <p>No registered services found for this user.</p>
+                                        <p className="text-xs mt-2">ID: {auth0Id}</p>
+                                    </div>
+                                )}
                             </div>
-
-                            {/* Render ServicesDetailsAndStatus if we have a service item */}
-                            {serviceItem ? (
-                                <div className="mt-8">
-                                    <ServicesDetailsAndStatus
-                                        servicesDate={formatDate(serviceItem.created_on || serviceItem.created_at)}
-                                        servicesServicePodioItemIdFormatted={serviceItem.podio_formatted_id}
-                                        servicesDiagnosis={serviceItem.diagnosis}
-                                        servicesPrice={serviceItem.price}
-                                        servicesRequestOrIssue={serviceItem.title || serviceItem.request_or_issue}
-                                        servicesObservations={serviceItem.observations}
-
-                                        servicesHourServicesStatusDispositivoRecibido={serviceItem.hour_dispositivo_recibido}
-                                        servicesHourServicesStatusDispositivoEnRevision={serviceItem.hour_dispositivo_en_revision}
-                                        servicesHourServicesStatusIniciaReparacion={serviceItem.hour_inicia_reparacion}
-                                        servicesHourServicesStatusEnviarCodigoDeSeguridad={serviceItem.hour_enviar_codigo_de_seguridad}
-                                        servicesHourServicesStatusDispositivoEntregado={serviceItem.hour_dispositivo_entregado}
-                                        servicesHourServicesStatusEnviarDiagnostico={serviceItem.hour_enviar_diagnostico}
-                                        servicesHourServicesStatusRefaccionesEnCamino={serviceItem.hour_refacciones_en_camino}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="mt-8 p-4 text-center text-gray-500 bg-white rounded shadow">
-                                    <p>No registered services found for this user.</p>
-                                    <p className="text-xs mt-2">ID: {auth0Id}</p>
-                                </div>
-                            )}
                         </div>
-                    </div>
-                </main>
+                    </main>
+                </div>
             </div>
-        </div>
-    );
+        );
+    } catch (e: any) {
+        // Re-throw redirects so they are handled by Next.js
+        if (e?.digest?.includes('NEXT_REDIRECT') || e?.message === 'NEXT_REDIRECT') {
+            throw e;
+        }
+        console.error("DASHBOARD CRASH:", e);
+        return (
+            <div className="p-8 text-red-600 bg-white min-h-screen z-50 relative overflow-y-auto">
+                <h1 className="text-2xl font-bold mb-4">Application Error Debugger</h1>
+                <div className="mb-4">
+                    <strong>Message:</strong> {e.message || String(e)}
+                </div>
+                <div className="mb-2 font-bold">Details:</div>
+                <pre className="bg-gray-100 p-4 rounded text-xs font-mono border whitespace-pre-wrap">
+                    {JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}
+                </pre>
+            </div>
+        );
+    }
 }
+
