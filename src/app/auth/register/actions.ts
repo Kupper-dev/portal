@@ -12,13 +12,13 @@ export async function registerCustomer(formData: FormData) {
 
     if (!token) {
         // If no token, they shouldn't be here.
-        redirect('/api/auth/login');
+        redirect('/auth/login');
     }
 
     const user = await verifyToken(token);
     if (!user || !user.sub || !user.email) {
         // Invalid session
-        redirect('/api/auth/login');
+        redirect('/auth/login');
     }
 
     const firstName = formData.get('firstName') as string;

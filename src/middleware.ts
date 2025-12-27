@@ -29,13 +29,15 @@ export async function middleware(request: NextRequest) {
         return logout(request);
     }
 
-    // Protected Routes (everything under /app except /auth routes)
-    // We check if it STARTS with /app to protect the dashboard
-    if (pathname.startsWith('/app') && !pathname.includes('/auth/')) {
+    // Protected Routes (everything except /auth routes and static assets)
+    // Note: pathname does NOT include basePath (e.g. '/app') here.
+    // So dashboard is at '/'
+    if (!pathname.startsWith('/auth/')) {
         const session = await getSession(request);
         if (!session) {
             console.log('[Middleware] No session, redirecting to login');
             // Redirect to login
+            // We Use absolute URL to ensure we hit the right path including basePath
             const loginUrl = new URL('/app/auth/login', request.url);
             return NextResponse.redirect(loginUrl);
         }

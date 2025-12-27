@@ -48,7 +48,7 @@ export default function RegisterForm({ initialEmail, initialName, initialPicture
                 setError(result.error);
             } else if (result?.success) {
                 // Force a full reload/navigation to dashboard to ensure fresh data fetch
-                window.location.href = '/';
+                window.location.href = '/app';
             }
         });
     };

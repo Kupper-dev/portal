@@ -14,12 +14,12 @@ export default async function RegisterPage() {
     const token = cookieStore.get('app_session')?.value;
 
     if (!token) {
-        redirect('/app/auth/login');
+        redirect('/auth/login');
     }
 
     const user = await verifyToken(token) as any;
     if (!user) {
-        redirect('/app/auth/login');
+        redirect('/auth/login');
     }
 
     return (
