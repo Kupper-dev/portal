@@ -1,0 +1,16 @@
+{
+  "cloud": {
+    "framework": "nextjs"
+  },
+  "siteId": "68d88947f902d5546e5fd07a",
+  "devlink": {
+    "rootDir": "./src/devlink"
+  },
+  "telemetry": {
+    "global": {
+      "allowTelemetry": false,
+      "lastPrompted": 1766798574521,
+      "version": "1.10.0"
+    }
+  }
+}

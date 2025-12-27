@@ -1,0 +1,146 @@
+[
+  {
+    "id": 30429788,
+    "name": "customers ",
+    "url_label": "customers",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429789,
+    "name": "devices",
+    "url_label": "devices",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429812,
+    "name": "services",
+    "url_label": "services",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429856,
+    "name": "service_or_spare_part",
+    "url_label": "serviceorsparepart",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429881,
+    "name": "store",
+    "url_label": "store",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429901,
+    "name": "gamer",
+    "url_label": "gamer",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429926,
+    "name": "acquired_devices",
+    "url_label": "acquireddevices",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429927,
+    "name": "quotations",
+    "url_label": "quotations",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30429978,
+    "name": "plans",
+    "url_label": "plans",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30458040,
+    "name": "invoices",
+    "url_label": "invoices",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30432187,
+    "name": "appointments ",
+    "url_label": "appointments",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30452168,
+    "name": "tickets",
+    "url_label": "tickets",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30432041,
+    "name": "students",
+    "url_label": "students",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30432042,
+    "name": "courses",
+    "url_label": "courses",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30432049,
+    "name": "classes",
+    "url_label": "classes",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30432051,
+    "name": "enrollments",
+    "url_label": "enrollments",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30451972,
+    "name": "chapters",
+    "url_label": "chapters",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  },
+  {
+    "id": 30588065,
+    "name": "technicians",
+    "url_label": "technicians",
+    "space_id": 10448753,
+    "space_name": "Panel",
+    "org_id": 3738643
+  }
+]

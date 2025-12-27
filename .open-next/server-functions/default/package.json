@@ -1,0 +1,31 @@
+{
+  "name": "portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "npx patch-package && next build",
+    "start": "next start",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "lint": "eslint",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@auth0/nextjs-auth0": "^4.14.0",
+    "@opennextjs/cloudflare": "^1.6.5",
+    "@supabase/supabase-js": "^2.89.0",
+    "next": "^15.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^15.1.6",
+    "patch-package": "^8.0.1",
+    "typescript": "^5",
+    "wrangler": "^4.56.0"
+  }
+}
