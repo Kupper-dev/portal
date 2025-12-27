@@ -14,4 +14,5 @@ export * from "./Header";
 export * from "./Hero";
 export * from "./ServicesDetailsAndStatus";
 export * from "./Sidebar";
+export * from "./SignupForm";
 export * from "./Table";

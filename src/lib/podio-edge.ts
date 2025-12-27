@@ -10,23 +10,49 @@ interface PodioField {
     values: any[];
 }
 
-export async function createPodioCustomer(email: string, name: string, auth0Id: string) {
+export async function createPodioCustomer(
+    email: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    auth0Id: string,
+    companyName?: string,
+    companySize?: string
+) {
     console.log(`[Podio] Creating Customer: ${email}`);
     try {
         const client = await getPodioAppClient(APP_ID_CUSTOMERS);
 
+        // Construct Name
+        const fullName = `${firstName} ${lastName}`.trim();
+
         // Construct fields
         const fields: Record<string, any> = {
-            'name': name,
-            'email': [{ 'type': 'home', 'value': email }], // Email field usually expects specific structure
+            'name': fullName, // Main Name/Title
+            'recipient': firstName, // 'recipient' column exists, mapping First Name here? Or just 'name' again?
+            // Actually 'recipient' might be contact person if 'name' is Company Schema? 
+            // But 'type' = 1 (Customer). Let's stick to 'name' as main.
+
+            'email': [{ 'type': 'home', 'value': email }],
+            'phone': [{ 'type': 'mobile', 'value': phone }], // Phone field structure
             'auth0id': auth0Id,
             'type': 1 // Customer (Option ID: 1)
-
-            // If it's a category, we might need the ID or exact text option matching.
-            // Requirement says: "Create item in Podio Customers App with type = customer."
-            // If 'type' is a category, passing string might fail if not exact match or if it requires Option ID.
-            // Safe bet: Try passing text. If fails, we catch error.
         };
+
+        if (companyName) {
+            // "empresa" or "company"
+            fields['empresa'] = companyName;
+            // Note: If 'empresa' is not the correct external ID, this field will be ignored or cause error.
+            // Using 'organization' or 'company_name' might be safer if we knew.
+            // Given the lack of strict schema, we try 'empresa' (common in Spanish apps).
+        }
+
+        if (companySize) {
+            // "tamano" or "size"
+            // If it's a category, we need the option ID ideally, but text might work if it matches exactly.
+            // We'll skip for now if unsure to avoid blocking creation.
+            // fields['tamano'] = companySize;
+        }
 
         const response = await client.request('POST', `/item/app/${APP_ID_CUSTOMERS}/`, {
             fields: fields

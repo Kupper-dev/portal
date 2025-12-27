@@ -9,7 +9,7 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
 
     if (!rawEmail || !auth0Id) {
         console.error('Missing email or sub in session');
-        return session;
+        return { status: 'error', session };
     }
 
     // Normalize email to ensure consistent matching
@@ -73,22 +73,14 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
                     });
                 }
             }
-            return session;
+            return { status: 'linked', session };
         }
 
-        // 3. If Not Found -> Create New Customer
-        console.log(`[IdentityLinker] Creating new Customer in Podio & Supabase`);
 
-        const podioItemId = await createPodioCustomer(email, user.name || email, auth0Id);
+        // 3. If Not Found -> Return incomplete status for redirection to registration
+        console.log(`[IdentityLinker] Customer not found. Returning incomplete status.`);
+        return { status: 'incomplete', session }; // Let the caller handle redirection
 
-        await supabase.from('customers').insert({
-            email: email,
-            name: user.name || user.nickname || email,
-            auth0id: auth0Id, // Correct column name
-            type: 1, // Default to Customer
-            sync_status: podioItemId ? 'synced' : 'pending',
-            podio_item_id: podioItemId || undefined
-        });
 
     }
     // FLOW 2: STUDENTS
@@ -143,7 +135,7 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
                     });
                 }
             }
-            return session;
+            return { status: 'linked', session };
         }
 
         // 3. Create New Student
@@ -159,5 +151,5 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
         });
     }
 
-    return session;
+    return { status: 'created', session };
 }

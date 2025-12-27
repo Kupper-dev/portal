@@ -1,4 +1,5 @@
 import { verifyToken } from '@/lib/auth-edge';
+import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { linkUserIdentity } from "@/lib/identity-linker";
 import { getSupabaseAdmin } from '@/lib/supabase';
@@ -61,13 +62,22 @@ export default async function DashboardPage() {
     const user = token ? (await verifyToken(token)) as UserPayload : null;
     const session = user ? { user } : null;
 
+
+
     // Link Identity if needed (Client side usually triggers this or specific flow, but keeping here as per previous code)
     const loginType = cookieStore.get('app_login_type')?.value || 'portal';
     if (session) {
         try {
-            await linkUserIdentity(session, loginType as 'portal' | 'student');
+            const linkage = await linkUserIdentity(session, loginType as 'portal' | 'student');
+            if (linkage.status === 'incomplete') {
+                redirect('/auth/register');
+            }
         } catch (error) {
             console.error("Failed to link identity:", error);
+            // If it's a redirect error, rethrow it so Next.js handles it
+            if ((error as any)?.digest?.includes('NEXT_REDIRECT')) {
+                throw error;
+            }
         }
     }
 
