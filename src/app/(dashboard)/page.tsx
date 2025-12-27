@@ -9,6 +9,7 @@ import {
     Header,
     Hero
 } from '@/devlink';
+import ClientRedirect from '@/components/client-redirect';
 
 interface UserPayload {
     name?: string;
@@ -70,7 +71,8 @@ export default async function DashboardPage() {
         try {
             const linkage = await linkUserIdentity(session, loginType as 'portal' | 'student');
             if (linkage.status === 'incomplete') {
-                redirect('/auth/register');
+                // Use client-side redirect to avoid malformed URL issues in Webflow Cloud
+                return <ClientRedirect destination="/app/auth/register" />;
             }
         } catch (error: any) {
             console.error("Failed to link identity:", error);
