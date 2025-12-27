@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { DevLinkProvider } from "@/devlink";
-import { Sidebar } from "@/devlink";
+// import { Sidebar } from "@/devlink"; // Removed as DashboardSection includes it
 // Importing global CSS to ensure DevLink styles are applied
 import '@/devlink/global.css';
 
@@ -16,17 +16,9 @@ export default function DashboardLayout({
 }) {
     return (
         <DevLinkProvider>
-            <div className="flex min-h-screen">
-                {/* Sidebar - Assuming it takes full height */}
-                <div className="flex-shrink-0">
-                    <Sidebar />
-                </div>
-
-                {/* Main Content Area */}
-                <main className="flex-1">
-                    {children}
-                </main>
-            </div>
+            <main>
+                {children}
+            </main>
         </DevLinkProvider>
     );
 }

@@ -45,19 +45,12 @@ export default async function DashboardPage() {
                 </div>
             );
         case 'Standard':
-            // Perhaps for standard users we show a specific view?
             return (
-                <div className="p-8">
-                    <h1 className="text-2xl font-bold mb-4">Standard Dashboard</h1>
-                    <DashboardSection />
-                </div>
+                <DashboardSection />
             );
         default:
-            // Default / Fallback Dashboard
             return (
-                <div className="p-8">
-                    <DashboardSection />
-                </div>
+                <DashboardSection />
             );
     }
 }
