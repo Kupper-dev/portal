@@ -1,11 +1,19 @@
 import { jwtVerify } from 'jose';
 
-const AUTH0_DOMAIN = process.env.AUTH0_ISSUER_BASE_URL?.replace('https://', '').replace('/', '') || '';
+const AUTH0_DOMAIN = (process.env.AUTH0_ISSUER_BASE_URL || '').replace('https://', '').replace('/', '');
 const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID || '';
 const AUTH0_CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET || '';
-const AUTH0_SECRET = process.env.AUTH0_SECRET || '';
 const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
-const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
+
+let ORIGIN = '';
+try {
+    if (process.env.AUTH0_BASE_URL) {
+        ORIGIN = new URL(process.env.AUTH0_BASE_URL).origin;
+    }
+} catch (e) {
+    console.error('Failed to parse AUTH0_BASE_URL:', e);
+}
+
 const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
 
 
