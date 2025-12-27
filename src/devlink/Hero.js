@@ -35,7 +35,7 @@ export function Hero({
               tag="div"
               {...heroRecipientNameOnly}
             >
-              {"User"}
+              {heroRecipientName}
             </_Builtin.Block>
             <_Builtin.Block tag="div">
               {"¿Que quieres reparar el día de hoy?"}

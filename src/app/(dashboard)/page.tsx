@@ -114,42 +114,45 @@ export default async function DashboardPage() {
                 />
 
                 <main className="flex-1 overflow-y-auto w-full">
-                    <div className="max-w-7xl mx-auto w-full">
-                        <Hero
-                            heroRecipientName={userName}
-                        />
+                    {/* Webflow specific wrapper class */}
+                    <div className="dashboard_section">
+                        <div className="max-w-7xl mx-auto w-full">
+                            <Hero
+                                heroRecipientName={userName}
+                            />
 
-                        {/* Render ServicesDetailsAndStatus if we have a service item */}
-                        {serviceItem ? (
-                            <div className="mt-8">
-                                <ServicesDetailsAndStatus
-                                    servicesDate={formatDate(serviceItem.created_on || serviceItem.created_at)}
-                                    servicesServicePodioItemIdFormatted={serviceItem.podio_formatted_id}
-                                    servicesDiagnosis={serviceItem.diagnosis}
-                                    servicesPrice={serviceItem.price} // Assuming 'price' column matches
-                                    servicesRequestOrIssue={serviceItem.title || serviceItem.request_or_issue} // Fallback
-                                    servicesObservations={serviceItem.observations}
-
-                                    // Mapping Status Hours (Assuming columns exist or passing empty if not found)
-                                    // You would need to map these to actual columns in your DB
-                                    servicesHourServicesStatusDispositivoRecibido={serviceItem.hour_dispositivo_recibido}
-                                    servicesHourServicesStatusDispositivoEnRevision={serviceItem.hour_dispositivo_en_revision}
-                                    servicesHourServicesStatusIniciaReparacion={serviceItem.hour_inicia_reparacion}
-                                    servicesHourServicesStatusEnviarCodigoDeSeguridad={serviceItem.hour_enviar_codigo_de_seguridad}
-                                    servicesHourServicesStatusDispositivoEntregado={serviceItem.hour_dispositivo_entregado}
-                                    servicesHourServicesStatusEnviarDiagnostico={serviceItem.hour_enviar_diagnostico}
-                                    servicesHourServicesStatusRefaccionesEnCamino={serviceItem.hour_refacciones_en_camino}
-                                />
+                            {/* Debugging Info */}
+                            <div className="hidden">
+                                Debug: Auth0 ID: {auth0Id}, Email: {userEmail}, Service Found: {serviceItem ? 'Yes' : 'No'}
                             </div>
-                        ) : (
-                            <div className="mt-8 p-4 text-center text-gray-500">
-                                {/* Optional: Empty state or just show nothing */}
-                                <p>No registered services found.</p>
-                            </div>
-                        )}
 
-                        {/* Fallback for other components/users */}
-                        {/* <DashboardSection /> - Only if we need generic fallback */}
+                            {/* Render ServicesDetailsAndStatus if we have a service item */}
+                            {serviceItem ? (
+                                <div className="mt-8">
+                                    <ServicesDetailsAndStatus
+                                        servicesDate={formatDate(serviceItem.created_on || serviceItem.created_at)}
+                                        servicesServicePodioItemIdFormatted={serviceItem.podio_formatted_id}
+                                        servicesDiagnosis={serviceItem.diagnosis}
+                                        servicesPrice={serviceItem.price}
+                                        servicesRequestOrIssue={serviceItem.title || serviceItem.request_or_issue}
+                                        servicesObservations={serviceItem.observations}
+
+                                        servicesHourServicesStatusDispositivoRecibido={serviceItem.hour_dispositivo_recibido}
+                                        servicesHourServicesStatusDispositivoEnRevision={serviceItem.hour_dispositivo_en_revision}
+                                        servicesHourServicesStatusIniciaReparacion={serviceItem.hour_inicia_reparacion}
+                                        servicesHourServicesStatusEnviarCodigoDeSeguridad={serviceItem.hour_enviar_codigo_de_seguridad}
+                                        servicesHourServicesStatusDispositivoEntregado={serviceItem.hour_dispositivo_entregado}
+                                        servicesHourServicesStatusEnviarDiagnostico={serviceItem.hour_enviar_diagnostico}
+                                        servicesHourServicesStatusRefaccionesEnCamino={serviceItem.hour_refacciones_en_camino}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="mt-8 p-4 text-center text-gray-500 bg-white rounded shadow">
+                                    <p>No registered services found for this user.</p>
+                                    <p className="text-xs mt-2">ID: {auth0Id}</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </main>
             </div>
