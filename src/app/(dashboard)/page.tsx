@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import { linkUserIdentity } from "@/lib/identity-linker";
 import { getSupabaseAdmin } from '@/lib/supabase';
 import {
-    DashboardSection,
     ServicesDetailsAndStatus,
     Sidebar,
     Header,
