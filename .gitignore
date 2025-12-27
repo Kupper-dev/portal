@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+podio_tokens.env
+scripts/inspect-services-latest.ts

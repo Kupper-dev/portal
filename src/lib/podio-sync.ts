@@ -354,7 +354,78 @@ export async function syncPodioToSupabase(
 
     // Upsert to Supabase
     // We assume table name matches urlLabel (e.g. 'customers', 'students') - sanitized
-    const tableName = appConfig.name.replace(/-/g, '_').toLowerCase(); // Basic sanitization matching migration
+    const tableName = appConfig.name.replace(/-/g, '_').toLowerCase();
+
+    // Special Logic for Services App (ID 30429812) to track Status History
+    if (appConfig.appId === 30429812) {
+        try {
+            // Fetch existing record to compare status
+            const { data: existingRecord, error: fetchError } = await supabase
+                .from(tableName)
+                .select('*')
+                .eq('podio_item_id', itemId)
+                .single();
+
+            if (!fetchError && existingRecord) {
+                // Preserve existing timestamps
+                const timestampFields = [
+                    'hour_dispositivo_recibido',
+                    'hour_dispositivo_en_revision',
+                    'hour_inicia_reparacion',
+                    'hour_enviar_codigo_de_seguridad',
+                    'hour_dispositivo_entregado',
+                    'hour_enviar_diagnostico',
+                    'hour_refacciones_en_camino'
+                ];
+
+                timestampFields.forEach(field => {
+                    if (existingRecord[field]) {
+                        mappedData[field] = existingRecord[field];
+                    }
+                });
+
+                // Check if status changed
+                const newStatus = mappedData['status']; // mappedData keys are sanitized external_ids
+                const oldStatus = existingRecord['status'];
+
+                if (newStatus && newStatus !== oldStatus) {
+                    const now = new Date().toISOString();
+                    console.log(`Status changed from '${oldStatus}' to '${newStatus}'. Recording timestamp.`);
+
+                    // Map Status Text to Column Name
+                    // Note: Podio returns "Dispositivo recibido " (with space) sometimes, trim it.
+                    const normalizedStatus = String(newStatus).trim().toLowerCase();
+
+                    // Map based on text match
+                    if (normalizedStatus.includes('dispositivo recibido')) mappedData['hour_dispositivo_recibido'] = now;
+                    else if (normalizedStatus.includes('dispositivo en revision') || normalizedStatus.includes('dispositivo en revisión')) mappedData['hour_dispositivo_en_revision'] = now;
+                    else if (normalizedStatus.includes('inicia reparacion') || normalizedStatus.includes('inicia reparación')) mappedData['hour_inicia_reparacion'] = now;
+                    else if (normalizedStatus.includes('enviar codigo') || normalizedStatus.includes('enviar código')) mappedData['hour_enviar_codigo_de_seguridad'] = now;
+                    else if (normalizedStatus.includes('dispositivo entregado')) mappedData['hour_dispositivo_entregado'] = now;
+                    else if (normalizedStatus.includes('enviar diagnostico') || normalizedStatus.includes('enviar diagnóstico')) mappedData['hour_enviar_diagnostico'] = now;
+                    else if (normalizedStatus.includes('refacciones en camino')) mappedData['hour_refacciones_en_camino'] = now;
+                }
+            } else {
+                // New record - record timestamp for current status
+                const newStatus = mappedData['status'];
+                if (newStatus) {
+                    const now = new Date().toISOString();
+                    const normalizedStatus = String(newStatus).trim().toLowerCase();
+
+                    if (normalizedStatus.includes('dispositivo recibido')) mappedData['hour_dispositivo_recibido'] = now;
+                    else if (normalizedStatus.includes('dispositivo en revision') || normalizedStatus.includes('dispositivo en revisión')) mappedData['hour_dispositivo_en_revision'] = now;
+                    else if (normalizedStatus.includes('inicia reparacion') || normalizedStatus.includes('inicia reparación')) mappedData['hour_inicia_reparacion'] = now;
+                    else if (normalizedStatus.includes('enviar codigo') || normalizedStatus.includes('enviar código')) mappedData['hour_enviar_codigo_de_seguridad'] = now;
+                    else if (normalizedStatus.includes('dispositivo entregado')) mappedData['hour_dispositivo_entregado'] = now;
+                    else if (normalizedStatus.includes('enviar diagnostico') || normalizedStatus.includes('enviar diagnóstico')) mappedData['hour_enviar_diagnostico'] = now;
+                    else if (normalizedStatus.includes('refacciones en camino')) mappedData['hour_refacciones_en_camino'] = now;
+                }
+            }
+        } catch (err) {
+            console.error('Error handling status history logic:', err);
+        }
+    }
+
 
     const { error } = await supabase
         .from(tableName)

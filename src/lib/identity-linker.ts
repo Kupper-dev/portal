@@ -1,5 +1,5 @@
 
-import { createPodioCustomer, createPodioStudent } from './podio-edge';
+import { createPodioCustomer, createPodioStudent, updatePodioCustomer, updatePodioStudent } from './podio-edge';
 import { getSupabaseAdmin } from './supabase';
 
 export async function linkUserIdentity(session: any, loginType: 'portal' | 'student' = 'portal') {
@@ -22,10 +22,7 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
     // FLOW 1: PORTAL (Customers / Business)
     if (loginType === 'portal') {
         // 1. Try Lookup by Auth0 ID (Most Reliable)
-        // Note: Column is 'auth0id' in DB based on debug output, though 'auth0_id' in code previously.
-        // We will check 'auth0id' (no underscore) if that's what debug showed, or 'auth0_id'.
-        // Debug output showed "auth0id": null. So likely column is "auth0id".
-        // BUT Supabase query output keys match DB columns.
+        // Note: Column is 'auth0id' in DB.
         let { data: customer } = await supabase
             .from('customers')
             .select('*') // Select * to be safe on column names
@@ -45,22 +42,36 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
             if (customerByEmail) {
                 console.log(`[IdentityLinker] Found customer by email (Auth0 ID missing/changed)`);
                 customer = customerByEmail;
-                // Update Auth0 ID using EMAIL because ID might be null or unreliable
+
+                // Update Supabase
                 await supabase
                     .from('customers')
                     .update({ auth0id: auth0Id, sync_status: 'synced' })
                     .eq('email', email); // Use email for update key
+
+                // Update Podio if item ID is known
+                if (customer.podio_item_id) {
+                    await updatePodioCustomer(customer.podio_item_id, {
+                        'auth0id': auth0Id
+                    });
+                }
             }
         }
 
         if (customer) {
             console.log(`[IdentityLinker] Found existing customer: ${customer.email} (ID: ${customer.id})`);
-            // Ensure Auth0 ID is synced
+            // Ensure Auth0 ID is synced if it differs (e.g. somehow changed but matched by ID? Unlikely logic path but safe)
             if (customer.auth0id !== auth0Id) {
                 await supabase
                     .from('customers')
                     .update({ auth0id: auth0Id, sync_status: 'synced' })
                     .eq('email', email);
+
+                if (customer.podio_item_id) {
+                    await updatePodioCustomer(customer.podio_item_id, {
+                        'auth0id': auth0Id
+                    });
+                }
             }
             return session;
         }
@@ -102,11 +113,19 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
             if (studentByEmail) {
                 console.log(`[IdentityLinker] Found student by email (Auth0 ID missing/changed)`);
                 student = studentByEmail;
-                // Update Auth0 ID
+
+                // Update Supabase
                 await supabase
                     .from('students')
                     .update({ auth0id: auth0Id, sync_status: 'synced' })
                     .eq('email', email);
+
+                // Update Podio
+                if (student.podio_item_id) {
+                    await updatePodioStudent(student.podio_item_id, {
+                        'auth0id': auth0Id
+                    });
+                }
             }
         }
 
@@ -117,6 +136,12 @@ export async function linkUserIdentity(session: any, loginType: 'portal' | 'stud
                     .from('students')
                     .update({ auth0id: auth0Id, sync_status: 'synced' })
                     .eq('email', email);
+
+                if (student.podio_item_id) {
+                    await updatePodioStudent(student.podio_item_id, {
+                        'auth0id': auth0Id
+                    });
+                }
             }
             return session;
         }

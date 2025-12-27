@@ -42,6 +42,26 @@ export async function createPodioCustomer(email: string, name: string, auth0Id: 
     }
 }
 
+export async function updatePodioCustomer(itemId: number, updates: Record<string, any>) {
+    console.log(`[Podio] Updating Customer Item ${itemId}`);
+    try {
+        const client = await getPodioAppClient(APP_ID_CUSTOMERS);
+
+        // Ensure auth0id is properly formatted if passed
+        // Note: updates keys should be external_ids
+
+        await client.request('PUT', `/item/${itemId}`, {
+            fields: updates
+        });
+
+        console.log(`[Podio] Customer Item ${itemId} updated successfully.`);
+        return true;
+    } catch (error) {
+        console.error(`[Podio] Failed to update customer ${itemId}:`, error);
+        return false;
+    }
+}
+
 export async function createPodioStudent(email: string, name: string, auth0Id: string) {
     console.log(`[Podio] Creating Student: ${email}`);
     try {
@@ -62,5 +82,22 @@ export async function createPodioStudent(email: string, name: string, auth0Id: s
     } catch (error) {
         console.error('[Podio] Failed to create student:', error);
         return null;
+    }
+}
+
+export async function updatePodioStudent(itemId: number, updates: Record<string, any>) {
+    console.log(`[Podio] Updating Student Item ${itemId}`);
+    try {
+        const client = await getPodioAppClient(APP_ID_STUDENTS);
+
+        await client.request('PUT', `/item/${itemId}`, {
+            fields: updates
+        });
+
+        console.log(`[Podio] Student Item ${itemId} updated successfully.`);
+        return true;
+    } catch (error) {
+        console.error(`[Podio] Failed to update student ${itemId}:`, error);
+        return false;
     }
 }
