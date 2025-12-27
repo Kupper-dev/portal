@@ -82,5 +82,5 @@ export async function registerCustomer(formData: FormData) {
         return { error: 'Ocurrió un error al registrar. Por favor intenta de nuevo.' };
     }
 
-    redirect('/');
+    return { success: true };
 }

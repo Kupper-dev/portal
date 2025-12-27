@@ -72,10 +72,10 @@ export default async function DashboardPage() {
             if (linkage.status === 'incomplete') {
                 redirect('/auth/register');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to link identity:", error);
-            // If it's a redirect error, rethrow it so Next.js handles it
-            if ((error as any)?.digest?.includes('NEXT_REDIRECT')) {
+            // Re-throw redirect errors so Next.js can handle them
+            if (error?.digest?.includes('NEXT_REDIRECT') || error?.message === 'NEXT_REDIRECT') {
                 throw error;
             }
         }

@@ -44,10 +44,12 @@ export default function RegisterForm({ initialEmail, initialName, initialPicture
 
         startTransition(async () => {
             const result = await registerCustomer(formData);
-            if (result && result.error) {
+            if (result?.error) {
                 setError(result.error);
+            } else if (result?.success) {
+                // Force a full reload/navigation to dashboard to ensure fresh data fetch
+                window.location.href = '/';
             }
-            // Success handles redirect in action
         });
     };
 
