@@ -1,15 +1,8 @@
 "use client";
 import React from "react";
 import * as _Builtin from "./_Builtin";
-import * as _interactions from "./interactions";
-
-const _interactionsData = JSON.parse(
-  '{"events":{"e":{"id":"e","name":"","animationType":"custom","eventTypeId":"MOUSE_CLICK","action":{"id":"","actionTypeId":"GENERAL_START_ACTION","config":{"delay":0,"easing":"","duration":0,"actionListId":"a","affectedElements":{},"playInReverse":false,"autoStopEventId":"e-2"}},"mediaQueries":["main","medium","small","tiny"],"target":{"id":"8fbc53b0-423e-d8c4-831c-9bc7c8be43c2","appliesTo":"ELEMENT","styleBlockIds":[]},"targets":[{"id":"8fbc53b0-423e-d8c4-831c-9bc7c8be43c2","appliesTo":"ELEMENT","styleBlockIds":[]}],"config":{"loop":false,"playInReverse":false,"scrollOffsetValue":null,"scrollOffsetUnit":null,"delay":null,"direction":null,"effectIn":null},"createdOn":1759027149168},"e-2":{"id":"e-2","name":"","animationType":"custom","eventTypeId":"MOUSE_SECOND_CLICK","action":{"id":"","actionTypeId":"GENERAL_START_ACTION","config":{"delay":0,"easing":"","duration":0,"actionListId":"a-2","affectedElements":{},"playInReverse":false,"autoStopEventId":"e"}},"mediaQueries":["main","medium","small","tiny"],"target":{"id":"8fbc53b0-423e-d8c4-831c-9bc7c8be43c2","appliesTo":"ELEMENT","styleBlockIds":[]},"targets":[{"id":"8fbc53b0-423e-d8c4-831c-9bc7c8be43c2","appliesTo":"ELEMENT","styleBlockIds":[]}],"config":{"loop":false,"playInReverse":false,"scrollOffsetValue":null,"scrollOffsetUnit":null,"delay":null,"direction":null,"effectIn":null},"createdOn":1759027149169}},"actionLists":{"a":{"id":"a","title":"Sidebar","actionItemGroups":[{"actionItems":[{"id":"a-n","actionTypeId":"STYLE_SIZE","config":{"delay":0,"easing":"","duration":500,"target":{"useEventTarget":"PARENT","selector":".sidebar","selectorGuids":["07bea470-5221-a62c-ee40-b4f2a25760bf"]},"widthValue":14,"heightValue":100,"widthUnit":"rem","heightUnit":"%","locked":false}}]},{"actionItems":[{"id":"a-n-2","actionTypeId":"STYLE_SIZE","config":{"delay":0,"easing":"outQuint","duration":400,"target":{"useEventTarget":"PARENT","selector":".sidebar","selectorGuids":["07bea470-5221-a62c-ee40-b4f2a25760bf"]},"widthValue":4.6,"heightValue":100,"widthUnit":"rem","heightUnit":"%","locked":false}},{"id":"a-n-3","actionTypeId":"GENERAL_DISPLAY","config":{"delay":0,"easing":"","duration":0,"target":{"selector":".mini_ad.vertical","selectorGuids":["0897b501-0e1e-1d21-3f2b-1762fef802ef","a2329353-f697-2613-284c-0b329be8f954"]},"value":"none"}}]}],"useFirstGroupAsInitialState":true,"createdOn":1759027156245},"a-2":{"id":"a-2","title":"Sidebar close","actionItemGroups":[{"actionItems":[{"id":"a-2-n","actionTypeId":"STYLE_SIZE","config":{"delay":0,"easing":"outQuint","duration":500,"target":{"useEventTarget":"PARENT","selector":".sidebar","selectorGuids":["07bea470-5221-a62c-ee40-b4f2a25760bf"]},"widthValue":14,"heightValue":100,"widthUnit":"rem","heightUnit":"%","locked":false}},{"id":"a-2-n-2","actionTypeId":"GENERAL_DISPLAY","config":{"delay":200,"easing":"","duration":0,"target":{"selector":".mini_ad.vertical","selectorGuids":["0897b501-0e1e-1d21-3f2b-1762fef802ef","a2329353-f697-2613-284c-0b329be8f954"]},"value":"grid"}}]}],"useFirstGroupAsInitialState":false,"createdOn":1759027348520}},"site":{"mediaQueries":[{"key":"main","min":992,"max":10000},{"key":"medium","min":768,"max":991},{"key":"small","min":480,"max":767},{"key":"tiny","min":0,"max":479}]}}'
-);
 
 export function Sidebar({ as: _Component = _Builtin.Block }) {
-  _interactions.useInteractions(_interactionsData);
-
   return (
     <_Component className="sidebar" tag="div">
       <_Builtin.Block className="sidebar_header" tag="div">
@@ -24,17 +17,6 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
               src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68d892b2385a8d51601da0ab_0ec971c75107842fc0678e0fb9a2b4ad_Logo%202026.svg"
             />
           </_Builtin.Block>
-          <_Builtin.Link
-            className="square"
-            data-w-id="8fbc53b0-423e-d8c4-831c-9bc7c8be43c2"
-            button={false}
-            block="inline"
-            options={{
-              href: "#",
-            }}
-          >
-            <_Builtin.NotSupported _atom="Animation" />
-          </_Builtin.Link>
         </_Builtin.Block>
       </_Builtin.Block>
       <_Builtin.Block className="sidebar_links" tag="div">
@@ -44,7 +26,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           id="dashboard"
           block="inline"
           options={{
-            href: "#",
+            href: "https://kupper-34ef94.webflow.io/app",
           }}
         >
           <_Builtin.Block className="square" tag="div">
@@ -54,7 +36,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
               width="auto"
               height="auto"
               alt=""
-              src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68d89975cf005d4f005eaf26_08c589973aab234e316c0fa6ccf7715d_Dashboard.svg"
+              src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68d89975cf005d4f005eaf26_2a9666290f2f559d7b0e5c632fe882f9_Dashboard.svg"
             />
           </_Builtin.Block>
           <_Builtin.Block className="hide_text" tag="div">
