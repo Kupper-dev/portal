@@ -1,11 +1,20 @@
-import { getSession } from '@/lib/auth-edge';
-// Import your synced DevLink components
-// TODO: Replace these with your actual "Type" specific components
+import { verifyToken } from '@/lib/auth-edge';
+import { cookies } from 'next/headers';
 import { DashboardSection } from '@/devlink';
 import { ServicesDetailsAndStatus } from '@/devlink'; // Example as another type
 
+interface UserPayload {
+    user_metadata?: {
+        podio_type?: string;
+    };
+    [key: string]: any;
+}
+
 export default async function DashboardPage() {
-    const session = await getSession();
+    const cookieStore = await cookies();
+    const token = cookieStore.get('app_session')?.value;
+    const user = token ? (await verifyToken(token)) as UserPayload : null;
+    const session = user ? { user } : null;
 
     // Logic to determine User Type from session or metadata
     // Currently defaulting to 'default' if not found
