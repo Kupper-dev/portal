@@ -32,12 +32,16 @@ export async function GET(request: NextRequest) {
         if (syncResult.status === 'LINKED') {
             console.log('[PostLogin] User Linked. Transitioning to READY.');
 
-            // Fix Protocol: Ensure we redirect to HTTPS if we are behind a proxy that terminates SSL
-            const targetUrl = new URL('/app', request.url);
-            if (request.headers.get('x-forwarded-proto') === 'https') {
-                targetUrl.protocol = 'https:';
-            }
-            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()}`);
+            // Fix Protocol & Host: Ensure we redirect to the correct PUBLIC domain with HTTPS
+            // request.url often reflects the internal worker URL (e.g. webflow.services)
+            // We must respect the Host or X-Forwarded-Host header to keep the user on the custom domain.
+
+            const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+            const proto = request.headers.get('x-forwarded-proto') || 'https';
+            const baseUrl = host ? `${proto}://${host}` : request.url;
+
+            const targetUrl = new URL('/app', baseUrl);
+            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()} (Host: ${host})`);
 
             // 1. Create the Redirect Response
             const response = NextResponse.redirect(targetUrl);
@@ -56,12 +60,13 @@ export async function GET(request: NextRequest) {
         if (syncResult.status === 'NOT_FOUND') {
             console.log('[PostLogin] User Not Found. Transitioning to ONBOARDING_REQUIRED.');
 
-            // Fix Protocol: Ensure we redirect to HTTPS if we are behind a proxy that terminates SSL
-            const targetUrl = new URL('/app/auth/complete-register', request.url);
-            if (request.headers.get('x-forwarded-proto') === 'https') {
-                targetUrl.protocol = 'https:';
-            }
-            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()}`);
+            // Fix Protocol & Host: Ensure we redirect to the correct PUBLIC domain
+            const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
+            const proto = request.headers.get('x-forwarded-proto') || 'https';
+            const baseUrl = host ? `${proto}://${host}` : request.url;
+
+            const targetUrl = new URL('/app/auth/complete-register', baseUrl);
+            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()} (Host: ${host})`);
 
             // 1. Create the Redirect Response specifically for registration
             const registerResponse = NextResponse.redirect(targetUrl);

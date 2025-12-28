@@ -13,8 +13,21 @@ const AUTH0_SECRET = process.env.AUTH0_SECRET || AUTH0_CLIENT_SECRET; // Fallbac
 const SECRET_KEY = new TextEncoder().encode(AUTH0_SECRET.padEnd(32, '0').substring(0, 32));
 
 const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
-const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
-const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
+// REMOVED STATIC REDIRECT_URI to support dynamic host detection
+// const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
+// const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
+
+// Helper for dynamic public URL
+function getPublicUrl(request: Request): string {
+    const headers = request.headers;
+    const host = headers.get('x-forwarded-host') || headers.get('host');
+    const proto = headers.get('x-forwarded-proto') || 'https'; // Default to https on Edge
+
+    // Fallback to request.url origin if no headers (local dev?)
+    if (!host) return new URL(request.url).origin;
+
+    return `${proto}://${host}${APP_BASE_PATH}`;
+}
 
 // --- Types ---
 
@@ -98,11 +111,16 @@ export async function updateSession(request: NextRequest, response: NextResponse
 
 export async function login(request: Request, type: 'portal' | 'student' = 'portal', screen_hint?: 'signup' | 'login'): Promise<Response> {
     const state = crypto.randomUUID();
+    const publicUrl = getPublicUrl(request);
+    const redirectUri = `${publicUrl}/auth/callback`;
+
+    console.log(`[AuthEdge] Login initiated. Redirect URI: ${redirectUri}`);
+
     const url = new URL(`https://${AUTH0_DOMAIN}/authorize`);
     url.searchParams.set('client_id', AUTH0_CLIENT_ID);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('scope', 'openid profile email');
-    url.searchParams.set('redirect_uri', REDIRECT_URI);
+    url.searchParams.set('redirect_uri', redirectUri);
     url.searchParams.set('state', state);
 
     if (screen_hint) {
@@ -117,7 +135,11 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
         status: 302,
         headers: {
             Location: url.toString(),
-            'Set-Cookie': `auth0_state=${state}:${type}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300`,
+            headers: {
+                Location: url.toString(),
+                // Clear existing session to ensure clean slate
+                'Set-Cookie': `auth0_state=${state}:${type}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300, app_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
+            },
         },
     });
     return response;
@@ -135,14 +157,26 @@ export async function callback(request: Request): Promise<Response> {
         ?.split('=')[1];
 
     if (!code || !state || !stateCookie) {
-        return new Response('Invalid state or missing code', { status: 400 });
+        console.error('[AuthEdge] Missing code/state/cookie. Redirecting to login to restart.');
+        return new Response(null, {
+            status: 302,
+            headers: { Location: `${getPublicUrl(request)}/auth/login` }
+        });
     }
 
     const [storedState, loginType] = stateCookie.split(':');
 
     if (state !== storedState) {
-        return new Response('Invalid state mismatch', { status: 400 });
+        console.error('[AuthEdge] State mismatch. Redirecting to login.');
+        return new Response(null, {
+            status: 302,
+            headers: { Location: `${getPublicUrl(request)}/auth/login` }
+        });
     }
+
+    // Dynamic Redirect URI for Code Exchange
+    const publicUrl = getPublicUrl(request);
+    const redirectUri = `${publicUrl}/auth/callback`;
 
     // Exchange for Tokens
     const tokenRes = await fetch(`https://${AUTH0_DOMAIN}/oauth/token`, {
@@ -153,7 +187,7 @@ export async function callback(request: Request): Promise<Response> {
             client_id: AUTH0_CLIENT_ID,
             client_secret: AUTH0_CLIENT_SECRET,
             code,
-            redirect_uri: REDIRECT_URI,
+            redirect_uri: redirectUri,
         }),
     });
 
@@ -189,7 +223,8 @@ export async function callback(request: Request): Promise<Response> {
 
         const headers = new Headers();
         // Redirect to POST-LOGIN to handle syncing
-        headers.append('Location', `${ORIGIN}${APP_BASE_PATH}/auth/post-login`);
+        // Use Dynamic URL
+        headers.append('Location', `${getPublicUrl(request)}/auth/post-login`);
         headers.append('Set-Cookie', `app_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
         // Clear state cookie
         headers.append('Set-Cookie', `auth0_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
