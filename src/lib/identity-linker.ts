@@ -30,19 +30,20 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
 
         // 2. Fallback: Lookup by Email implies pre-existing manual entry or invite
         if (!customer) {
+            // CASE-INSENSITIVE LOOKUP
             const { data: customerByEmail } = await supabase
                 .from('customers')
                 .select('*')
-                .eq('email', email)
+                .ilike('email', email)
                 .maybeSingle();
 
             if (customerByEmail) {
-                console.log(`[IdentityLinker] Found customer by email, linking Auth0 ID`);
+                console.log(`[IdentityLinker] Found customer by email (case-insensitive), linking Auth0 ID`);
                 customer = customerByEmail;
                 await supabase
                     .from('customers')
                     .update({ auth0id: auth0Id, sync_status: 'synced' })
-                    .eq('email', email);
+                    .eq('id', customer.id); // Safer to update by ID
             }
         }
 
@@ -65,10 +66,11 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
             .maybeSingle();
 
         if (!student) {
+            // CASE-INSENSITIVE LOOKUP
             const { data: studentByEmail } = await supabase
                 .from('students')
                 .select('*')
-                .eq('email', email)
+                .ilike('email', email)
                 .maybeSingle();
 
             if (studentByEmail) {
@@ -76,7 +78,7 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
                 await supabase
                     .from('students')
                     .update({ auth0id: auth0Id, sync_status: 'synced' })
-                    .eq('email', email);
+                    .eq('id', student.id);
             }
         }
 

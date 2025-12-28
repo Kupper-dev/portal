@@ -89,7 +89,7 @@ export async function updateSession(request: NextRequest, response: NextResponse
 
 // --- Auth0 Flow ---
 
-export async function login(request: Request, type: 'portal' | 'student' = 'portal'): Promise<Response> {
+export async function login(request: Request, type: 'portal' | 'student' = 'portal', screen_hint?: 'signup' | 'login'): Promise<Response> {
     const state = crypto.randomUUID();
     const url = new URL(`https://${AUTH0_DOMAIN}/authorize`);
     url.searchParams.set('client_id', AUTH0_CLIENT_ID);
@@ -98,7 +98,11 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
     url.searchParams.set('redirect_uri', REDIRECT_URI);
     url.searchParams.set('state', state);
 
-    if (type === 'student') {
+    if (screen_hint) {
+        url.searchParams.set('screen_hint', screen_hint);
+    }
+    // Legacy support or specific flows if needed
+    else if (type === 'student') {
         // url.searchParams.set('screen_hint', 'signup'); 
     }
 
