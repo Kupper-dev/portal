@@ -135,11 +135,8 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
         status: 302,
         headers: {
             Location: url.toString(),
-            headers: {
-                Location: url.toString(),
-                // Clear existing session to ensure clean slate
-                'Set-Cookie': `auth0_state=${state}:${type}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300, app_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
-            },
+            // Clear existing session to ensure clean slate
+            'Set-Cookie': `auth0_state=${state}:${type}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300, app_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
         },
     });
     return response;
@@ -243,7 +240,10 @@ export async function callback(request: Request): Promise<Response> {
 export async function logout(request: Request): Promise<Response> {
     const logoutUrl = new URL(`https://${AUTH0_DOMAIN}/v2/logout`);
     logoutUrl.searchParams.set('client_id', AUTH0_CLIENT_ID);
-    logoutUrl.searchParams.set('returnTo', `${ORIGIN}${APP_BASE_PATH}`);
+
+    // Use dynamic public URL for returnTo
+    const publicUrl = getPublicUrl(request);
+    logoutUrl.searchParams.set('returnTo', publicUrl);
 
     return new Response(null, {
         status: 302,
