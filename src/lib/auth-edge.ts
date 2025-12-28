@@ -77,6 +77,11 @@ export async function updateSession(request: NextRequest, response: NextResponse
     const newSession = { ...currentSession, ...updates };
     const token = await encryptSession(newSession);
 
+    console.log(`[AuthEdge] Updating session. New Token Length: ${token.length}`);
+
+    // Verify payload?
+    // console.log('[AuthEdge] New Session Payload:', JSON.stringify(newSession));
+
     response.cookies.set('app_session', token, {
         path: '/',
         httpOnly: true,
@@ -84,6 +89,7 @@ export async function updateSession(request: NextRequest, response: NextResponse
         sameSite: 'lax',
         maxAge: 86400,
     });
+    console.log('[AuthEdge] Cookie set on response.');
 
     return newSession;
 }

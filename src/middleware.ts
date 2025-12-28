@@ -7,38 +7,26 @@ export async function middleware(request: NextRequest) {
     console.log(`[Middleware] Path: ${pathname}`);
 
     // 1. Handle Auth Routes (Login, Callback, Logout, Signup)
-    if (pathname.endsWith('/auth/login') || pathname.endsWith('/auth/login/portal')) {
+    // We use explicit matches to avoid trailing slash issues or partial matches
+    // e.g. /auth/login and /auth/login/ should both work.
+
+    // Helper to match paths roughly
+    const isPath = (path: string) => pathname === path || pathname === `${path}/`;
+
+    if (isPath('/auth/login') || isPath('/auth/login/portal')) {
         return login(request, 'portal');
     }
-    if (pathname.endsWith('/auth/login/student')) {
+    if (isPath('/auth/login/student')) {
         return login(request, 'student');
     }
-    if (pathname.endsWith('/auth/signup')) {
-        // Explicitly allow signup route to pass through (it handles its own logic/redirection)
-        // Actually, looking at signup/route.ts, it calls login() with screen_hint.
-        // But since it is a route handler, we should probably let the route handler execute?
-        // Wait, if we return login() here, we might double-redirect if the route handler also redirects.
-        // Best approach: If it is a Route Handler that does the redirect, let it pass?
-        // OR: Perform the logic here like login/logout?
-        // For consistency with login/logout above, let's treat it as a pass-through or handle it.
-        // User's `src/app/auth/signup/route.ts`:
-        /*
-          import { login } from '@/lib/auth-edge';
-          export async function GET(request: Request) {
-            return login(request, 'portal', 'signup');
-          }
-        */
-        // If we let it pass, it hits the route handler, which calls login(), returning the redirect.
-        // If we handle it here, we duplicate logic.
-        // BUT, we must ensure it is NOT blocked by Section 2 (Strict Session Check).
-        // Since Section 2 checks for NO session, we just need to return next() or handle it.
-        // If we return next(), it hits the Route Handler. Perfect.
+    if (isPath('/auth/signup')) {
+        // Explicitly allow signup route
         return NextResponse.next();
     }
-    if (pathname.endsWith('/auth/callback')) {
+    if (isPath('/auth/callback')) {
         return callback(request);
     }
-    if (pathname.endsWith('/auth/logout')) {
+    if (isPath('/auth/logout')) {
         return logout(request);
     }
 
