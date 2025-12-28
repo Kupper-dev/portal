@@ -3,8 +3,8 @@ import { getSupabaseAdmin } from './supabase';
 import { AppSession } from './auth-edge';
 
 export type LinkResult =
-    | { status: 'LINKED'; userType: string; internalId: string; synced: true }
-    | { status: 'NOT_FOUND'; synced: false };
+    | { status: 'LINKED'; userType: string; internalId: string }
+    | { status: 'NOT_FOUND' };
 
 export async function linkUserIdentity(session: AppSession): Promise<LinkResult> {
     const { email: rawEmail, auth0Id, loginType } = session;
@@ -52,8 +52,7 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
             return {
                 status: 'LINKED',
                 userType: 'portal',
-                internalId: customer.id,
-                synced: true
+                internalId: customer.id
             };
         }
     }
@@ -86,8 +85,7 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
             return {
                 status: 'LINKED',
                 userType: 'student',
-                internalId: student.id,
-                synced: true
+                internalId: student.id
             };
         }
     }
@@ -95,6 +93,6 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
     // If we get here, USER DOES NOT EXIST in our system.
     // Return NOT_FOUND so the implementation can redirect to Registration Form.
     console.log(`[IdentityLinker] User not found, requires registration.`);
-    return { status: 'NOT_FOUND', synced: false };
+    return { status: 'NOT_FOUND' };
 }
 

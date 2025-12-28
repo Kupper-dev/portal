@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         const response = NextResponse.json({ success: true, redirect: '/app' });
 
         await updateSession(request, response, {
-            synced: true,
+            flow: 'ready',
             userType: typeToCreate,
             internalId: internalId || 'unknown'
         });

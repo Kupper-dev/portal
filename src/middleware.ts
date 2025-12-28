@@ -30,32 +30,39 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/app/auth/login', request.url));
         }
 
-        // B: Allow "Post-Login" logic to run (It handles the syncing)
-        if (pathname.endsWith('/auth/post-login')) {
-            // If already synced, kick them out to dashboard to avoid re-running expensive syncs unnecessary
-            if (session.synced) {
-                return NextResponse.redirect(new URL('/app', request.url));
-            }
-            return NextResponse.next();
-        }
+        const flow = session.flow || 'authenticated'; // Fallback for legacy/active sessions
 
-        // C: Allow "Complete Registration" if session exists (even if not synced yet)
-        // This is THE ONLY place a non-synced user can go.
-        if (pathname.endsWith('/auth/complete-register')) {
-            // Optional: If they ARE synced, maybe they shouldn't be here? 
-            // For now, let's allow it, or redirect to dashboard if we want to be strict.
-            if (session.synced) {
-                return NextResponse.redirect(new URL('/app', request.url));
-            }
-            return NextResponse.next();
-        }
+        // B: Flow State Machine
+        switch (flow) {
+            case 'authenticated':
+            case 'syncing':
+                // User MUST go to post-login to verify identity
+                if (!pathname.endsWith('/auth/post-login')) {
+                    console.log(`[Middleware] Flow '${flow}' - redirecting to post-login`);
+                    return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
+                }
+                return NextResponse.next();
 
-        // D: All other /app routes require SYNCED status
-        if (!session.synced) {
-            console.log('[Middleware] Session active but not synced, redirecting to post-login');
-            // We send them to post-login to attempt a sync (maybe they just need to run the check)
-            // Post-login will decide if they need to Register or if they are just desynced.
-            return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
+            case 'onboarding_required':
+                // User MUST complete registration
+                if (!pathname.endsWith('/auth/complete-register')) {
+                    console.log(`[Middleware] Flow '${flow}' - redirecting to register`);
+                    return NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
+                }
+                return NextResponse.next();
+
+            case 'ready':
+                // User is fully authorized. 
+                // Prevent access to auth flows (post-login, register) to avoid confusion/loops
+                if (pathname.endsWith('/auth/post-login') || pathname.endsWith('/auth/complete-register')) {
+                    console.log(`[Middleware] Flow '${flow}' - redirecting to dashboard`);
+                    return NextResponse.redirect(new URL('/app', request.url));
+                }
+                return NextResponse.next();
+
+            default:
+                // Unknown state? Safe default -> login
+                return NextResponse.redirect(new URL('/app/auth/login', request.url));
         }
     }
 

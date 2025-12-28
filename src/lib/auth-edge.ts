@@ -23,7 +23,8 @@ export interface AppSession {
     email: string;
     name?: string;
     picture?: string;
-    synced: boolean;
+    // synced: boolean; // DEPRECATED
+    flow: 'authenticated' | 'syncing' | 'onboarding_required' | 'ready';
     userType?: 'portal' | 'student' | 'vip' | 'admin' | string;
     internalId?: string; // Podio or Supabase ID
     loginType?: 'portal' | 'student'; // Intent of login
@@ -171,8 +172,8 @@ export async function callback(request: Request): Promise<Response> {
             name: user.name as string || user.nickname as string,
             picture: user.picture as string,
 
-            // KEY CHANGE: Not synced yet
-            synced: false,
+            // KEY CHANGE: State Machine Init
+            flow: 'authenticated', // Step 1: Just logged in, needs sync
             loginType: (loginType as 'portal' | 'student') || 'portal',
         };
 
