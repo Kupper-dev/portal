@@ -127,11 +127,14 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
     if (process.env.AUTH0_BASE_URL) {
         try {
             const configuredUrl = new URL(process.env.AUTH0_BASE_URL);
-            const currentHost = request.headers.get('host') || '';
+
+            // FIX: Use X-Forwarded-Host to detect the REAL public host, avoiding internal Webflow/Cloudflare service names
+            const requestHeaders = request.headers;
+            const currentHost = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host') || '';
 
             // Normalize hosts (remove port if needed, though usually standard ports)
             if (currentHost && configuredUrl.host !== currentHost) {
-                console.log(`[AuthEdge] Domain mismatch. Current: ${currentHost}, Configured: ${configuredUrl.host}. Redirecting to configured domain.`);
+                console.log(`[AuthEdge] Domain mismatch. Current (Public): ${currentHost}, Configured: ${configuredUrl.host}. Redirecting to configured domain.`);
 
                 const targetUrl = new URL(`${configuredUrl.origin}${APP_BASE_PATH}/auth/login`);
                 // Preserve params
