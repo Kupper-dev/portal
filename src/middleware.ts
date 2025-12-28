@@ -31,6 +31,7 @@ export async function middleware(request: NextRequest) {
         }
 
         const flow = session.flow || 'authenticated'; // Fallback for legacy/active sessions
+        console.log(`[Middleware] Session Found. Flow: ${flow}`);
 
         // B: Flow State Machine
         switch (flow) {
@@ -38,7 +39,7 @@ export async function middleware(request: NextRequest) {
             case 'syncing':
                 // User MUST go to post-login to verify identity
                 if (!pathname.endsWith('/auth/post-login')) {
-                    console.log(`[Middleware] Flow '${flow}' - redirecting to post-login`);
+                    console.log(`[Middleware] Flow '${flow}' - blocking access to ${pathname}, redirecting to post-login`);
                     return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
                 }
                 return NextResponse.next();
@@ -46,9 +47,10 @@ export async function middleware(request: NextRequest) {
             case 'onboarding_required':
                 // User MUST complete registration
                 if (!pathname.endsWith('/auth/complete-register')) {
-                    console.log(`[Middleware] Flow '${flow}' - redirecting to register`);
+                    console.log(`[Middleware] Flow '${flow}' - blocking access to ${pathname}, redirecting to register`);
                     return NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
                 }
+                console.log(`[Middleware] Flow '${flow}' - creating access to register page`);
                 return NextResponse.next();
 
             case 'ready':

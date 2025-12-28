@@ -8,16 +8,22 @@ import RegisterFormWrapper from './RegisterFormWrapper';
 export const dynamic = 'force-dynamic';
 
 export default async function CompleteRegisterPage() {
+    console.log('[RegisterPage] Loading...');
     const cookieStore = await cookies();
     const token = cookieStore.get('app_session')?.value;
+    console.log(`[RegisterPage] Token present: ${!!token}`);
+
     const session = token ? await decryptSession(token) : null;
+    console.log(`[RegisterPage] Session decrypted: ${!!session}, Flow: ${session?.flow}`);
 
     if (!session) {
+        console.log('[RegisterPage] No session found, redirecting to login');
         redirect('/app/auth/login');
     }
 
     if (session.flow === 'ready') {
         // If already ready, no need to be here
+        console.log('[RegisterPage] Flow is ready, redirecting to dashboard');
         redirect('/app');
     }
 
