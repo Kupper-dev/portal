@@ -47,7 +47,7 @@ export default async function DashboardPage() {
             return (
                 <div className="flex w-full h-screen bg-white">
                     <div className="w-auto h-full z-20">
-                        <Sidebar className="h-full" />
+                        <Sidebar />
                     </div>
                     <div className="flex-1 flex flex-col h-full overflow-auto">
                         <div className="p-8">
