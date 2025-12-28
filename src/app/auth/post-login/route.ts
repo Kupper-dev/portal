@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession, updateSession } from '@/lib/auth-edge';
 import { linkUserIdentity } from '@/lib/identity-linker';
 
-export const runtime = 'edge';
+
 
 export async function GET(request: NextRequest) {
     const session = await getSession(request);
