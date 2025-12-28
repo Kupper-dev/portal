@@ -11,21 +11,30 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(new URL('/app/auth/login', request.url));
     }
 
-    if (session.synced) {
-        // Already synced, go to dashboard
+    const flow = session.flow || 'authenticated';
+
+    // 1. Check if already done
+    if (flow === 'ready') {
         return NextResponse.redirect(new URL('/app', request.url));
     }
+    if (flow === 'onboarding_required') {
+        return NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
+    }
 
+    // 2. State Machine Logic
     try {
         // Perform the sync (Lookup Only)
+        // We do NOT redirect yet.
         const syncResult = await linkUserIdentity(session);
 
+        const response = NextResponse.redirect(new URL('/app', request.url)); // Default target
+
         if (syncResult.status === 'LINKED') {
-            console.log('[PostLogin] User Linked. Redirecting to Dashboard.');
-            const response = NextResponse.redirect(new URL('/app', request.url));
+            console.log('[PostLogin] User Linked. Transitioning to READY.');
+            // Destination: Dashboard
 
             await updateSession(request, response, {
-                synced: true,
+                flow: 'ready',
                 userType: syncResult.userType,
                 internalId: syncResult.internalId
             });
@@ -33,14 +42,21 @@ export async function GET(request: NextRequest) {
         }
 
         if (syncResult.status === 'NOT_FOUND') {
-            console.log('[PostLogin] User Not Found. Redirecting to Registration.');
-            // Redirect to Registration Form
-            // We do NOT update 'synced' yet.
-            return NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
+            console.log('[PostLogin] User Not Found. Transitioning to ONBOARDING_REQUIRED.');
+            // Destination: Register
+            const registerResponse = NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
+
+            await updateSession(request, registerResponse, {
+                flow: 'onboarding_required'
+            });
+            return registerResponse;
         }
 
     } catch (error) {
         console.error("Sync Failed:", error);
         return new NextResponse("Sync Failed. Please try again or contact support.", { status: 500 });
     }
+
+    // Fallback?
+    return NextResponse.redirect(new URL('/app/auth/login', request.url));
 }
