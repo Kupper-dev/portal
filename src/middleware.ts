@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { login, callback, logout, getSession } from './lib/auth-edge';
 
 export async function middleware(request: NextRequest) {
+    // Middleware v1.1 - Robustness Patch (Login Loops & Session Persistence)
     const { pathname } = request.nextUrl;
     console.log(`[Middleware] Path: ${pathname}`);
 
