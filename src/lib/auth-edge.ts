@@ -170,7 +170,8 @@ export async function callback(request: Request): Promise<Response> {
             auth0Id: user.sub as string,
             email: user.email as string,
             name: user.name as string || user.nickname as string,
-            picture: user.picture as string,
+            name: user.name as string || user.nickname as string,
+            // picture: user.picture as string, // Removed to save cookie space
 
             // KEY CHANGE: State Machine Init
             // We omit 'picture' to keep cookie size small (to avoid 4KB limit issues on some browsers/servers).
