@@ -4,7 +4,6 @@ import { getSession, updateSession } from '@/lib/auth-edge';
 import { linkUserIdentity } from '@/lib/identity-linker';
 
 
-
 export async function GET(request: NextRequest) {
     const session = await getSession(request);
 
@@ -18,19 +17,27 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // Perform the sync
+        // Perform the sync (Lookup Only)
         const syncResult = await linkUserIdentity(session);
 
-        // Update the session cookie with new flags
-        const response = NextResponse.redirect(new URL('/app', request.url));
+        if (syncResult.status === 'LINKED') {
+            console.log('[PostLogin] User Linked. Redirecting to Dashboard.');
+            const response = NextResponse.redirect(new URL('/app', request.url));
 
-        await updateSession(request, response, {
-            synced: true,
-            userType: syncResult.userType,
-            internalId: syncResult.internalId
-        });
+            await updateSession(request, response, {
+                synced: true,
+                userType: syncResult.userType,
+                internalId: syncResult.internalId
+            });
+            return response;
+        }
 
-        return response;
+        if (syncResult.status === 'NOT_FOUND') {
+            console.log('[PostLogin] User Not Found. Redirecting to Registration.');
+            // Redirect to Registration Form
+            // We do NOT update 'synced' yet.
+            return NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
+        }
 
     } catch (error) {
         console.error("Sync Failed:", error);

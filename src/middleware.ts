@@ -7,7 +7,6 @@ export async function middleware(request: NextRequest) {
     console.log(`[Middleware] Path: ${pathname}`);
 
     // 1. Handle Auth Routes (Login, Callback, Logout)
-    // These need to pass through regardless of session
     if (pathname.endsWith('/auth/login') || pathname.endsWith('/auth/login/portal')) {
         return login(request, 'portal');
     }
@@ -23,30 +22,41 @@ export async function middleware(request: NextRequest) {
 
     // 2. Protected App Routes (/app/*)
     if (pathname.startsWith('/app')) {
-        // Allow access to the post-login route itself to avoid loop
-        const isPostLogin = pathname.endsWith('/auth/post-login');
-
         const session = await getSession(request);
 
-        // A: No Session -> Redirect to Login
+        // A: Strict Session Check
         if (!session) {
-            console.log('[Middleware] No session, redirecting to login');
+            console.log('[Middleware] No session, strictly redirecting to login');
             return NextResponse.redirect(new URL('/app/auth/login', request.url));
         }
 
-        // B: Session but Not Synced -> Redirect to Post-Login
-        if (!session.synced && !isPostLogin) {
+        // B: Allow "Post-Login" logic to run (It handles the syncing)
+        if (pathname.endsWith('/auth/post-login')) {
+            // If already synced, kick them out to dashboard to avoid re-running expensive syncs unnecessary
+            if (session.synced) {
+                return NextResponse.redirect(new URL('/app', request.url));
+            }
+            return NextResponse.next();
+        }
+
+        // C: Allow "Complete Registration" if session exists (even if not synced yet)
+        // This is THE ONLY place a non-synced user can go.
+        if (pathname.endsWith('/auth/complete-register')) {
+            // Optional: If they ARE synced, maybe they shouldn't be here? 
+            // For now, let's allow it, or redirect to dashboard if we want to be strict.
+            if (session.synced) {
+                return NextResponse.redirect(new URL('/app', request.url));
+            }
+            return NextResponse.next();
+        }
+
+        // D: All other /app routes require SYNCED status
+        if (!session.synced) {
             console.log('[Middleware] Session active but not synced, redirecting to post-login');
+            // We send them to post-login to attempt a sync (maybe they just need to run the check)
+            // Post-login will decide if they need to Register or if they are just desynced.
             return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
         }
-
-        // C: Session Synced but trying to access Post-Login -> Redirect to Dashboard
-        if (session.synced && isPostLogin) {
-            console.log('[Middleware] Already synced, redirecting to dashboard');
-            return NextResponse.redirect(new URL('/app', request.url));
-        }
-
-        // D: Valid, Synced Session -> Allow
     }
 
     return NextResponse.next();
