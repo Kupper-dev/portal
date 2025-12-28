@@ -87,8 +87,64 @@ graph TD
     K --> H
 ```
 
-## Troubleshooting Common Issues
+## Authentication Flow v2 (State Machine Refactor - Dec 2025)
 
--   **LoopingRedirects**: Usually caused by Middleware redirecting a synced user to `post-login` or vice versa. *Status: Fixed by strict strict checks.*
--   **User Not Found**: Caused by case-mismatch (e.g. `Diego@` vs `diego@`). *Status: Fixed with `ilike` lookup.*
--   **Build Failures**: Caused by `runtime = 'edge'` in compatibility routes. *Status: Fixed by removing directive.*
+### Core Changes
+1.  **State Machine vs Boolean**: 
+    -   Removed `synced: boolean`.
+    -   Introduced `flow`:
+        -   `'authenticated'`: Just logged in, needs identity check.
+        -   `'syncing'`: actively looking up identity (transient).
+        -   `'onboarding_required'`: User not found in DB, must register.
+        -   `'ready'`: User fully linked and authorized.
+2.  **Middleware Robustness**:
+    -   Now handles `basePath` (`/app`) stripping by Next.js automatically.
+    -   Uses `pathname.endsWith` for robust matching against trailing slashes.
+    -   Explicitly **allows** `/auth/signup` to bypass strict session checks to enable flow restart.
+3.  **Session Optimization**:
+    -   Removed parsing of `picture` field from Auth0 ID Token.
+    -   **Reason**: Google OAuth tokens with profile pictures often exceed 4KB, causing silent cookie rejection by browsers on redirect.
+
+### Updated Flow Diagram
+
+```mermaid
+graph TD
+    A[Visitor] -->|Login| B(Auth0)
+    A -->|Signup| C(Auth0 'Signup')
+    B --> D[Middleware /auth/callback]
+    C --> D
+    
+    D -->|Set Session (flow: authenticated)| E[Post-Login /auth/post-login]
+    
+    E -->|Identity Lookup| F{User Exists?}
+    F -- Yes --> G[Update Session (flow: ready)]
+    G --> H[Dashboard /app]
+    
+    F -- No --> I[Update Session (flow: onboarding_required)]
+    I --> J[Registration Page /auth/complete-register]
+    J -->|Submit| K[API /api/auth/register]
+    K -->|Create Record| L[Update Session (flow: ready)]
+    L --> H
+```
+
+## Troubleshooting & Resolutions
+
+### 1. Session Lost after Redirect (Looping to Login)
+-   **Symptoms**: User logs in -> Post-Login -> Register Page -> Redirects back to Login.
+-   **Cause**: The session cookie exceeded the browser's 4KB limit (common with Google Auth including high-res `picture` URLs).
+-   **Fix**: Optimized `AppSession` payload by removing the `picture` field.
+-   **Verification**: Check server logs for `[AuthEdge] Updating session. New Token Length: < 4000`.
+
+### 2. Middleware "Ignoring" Routes
+-   **Symptoms**: Logs show path `/auth/login` but Middleware falls through to "Strict Session Check", causing 404s or loops.
+-   **Cause**: `next.config.ts` sets `basePath: '/app'`. Next.js Middleware receives the `pathname` *without* this prefix (e.g., `/auth/login`), but logic checked for `startsWith('/app')`.
+-   **Fix**: Updated Middleware to check valid relative paths (e.g. `isPath('/auth/login')`).
+
+### 3. React Error: "input is a self-closing tag"
+-   **Symptoms**: Registration page crashes on load.
+-   **Cause**: Webflow components exporting a Submit Button as `<input type="submit">`. React strictly forbids `children` (inner text) on void elements.
+-   **Fix**: in `RegisterFormWrapper`, pass the button text via the `value` prop, not `children`.
+
+### 4. "User Not Found" for Existing Users
+-   **Cause**: Email casing mismatch (`Diego@` vs `diego@`).
+-   **Fix**: Implemented `ilike` (Case-Insensitive) lookup in `identity-linker.ts`.
