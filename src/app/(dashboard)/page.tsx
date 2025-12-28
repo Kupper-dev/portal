@@ -1,8 +1,7 @@
 import { verifyToken } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 import { linkUserIdentity } from "@/lib/identity-linker";
-import { DashboardSection } from '@/devlink';
-import { ServicesDetailsAndStatus } from '@/devlink'; // Example as another type
+import { Sidebar, Hero, ServicesDetailsAndStatus } from '@/devlink';
 
 interface UserPayload {
     user_metadata?: {
@@ -46,11 +45,29 @@ export default async function DashboardPage() {
             );
         case 'Standard':
             return (
-                <DashboardSection />
+                <div className="flex w-full h-screen bg-white">
+                    <div className="w-auto h-full z-20">
+                        <Sidebar className="h-full" />
+                    </div>
+                    <div className="flex-1 flex flex-col h-full overflow-auto">
+                        <div className="p-8">
+                            <Hero />
+                        </div>
+                    </div>
+                </div>
             );
         default:
             return (
-                <DashboardSection />
+                <div className="flex w-full h-screen bg-white">
+                    <div className="w-auto h-full z-20">
+                        <Sidebar />
+                    </div>
+                    <div className="flex-1 flex flex-col h-full overflow-auto">
+                        <div className="p-8">
+                            <Hero />
+                        </div>
+                    </div>
+                </div>
             );
     }
 }
