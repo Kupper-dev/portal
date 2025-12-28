@@ -121,6 +121,33 @@ export async function updateSession(request: NextRequest, response: NextResponse
 // --- Auth0 Flow ---
 
 export async function login(request: Request, type: 'portal' | 'student' = 'portal', screen_hint?: 'signup' | 'login'): Promise<Response> {
+    // 0. Domain Unification Check
+    // If we are on a custom domain (e.g. login.kupper.com.mx) but Auth0 is whitelisted for staging (webflow.io),
+    // we must switch the user to the staging domain BEFORE starting the flow, otherwise cookies won't match.
+    if (process.env.AUTH0_BASE_URL) {
+        try {
+            const configuredUrl = new URL(process.env.AUTH0_BASE_URL);
+            const currentHost = request.headers.get('host') || '';
+
+            // Normalize hosts (remove port if needed, though usually standard ports)
+            if (currentHost && configuredUrl.host !== currentHost) {
+                console.log(`[AuthEdge] Domain mismatch. Current: ${currentHost}, Configured: ${configuredUrl.host}. Redirecting to configured domain.`);
+
+                const targetUrl = new URL(`${configuredUrl.origin}${APP_BASE_PATH}/auth/login`);
+                // Preserve params
+                if (type) targetUrl.searchParams.set('type', type);
+                if (screen_hint) targetUrl.searchParams.set('screen_hint', screen_hint);
+
+                return new Response(null, {
+                    status: 302,
+                    headers: { Location: targetUrl.toString() }
+                });
+            }
+        } catch (e) {
+            console.error('[AuthEdge] Error checking domain match', e);
+        }
+    }
+
     const state = crypto.randomUUID();
     const publicUrl = getPublicUrl(request);
     const redirectUri = `${publicUrl}/auth/callback`;
