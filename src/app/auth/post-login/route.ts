@@ -27,28 +27,35 @@ export async function GET(request: NextRequest) {
         // We do NOT redirect yet.
         const syncResult = await linkUserIdentity(session);
 
-        const response = NextResponse.redirect(new URL('/app', request.url)); // Default target
-
         if (syncResult.status === 'LINKED') {
             console.log('[PostLogin] User Linked. Transitioning to READY.');
-            // Destination: Dashboard
 
+            // 1. Create the Redirect Response
+            const response = NextResponse.redirect(new URL('/app', request.url));
+
+            // 2. Encrypt & Set the Session Cookie on THIS response object
             await updateSession(request, response, {
                 flow: 'ready',
                 userType: syncResult.userType,
                 internalId: syncResult.internalId
             });
+
+            // 3. Return the response with the cookie
             return response;
         }
 
         if (syncResult.status === 'NOT_FOUND') {
             console.log('[PostLogin] User Not Found. Transitioning to ONBOARDING_REQUIRED.');
-            // Destination: Register
+
+            // 1. Create the Redirect Response specifically for registration
             const registerResponse = NextResponse.redirect(new URL('/app/auth/complete-register', request.url));
 
+            // 2. Encrypt & Set the Session Cookie on THIS response object
             await updateSession(request, registerResponse, {
                 flow: 'onboarding_required'
             });
+
+            // 3. Return the response
             return registerResponse;
         }
 

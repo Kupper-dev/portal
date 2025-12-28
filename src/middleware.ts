@@ -57,6 +57,13 @@ export async function middleware(request: NextRequest) {
 
     // A: Strict Session Check
     if (!session) {
+        // PERMISSIVE CHECK: If path matches /auth/*, DO NOT strictly redirect to login
+        // to avoid infinite loops (e.g. redirected from callback -> middleware -> login -> callback)
+        if (pathname.startsWith('/auth/')) {
+            console.log(`[Middleware] No session on ${pathname}, allowing pass-through/native handling`);
+            return NextResponse.next();
+        }
+
         console.log('[Middleware] No session, strictly redirecting to login');
         return NextResponse.redirect(new URL('/app/auth/login', request.url));
     }
@@ -69,6 +76,13 @@ export async function middleware(request: NextRequest) {
         case 'authenticated':
         case 'syncing':
             // User MUST go to post-login to verify identity
+            // EXCEPTION: Allow complete-register if they manually navigated or got redirected there?
+            // User said: "Allow /auth/complete-register if a session exists, regardless of flow"
+            if (pathname.endsWith('/auth/complete-register')) {
+                console.log(`[Middleware] Flow '${flow}' - allowing access to register page (permissive)`);
+                return NextResponse.next();
+            }
+
             if (!pathname.endsWith('/auth/post-login')) {
                 console.log(`[Middleware] Flow '${flow}' - blocking access to ${pathname}, redirecting to post-login`);
                 return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
@@ -96,9 +110,9 @@ export async function middleware(request: NextRequest) {
             return NextResponse.next();
 
         default:
-            // Unknown state? Safe default -> login
-            console.log(`[Middleware] Unknown flow '${flow}' - redirecting to login`);
-            return NextResponse.redirect(new URL('/app/auth/login', request.url));
+            // Unknown state?
+            console.log(`[Middleware] Unknown flow '${flow}' - allowing pass through`);
+            return NextResponse.next();
     }
 
     return NextResponse.next();
