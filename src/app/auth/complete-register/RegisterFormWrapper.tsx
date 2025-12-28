@@ -82,8 +82,8 @@ export default function RegisterFormWrapper({ initialEmail, loginType }: { initi
             // Register Button
             signUpCompleteRegisterButton={{
                 onClick: () => handleSubmit(),
-                // Show loading state text if needed
-                children: isLoading ? "Registering..." : "Complete Registration"
+                // Input submit buttons take 'value', not 'children'
+                value: isLoading ? "Registering..." : "Complete Registration"
             }}
 
             // Employee Selection Buttons (Examples based on prop names)
