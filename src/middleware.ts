@@ -4,41 +4,49 @@ import { login, callback, logout, getSession } from './lib/auth-edge';
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    console.log(`[Middleware] Path: ${pathname}, URL: ${request.url}`);
+    console.log(`[Middleware] Path: ${pathname}`);
 
-
-    // Handle Auth Routes
-    if (pathname.endsWith('/auth/login')) {
-        console.log('[Middleware] Handling Login (Default Portal)');
-        return login(request, 'portal');
-    }
-    if (pathname.endsWith('/auth/login/portal')) {
-        console.log('[Middleware] Handling Login (Portal)');
+    // 1. Handle Auth Routes (Login, Callback, Logout)
+    // These need to pass through regardless of session
+    if (pathname.endsWith('/auth/login') || pathname.endsWith('/auth/login/portal')) {
         return login(request, 'portal');
     }
     if (pathname.endsWith('/auth/login/student')) {
-        console.log('[Middleware] Handling Login (Student)');
         return login(request, 'student');
     }
     if (pathname.endsWith('/auth/callback')) {
-        console.log('[Middleware] Handling Callback');
         return callback(request);
     }
     if (pathname.endsWith('/auth/logout')) {
-        console.log('[Middleware] Handling Logout');
         return logout(request);
     }
 
-    // Protected Routes (everything under /app except /auth routes)
-    // We check if it STARTS with /app to protect the dashboard
-    if (pathname.startsWith('/app') && !pathname.includes('/auth/')) {
+    // 2. Protected App Routes (/app/*)
+    if (pathname.startsWith('/app')) {
+        // Allow access to the post-login route itself to avoid loop
+        const isPostLogin = pathname.endsWith('/auth/post-login');
+
         const session = await getSession(request);
+
+        // A: No Session -> Redirect to Login
         if (!session) {
             console.log('[Middleware] No session, redirecting to login');
-            // Redirect to login
-            const loginUrl = new URL('/app/auth/login', request.url);
-            return NextResponse.redirect(loginUrl);
+            return NextResponse.redirect(new URL('/app/auth/login', request.url));
         }
+
+        // B: Session but Not Synced -> Redirect to Post-Login
+        if (!session.synced && !isPostLogin) {
+            console.log('[Middleware] Session active but not synced, redirecting to post-login');
+            return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
+        }
+
+        // C: Session Synced but trying to access Post-Login -> Redirect to Dashboard
+        if (session.synced && isPostLogin) {
+            console.log('[Middleware] Already synced, redirecting to dashboard');
+            return NextResponse.redirect(new URL('/app', request.url));
+        }
+
+        // D: Valid, Synced Session -> Allow
     }
 
     return NextResponse.next();

@@ -1,40 +1,21 @@
-import { verifyToken } from '@/lib/auth-edge';
+import { decryptSession, AppSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
-import { linkUserIdentity } from "@/lib/identity-linker";
 import { Sidebar, Hero, ServicesDetailsAndStatus } from '@/devlink';
-
-interface UserPayload {
-    user_metadata?: {
-        podio_type?: string;
-    };
-    [key: string]: any;
-}
 
 export default async function DashboardPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get('app_session')?.value;
-    const user = token ? (await verifyToken(token)) as UserPayload : null;
-    const session = user ? { user } : null;
+    const session = token ? await decryptSession(token) : null;
 
-    // Link Identity if needed
-    const loginType = cookieStore.get('app_login_type')?.value || 'portal';
-    if (session) {
-        try {
-            // Identity linking expects a session object
-            // This ensures Podio and Auth0 users are synced
-            await linkUserIdentity(session, loginType as 'portal' | 'student');
-        } catch (error) {
-            console.error("Failed to link identity:", error);
-        }
-    }
 
-    // Logic to determine User Type from session or metadata
-    // Currently defaulting to 'default' if not found
-    const userType = session?.user?.user_metadata?.podio_type || 'default';
+    // Link Identity is now handled by /auth/post-login middleware redirection
+    // access to this page implies session.synced = true
+
+    // Logic to determine User Type from session
+    const userType = session?.userType || 'default';
 
     console.log(`[Dashboard] User Type: ${userType}`);
 
-    // Conditional Rendering Logic
     switch (userType) {
         case 'VIP':
             return (

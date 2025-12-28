@@ -1,13 +1,93 @@
-import { jwtVerify } from 'jose';
+import { jwtVerify, EncryptJWT, jwtDecrypt } from 'jose';
+import { NextRequest, NextResponse } from 'next/server';
 
 const AUTH0_DOMAIN = process.env.AUTH0_ISSUER_BASE_URL?.replace('https://', '').replace('/', '') || '';
 const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID || '';
+// We use the client secret as the encryption key for our session cookie.
+// Ensure it is long enough or hash it. To be safe on Edge, we'll try raw first.
 const AUTH0_CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET || '';
-const AUTH0_SECRET = process.env.AUTH0_SECRET || '';
+const AUTH0_SECRET = process.env.AUTH0_SECRET || AUTH0_CLIENT_SECRET; // Fallback
+
+// Key must be at least 32 bytes for A256GCM. 
+// We use a simple method to ensure it works on Edge.
+const SECRET_KEY = new TextEncoder().encode(AUTH0_SECRET.padEnd(32, '0').substring(0, 32));
+
 const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
 const ORIGIN = process.env.AUTH0_BASE_URL ? new URL(process.env.AUTH0_BASE_URL).origin : '';
 const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
 
+// --- Types ---
+
+export interface AppSession {
+    auth0Id: string;
+    email: string;
+    name?: string;
+    picture?: string;
+    synced: boolean;
+    userType?: 'portal' | 'student' | 'vip' | 'admin' | string;
+    internalId?: string; // Podio or Supabase ID
+    loginType?: 'portal' | 'student'; // Intent of login
+
+    // JWT standard claims
+    exp?: number;
+    iat?: number;
+}
+
+// --- Session Management ---
+
+export async function encryptSession(payload: Omit<AppSession, 'exp' | 'iat'>): Promise<string> {
+    const iat = Math.floor(Date.now() / 1000);
+    const exp = iat + 86400; // 24 hours
+
+    return new EncryptJWT({ ...payload })
+        .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
+        .setIssuedAt(iat)
+        .setExpirationTime(exp)
+        .encrypt(SECRET_KEY);
+}
+
+export async function decryptSession(token: string): Promise<AppSession | null> {
+    try {
+        const { payload } = await jwtDecrypt(token, SECRET_KEY, {
+            clockTolerance: 10,
+        });
+        return payload as unknown as AppSession;
+    } catch (e) {
+        // console.error('Session Decryption Failed:', e); // Optional logging
+        return null;
+    }
+}
+
+export async function getSession(request: NextRequest): Promise<AppSession | null> {
+    const cookieHeader = request.headers.get('Cookie') || '';
+    const sessionToken = cookieHeader
+        .split(';')
+        .find((c) => c.trim().startsWith('app_session='))
+        ?.split('=')[1];
+
+    if (!sessionToken) return null;
+    return decryptSession(sessionToken);
+}
+
+export async function updateSession(request: NextRequest, response: NextResponse, updates: Partial<AppSession>) {
+    const currentSession = await getSession(request);
+    if (!currentSession) return;
+
+    const newSession = { ...currentSession, ...updates };
+    const token = await encryptSession(newSession);
+
+    response.cookies.set('app_session', token, {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        maxAge: 86400,
+    });
+
+    return newSession;
+}
+
+// --- Auth0 Flow ---
 
 export async function login(request: Request, type: 'portal' | 'student' = 'portal'): Promise<Response> {
     const state = crypto.randomUUID();
@@ -19,7 +99,6 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
     url.searchParams.set('state', state);
 
     if (type === 'student') {
-        // Optional: Add connection or screen_hint if configured
         // url.searchParams.set('screen_hint', 'signup'); 
     }
 
@@ -54,6 +133,7 @@ export async function callback(request: Request): Promise<Response> {
         return new Response('Invalid state mismatch', { status: 400 });
     }
 
+    // Exchange for Tokens
     const tokenRes = await fetch(`https://${AUTH0_DOMAIN}/oauth/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -76,28 +156,30 @@ export async function callback(request: Request): Promise<Response> {
     const { id_token } = tokenData;
 
     try {
-        const user = await verifyToken(id_token);
+        // Verify Auth0 Signature
+        const user = await verifyAuth0Token(id_token);
         if (!user) throw new Error('Verification failed');
 
-        // We can append loginType to session cookie if we want to extract it later
-        // But for now, just setting the session is enough. The identity-linker
-        // might need to know the INTENDED type? 
-        // Actually, identity-linker runs on page load. It doesn't know about login flow type unless we store it.
-        // Let's store it in the session cookie or a separate cookie?
-        // Safest is to rely on email lookup, BUT for new users we need to know where to create them!
-        // So we MUST store loginType in the session or a parallel cookie.
+        // Create Internal Session
+        const sessionPayload: Omit<AppSession, 'exp' | 'iat'> = {
+            auth0Id: user.sub as string,
+            email: user.email as string,
+            name: user.name as string || user.nickname as string,
+            picture: user.picture as string,
 
-        // Let's append it to the session value or use a claiming approach.
-        // Simple approach: `app_session=ID_TOKEN`
-        // We can set another cookie `app_login_type=student`
+            // KEY CHANGE: Not synced yet
+            synced: false,
+            loginType: (loginType as 'portal' | 'student') || 'portal',
+        };
 
-        const sessionCookie = `app_session=${id_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`;
-        const typeCookie = `app_login_type=${loginType || 'portal'}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`;
+        const sessionToken = await encryptSession(sessionPayload);
 
         const headers = new Headers();
-        headers.append('Location', `${ORIGIN}${APP_BASE_PATH}`);
-        headers.append('Set-Cookie', sessionCookie);
-        headers.append('Set-Cookie', typeCookie);
+        // Redirect to POST-LOGIN to handle syncing
+        headers.append('Location', `${ORIGIN}${APP_BASE_PATH}/auth/post-login`);
+        headers.append('Set-Cookie', `app_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
+        // Clear state cookie
+        headers.append('Set-Cookie', `auth0_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
 
         return new Response(null, {
             status: 302,
@@ -124,19 +206,8 @@ export async function logout(request: Request): Promise<Response> {
     });
 }
 
-export async function getSession(request: Request) {
-    const cookieHeader = request.headers.get('Cookie') || '';
-    const sessionToken = cookieHeader
-        .split(';')
-        .find((c) => c.trim().startsWith('app_session='))
-        ?.split('=')[1];
-
-    if (!sessionToken) return null;
-    const user = await verifyToken(sessionToken);
-    return user ? { user } : null;
-}
-
-export async function verifyToken(token: string) {
+// Internal verification of Auth0 (only needed one time during callback)
+async function verifyAuth0Token(token: string) {
     try {
         const jwks = await import('jose').then((m) => m.createRemoteJWKSet(new URL(`https://${AUTH0_DOMAIN}/.well-known/jwks.json`)));
         const { payload } = await jwtVerify(token, jwks, {
