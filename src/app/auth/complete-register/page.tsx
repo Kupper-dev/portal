@@ -16,8 +16,8 @@ export default async function CompleteRegisterPage() {
         redirect('/app/auth/login');
     }
 
-    if (session.synced) {
-        // If already synced, no need to be here
+    if (session.flow === 'ready') {
+        // If already ready, no need to be here
         redirect('/app');
     }
 
