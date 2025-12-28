@@ -122,9 +122,10 @@ export async function updateSession(request: NextRequest, response: NextResponse
 
 export async function login(request: Request, type: 'portal' | 'student' = 'portal', screen_hint?: 'signup' | 'login'): Promise<Response> {
     // 0. Domain Unification Check
-    // If we are on a custom domain (e.g. login.kupper.com.mx) but Auth0 is whitelisted for staging (webflow.io),
-    // we must switch the user to the staging domain BEFORE starting the flow, otherwise cookies won't match.
-    if (process.env.AUTH0_BASE_URL) {
+    // If we are on a custom domain matches, ensure we are on the primary domain.
+    // Loop Prevention: If 'auth_redirect' param is present, we assume we already redirected and strictly proceed.
+    const requestUrl = new URL(request.url);
+    if (process.env.AUTH0_BASE_URL && !requestUrl.searchParams.has('auth_redirect')) {
         try {
             const configuredUrl = new URL(process.env.AUTH0_BASE_URL);
 
@@ -133,13 +134,18 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
             const currentHost = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host') || '';
 
             // Normalize hosts (remove port if needed, though usually standard ports)
-            if (currentHost && configuredUrl.host !== currentHost) {
-                console.log(`[AuthEdge] Domain mismatch. Current (Public): ${currentHost}, Configured: ${configuredUrl.host}. Redirecting to configured domain.`);
+            // We also check requestUrl.host as a fallback source of truth
+            const effectiveHost = currentHost || requestUrl.host;
+
+            if (effectiveHost && configuredUrl.host !== effectiveHost) {
+                console.log(`[AuthEdge] Domain mismatch. Current (Public): ${effectiveHost}, Configured: ${configuredUrl.host}. Redirecting to configured domain.`);
 
                 const targetUrl = new URL(`${configuredUrl.origin}${APP_BASE_PATH}/auth/login`);
                 // Preserve params
                 if (type) targetUrl.searchParams.set('type', type);
                 if (screen_hint) targetUrl.searchParams.set('screen_hint', screen_hint);
+                // Mark as redirected to prevent infinite loops if headers are stubborn
+                targetUrl.searchParams.set('auth_redirect', 'true');
 
                 return new Response(null, {
                     status: 302,
