@@ -178,14 +178,27 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
         // url.searchParams.set('screen_hint', 'signup'); 
     }
 
-    const response = new Response(null, {
-        status: 302,
-        headers: {
-            Location: url.toString(),
-            // Clear existing session to ensure clean slate
-            'Set-Cookie': `auth0_state=${state}:${type}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300, app_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
-        },
+    const response = NextResponse.redirect(url);
+
+    // Use NextResponse API for setting cookies to ensure correct header formatting
+    // Auth0 State Cookie
+    response.cookies.set('auth0_state', `${state}:${type}`, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 5 // 5 mins
     });
+
+    // Clear App Session Cookie
+    response.cookies.set('app_session', '', {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 0
+    });
+
     return response;
 }
 
