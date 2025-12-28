@@ -19,6 +19,17 @@ const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
 
 // Helper for dynamic public URL
 function getPublicUrl(request: Request): string {
+    // 1. Priority: Explicit Environment Variable (Correct Public Domain)
+    if (process.env.AUTH0_BASE_URL) {
+        try {
+            const url = new URL(process.env.AUTH0_BASE_URL);
+            return `${url.origin}${APP_BASE_PATH}`;
+        } catch (e) {
+            console.error('[AuthEdge] Invalid AUTH0_BASE_URL, falling back to headers', e);
+        }
+    }
+
+    // 2. Fallback: Dynamic Headers (May leak internal URLs in some envs)
     const headers = request.headers;
     const host = headers.get('x-forwarded-host') || headers.get('host');
     const proto = headers.get('x-forwarded-proto') || 'https'; // Default to https on Edge
