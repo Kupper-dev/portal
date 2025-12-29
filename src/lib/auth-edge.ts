@@ -121,47 +121,23 @@ export async function updateSession(request: NextRequest, response: NextResponse
 // --- Auth0 Flow ---
 
 export async function login(request: Request, type: 'portal' | 'student' = 'portal', screen_hint?: 'signup' | 'login'): Promise<Response> {
-    // 0. Domain Unification Check
-    // If we are on a custom domain matches, ensure we are on the primary domain.
-    // Loop Prevention: If 'auth_redirect' param is present, we assume we already redirected and strictly proceed.
-    const requestUrl = new URL(request.url);
-    if (process.env.AUTH0_BASE_URL && !requestUrl.searchParams.has('auth_redirect')) {
-        try {
-            const configuredUrl = new URL(process.env.AUTH0_BASE_URL);
+    // 0. Resolve Canonical Public URL
+    // We strictly use AUTH0_BASE_URL if set, to prevent domain mismatch loops.
+    // If not set, we fall back to dynamic header detection (e.g. for previews).
+    const publicUrl = process.env.AUTH0_BASE_URL
+        ? `${new URL(process.env.AUTH0_BASE_URL).origin}${APP_BASE_PATH}`
+        : getPublicUrl(request);
 
-            // FIX: Use X-Forwarded-Host to detect the REAL public host, avoiding internal Webflow/Cloudflare service names
-            const requestHeaders = request.headers;
-            const currentHost = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host') || '';
-
-            // Normalize hosts (remove port if needed, though usually standard ports)
-            // We also check requestUrl.host as a fallback source of truth
-            const effectiveHost = currentHost || requestUrl.host;
-
-            if (effectiveHost && configuredUrl.host !== effectiveHost) {
-                console.log(`[AuthEdge] Domain mismatch. Current (Public): ${effectiveHost}, Configured: ${configuredUrl.host}. Redirecting to configured domain.`);
-
-                const targetUrl = new URL(`${configuredUrl.origin}${APP_BASE_PATH}/auth/login`);
-                // Preserve params
-                if (type) targetUrl.searchParams.set('type', type);
-                if (screen_hint) targetUrl.searchParams.set('screen_hint', screen_hint);
-                // Mark as redirected to prevent infinite loops if headers are stubborn
-                targetUrl.searchParams.set('auth_redirect', 'true');
-
-                return new Response(null, {
-                    status: 302,
-                    headers: { Location: targetUrl.toString() }
-                });
-            }
-        } catch (e) {
-            console.error('[AuthEdge] Error checking domain match', e);
-        }
-    }
-
-    const state = crypto.randomUUID();
-    const publicUrl = getPublicUrl(request);
+    // 1. Construct Redirect URI
     const redirectUri = `${publicUrl}/auth/callback`;
 
     console.log(`[AuthEdge] Login initiated. Redirect URI: ${redirectUri}`);
+
+    // NOTE: We REMOVED the direct domain mismatch check/redirect here.
+    // Instead, relying on 'redirectUri' being correct will FORCE Auth0 to send the user
+    // back to the correct public domain, naturally switching them over without a pre-redirect loop.
+
+    const state = crypto.randomUUID();
 
     const url = new URL(`https://${AUTH0_DOMAIN}/authorize`);
     url.searchParams.set('client_id', AUTH0_CLIENT_ID);
@@ -243,7 +219,9 @@ export async function callback(request: Request): Promise<Response> {
     }
 
     // Dynamic Redirect URI for Code Exchange
-    const publicUrl = getPublicUrl(request);
+    const publicUrl = process.env.AUTH0_BASE_URL
+        ? `${new URL(process.env.AUTH0_BASE_URL).origin}${APP_BASE_PATH}`
+        : getPublicUrl(request);
     const redirectUri = `${publicUrl}/auth/callback`;
 
     // Exchange for Tokens
