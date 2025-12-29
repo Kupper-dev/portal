@@ -86,7 +86,17 @@ export async function middleware(request: NextRequest) {
 
             if (!pathname.endsWith('/auth/post-login')) {
                 console.log(`[Middleware] Flow '${flow}' - blocking access to ${pathname}, redirecting to post-login`);
-                return NextResponse.redirect(new URL('/app/auth/post-login', request.url));
+
+                // Infinite Loop Prevention
+                const loopCount = parseInt(request.nextUrl.searchParams.get('rc') || '0');
+                if (loopCount > 3) {
+                    console.error('[Middleware] Infinite Redirect Loop Detected. Breaking loop.');
+                    return NextResponse.redirect(new URL('/app/auth/login?error=infinite_loop', request.url));
+                }
+
+                const url = new URL('/app/auth/post-login', request.url);
+                url.searchParams.set('rc', (loopCount + 1).toString());
+                return NextResponse.redirect(url);
             }
             console.log(`[Middleware] Flow '${flow}' - allowing access to post-login page`);
             return NextResponse.next();

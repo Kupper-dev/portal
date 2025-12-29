@@ -213,11 +213,22 @@ export async function callback(request: Request): Promise<Response> {
         .find((c) => c.trim().startsWith('auth0_state='))
         ?.split('=')[1];
 
+    const error = url.searchParams.get('error');
+    const errorDescription = url.searchParams.get('error_description');
+
+    if (error) {
+        console.error(`[AuthEdge] Auth0 Error: ${error} - ${errorDescription}`);
+        return new Response(null, {
+            status: 302,
+            headers: { Location: `${getPublicUrl(request)}/auth/login?error=${encodeURIComponent(error)}` }
+        });
+    }
+
     if (!code || !state || !stateCookie) {
         console.error('[AuthEdge] Missing code/state/cookie. Redirecting to login to restart.');
         return new Response(null, {
             status: 302,
-            headers: { Location: `${getPublicUrl(request)}/auth/login` }
+            headers: { Location: `${getPublicUrl(request)}/auth/login?error=missing_state` }
         });
     }
 
@@ -227,7 +238,7 @@ export async function callback(request: Request): Promise<Response> {
         console.error('[AuthEdge] State mismatch. Redirecting to login.');
         return new Response(null, {
             status: 302,
-            headers: { Location: `${getPublicUrl(request)}/auth/login` }
+            headers: { Location: `${getPublicUrl(request)}/auth/login?error=invalid_state` }
         });
     }
 
@@ -251,7 +262,10 @@ export async function callback(request: Request): Promise<Response> {
     if (!tokenRes.ok) {
         const text = await tokenRes.text();
         console.error('Auth0 Token Exchange Failed:', text);
-        return new Response('Token exchange failed', { status: 502 });
+        return new Response(null, {
+            status: 302,
+            headers: { Location: `${getPublicUrl(request)}/auth/login?error=token_exchange_failed` }
+        });
     }
 
     const tokenData = await tokenRes.json();
@@ -293,7 +307,10 @@ export async function callback(request: Request): Promise<Response> {
 
     } catch (error) {
         console.error('JWT Verification Failed:', error);
-        return new Response('Invalid ID Token', { status: 401 });
+        return new Response(null, {
+            status: 302,
+            headers: { Location: `${getPublicUrl(request)}/auth/login?error=invalid_token` }
+        });
     }
 }
 

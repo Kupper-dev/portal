@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
                 userType: syncResult.userType,
                 internalId: syncResult.internalId
             });
+            console.log('[PostLogin] READY Transition. Set-Cookie:', response.headers.get('Set-Cookie'));
 
             // 3. Return the response with the cookie
             return response;
@@ -75,6 +76,7 @@ export async function GET(request: NextRequest) {
             await updateSession(request, registerResponse, {
                 flow: 'onboarding_required'
             });
+            console.log('[PostLogin] ONBOARDING Transition. Set-Cookie:', registerResponse.headers.get('Set-Cookie'));
 
             // 3. Return the response
             return registerResponse;

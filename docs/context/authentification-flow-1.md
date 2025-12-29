@@ -147,4 +147,14 @@ graph TD
 
 ### 4. "User Not Found" for Existing Users
 -   **Cause**: Email casing mismatch (`Diego@` vs `diego@`).
--   **Fix**: Implemented `ilike` (Case-Insensitive) lookup in `identity-linker.ts`.
+### 5. Infinite Redirect Loop on Webflow
+-   **Symptoms**: `ERR_TOO_MANY_REDIRECTS`, logs showing repeated "Domain mismatch" despite redirects.
+-   **Cause**: Webflow's internal headers (`Host`, `X-Forwarded-Host`) were persisting as the internal service URL (`...webflow.services`) even after a redirect to the custom domain. The server kept thinking it was on the wrong domain.
+-   **Attempted Fix**:
+    1.  **Prioritized `X-Forwarded-Host`**: Updated `auth-edge.ts` to check this header first for the real public domain.
+    2.  **Loop Break Mechanism**: Added a `?auth_redirect=true` query parameter to the redirect URL. If this param is present, the server **bypasses** the domain check, assuming the redirect has already happened. (Status: Pending Verification/Failed)
+
+### 6. "Missing code/state/cookie" Error (Login Restart Loop)
+-   **Symptoms**: User logs in -> Auth0 -> Callback -> Redirects immediately back to Login. Logs show "[AuthEdge] Missing code/state/cookie".
+-   **Cause**: The manual `Set-Cookie` header string construction in the `login` function was likely malformed or mishandled by the Edge Runtime, causing the `auth0_state` cookie (critical for security) to be dropped.
+-   **Attempted Fix**: Refactored the `login` function to use `NextResponse.redirect()` and the native `response.cookies.set()` API. (Status: Pending Verification/Failed)

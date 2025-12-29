@@ -42,7 +42,7 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
                 customer = customerByEmail;
                 await supabase
                     .from('customers')
-                    .update({ auth0id: auth0Id, sync_status: 'synced' })
+                    .update({ auth0id: auth0Id })
                     .eq('id', customer.id); // Safer to update by ID
             }
         }
@@ -76,7 +76,7 @@ export async function linkUserIdentity(session: AppSession): Promise<LinkResult>
                 student = studentByEmail;
                 await supabase
                     .from('students')
-                    .update({ auth0id: auth0Id, sync_status: 'synced' })
+                    .update({ auth0id: auth0Id })
                     .eq('id', student.id);
             }
         }
