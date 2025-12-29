@@ -121,7 +121,44 @@ export async function updateSession(request: NextRequest, response: NextResponse
 // --- Auth0 Flow ---
 
 export async function login(request: Request, type: 'portal' | 'student' = 'portal', screen_hint?: 'signup' | 'login'): Promise<Response> {
-    // 0. Resolve Canonical Public URL
+    // 0. Smart Redirect (V3 Fix)
+    // Ensure user is on the Canonical Domain BEFORE setting cookies.
+    // This prevents "State Mismatch" where cookies are set on 'custom.com' but Auth0 returns to 'webflow.io'.
+    const requestUrl = new URL(request.url);
+    if (process.env.AUTH0_BASE_URL && !requestUrl.searchParams.has('auth_redirect')) {
+        try {
+            const configuredUrl = new URL(process.env.AUTH0_BASE_URL);
+            const requestHeaders = request.headers;
+
+            // X-Forwarded-Host is closest to the browser's URL bar
+            const currentHost = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host') || '';
+            const configuredHost = configuredUrl.host;
+
+            // Internal Webflow hosts (e.g., wf-app-prod...) cause infinite loops if we redirect to them.
+            // We MUST allow them to pass through so the internal routing works (unless they are the ones initiating the mismatch).
+            // Actually, the loop happens if we redirect FROM internal TO configured, and platform routes back TO internal.
+            // BUT, if we are on 'login.kupper.com.mx' (External), we MUST redirect to 'kupper.webflow.io' (Canonical).
+            const isInternal = currentHost.includes('webflow.services');
+
+            if (currentHost && !isInternal && currentHost !== configuredHost) {
+                console.log(`[AuthEdge] Smart Redirect. Current: ${currentHost}, Configured: ${configuredHost}. Redirecting...`);
+
+                const targetUrl = new URL(`${configuredUrl.origin}${APP_BASE_PATH}/auth/login`);
+                if (type) targetUrl.searchParams.set('type', type);
+                if (screen_hint) targetUrl.searchParams.set('screen_hint', screen_hint);
+                targetUrl.searchParams.set('auth_redirect', 'true'); // Safety breaker
+
+                return new Response(null, {
+                    status: 302,
+                    headers: { Location: targetUrl.toString() }
+                });
+            }
+        } catch (e) {
+            console.error('[AuthEdge] Smart Redirect Check Failed:', e);
+        }
+    }
+
+    // 1. Resolve Canonical Public URL
     // We strictly use AUTH0_BASE_URL if set, to prevent domain mismatch loops.
     // If not set, we fall back to dynamic header detection (e.g. for previews).
     const publicUrl = process.env.AUTH0_BASE_URL
