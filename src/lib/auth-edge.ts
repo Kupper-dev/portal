@@ -140,6 +140,8 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
             // BUT, if we are on 'login.kupper.com.mx' (External), we MUST redirect to 'kupper.webflow.io' (Canonical).
             const isInternal = currentHost.includes('webflow.services');
 
+            console.log(`[AuthEdge] Debug V3: Current=${currentHost}, Configured=${configuredHost}, IsInternal=${isInternal}`);
+
             if (currentHost && !isInternal && currentHost !== configuredHost) {
                 console.log(`[AuthEdge] Smart Redirect. Current: ${currentHost}, Configured: ${configuredHost}. Redirecting...`);
 
