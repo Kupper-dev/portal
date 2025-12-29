@@ -158,3 +158,23 @@ graph TD
 -   **Symptoms**: User logs in -> Auth0 -> Callback -> Redirects immediately back to Login. Logs show "[AuthEdge] Missing code/state/cookie".
 -   **Cause**: The manual `Set-Cookie` header string construction in the `login` function was likely malformed or mishandled by the Edge Runtime, causing the `auth0_state` cookie (critical for security) to be dropped.
 -   **Attempted Fix**: Refactored the `login` function to use `NextResponse.redirect()` and the native `response.cookies.set()` API. (Status: Pending Verification/Failed)
+
+### 7. Infinite Redirect Loop V2 ("redirected too many times")
+-   **Symptoms**: Browser stops with infinite redirect error.
+-   **Cause**: The application was aggressively redirecting to `AUTH0_BASE_URL` if it detected a domain mismatch. However, this logic conflicted with internal Webflow service URLs or load balancers, causing it to redirect endlessly to itself.
+-   **Fix**: Removed the aggressive pre-redirection block in `login`. Relied on `redirect_uri` (set to the canonical domain) to naturally bring the user back to the correct domain after Auth0.
+
+### 8. Cookie Domain Split (V3)
+-   **Symptoms**: "State mismatch" error after login.
+-   **Cause**: User starts login on `login.kupper.com.mx`, setting the `auth0_state` cookie there. Auth0 redirects back to `kupper-xxx.webflow.io` (canonical). The browser, respecting Same-Origin Policy, hides the cookie set on the custom domain, so the server sees no state cookie on the canonical domain.
+-   **Fix**: Implemented "Smart Redirect" at the start of `login`. If the user is on a custom domain, they are **immediately redirected** to the canonical `AUTH0_BASE_URL` *before* the Auth0 flow begins. This ensures the cookie is set on the final domain.
+
+### 9. State Mismatch (Encoding Issue)
+-   **Symptoms**: "State mismatch" error even when on the correct domain. Logs show `Cookie: ...%3Aportal`.
+-   **Cause**: Browser or network layer was URL-encoding the `:` separator in the `auth0_state` cookie value. The code was splitting by `:` raw, failing to parse the UUID.
+-   **Fix**: Added `decodeURIComponent(cookieValue)` in `callback` function.
+
+### 10. Current Status (Dec 29, 2025)
+-   **Issue**: Redirect to main domain (`kupper.com.mx`) instead of App Dashboard after login.
+-   **Diagnosis**: `AUTH0_BASE_URL` was set to the `.webflow.io` staging domain, but Webflow Hosting was configured to redirect that subdomain to the main marketing site.
+-   **Required Action**: Update `AUTH0_BASE_URL` to `https://login.kupper.com.mx` (Custom Domain) and redeploy.
