@@ -248,7 +248,7 @@ export async function callback(request: Request): Promise<Response> {
     const [storedState, loginType] = stateCookie.split(':');
 
     if (state !== storedState) {
-        console.error('[AuthEdge] State mismatch. Redirecting to login.');
+        console.error(`[AuthEdge] State mismatch. Param: ${state}, Cookie: ${storedState}. Redirecting to login.`);
         return new Response(null, {
             status: 302,
             headers: { Location: `${getPublicUrl(request)}/auth/login?error=invalid_state` }
