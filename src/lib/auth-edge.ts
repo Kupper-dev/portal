@@ -140,8 +140,6 @@ export async function login(request: Request, type: 'portal' | 'student' = 'port
             // BUT, if we are on 'login.kupper.com.mx' (External), we MUST redirect to 'kupper.webflow.io' (Canonical).
             const isInternal = currentHost.includes('webflow.services');
 
-            console.log(`[AuthEdge] Debug V3: Current=${currentHost}, Configured=${configuredHost}, IsInternal=${isInternal}`);
-
             if (currentHost && !isInternal && currentHost !== configuredHost) {
                 console.log(`[AuthEdge] Smart Redirect. Current: ${currentHost}, Configured: ${configuredHost}. Redirecting...`);
 
@@ -223,10 +221,13 @@ export async function callback(request: Request): Promise<Response> {
     const state = url.searchParams.get('state');
 
     const cookieHeader = request.headers.get('Cookie') || '';
-    const stateCookie = cookieHeader
+    const rawStateCookie = cookieHeader
         .split(';')
         .find((c) => c.trim().startsWith('auth0_state='))
         ?.split('=')[1];
+
+    // FIX: Decode the cookie value to handle encoded characters (like %3A for :)
+    const stateCookie = rawStateCookie ? decodeURIComponent(rawStateCookie) : undefined;
 
     const error = url.searchParams.get('error');
     const errorDescription = url.searchParams.get('error_description');
