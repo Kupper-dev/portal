@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
             const baseUrl = getPublicUrl(request);
             const targetUrl = new URL('/app', baseUrl);
-            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()} (Host: ${host})`);
+            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()}`);
 
             // 1. Create the Redirect Response
             const response = NextResponse.redirect(targetUrl);
