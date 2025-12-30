@@ -4,14 +4,18 @@ import { login, callback, logout, getSession } from './lib/auth-edge';
 
 export async function middleware(request: NextRequest) {
     // Middleware v1.1 - Robustness Patch (Login Loops & Session Persistence)
-    const { pathname } = request.nextUrl;
-    console.log(`[Middleware] Path: ${pathname}`);
+    let { pathname } = request.nextUrl;
+    console.log(`[Middleware] Original Path: ${pathname}`);
 
-    // 1. Handle Auth Routes (Login, Callback, Logout, Signup)
-    // We use explicit matches to avoid trailing slash issues or partial matches
-    // e.g. /auth/login and /auth/login/ should both work.
+    // Normalize path: Strip /app prefix if present (since basePath is /app)
+    // This ensures our logic works whether Next.js passes the full path or relative path
+    if (pathname.startsWith('/app')) {
+        pathname = pathname.replace(/^\/app/, '') || '/';
+    }
+    console.log(`[Middleware] Normalized Path: ${pathname}`);
 
     // Helper to match paths roughly
+
     const isPath = (path: string) => pathname === path || pathname === `${path}/`;
 
     if (isPath('/auth/login') || isPath('/auth/login/portal')) {
@@ -63,6 +67,12 @@ export async function middleware(request: NextRequest) {
         if (pathname.startsWith('/auth/')) {
             console.log(`[Middleware] No session on ${pathname}, allowing pass-through/native handling`);
             return NextResponse.next();
+        }
+
+        // STRICT CHECK: Root path must redirect
+        if (pathname === '/' || pathname === '/app' || pathname === '/app/') {
+            console.log('[Middleware] No session on root, strictly redirecting to login');
+            return NextResponse.redirect(new URL('/app/auth/login', request.url));
         }
 
         console.log('[Middleware] No session, strictly redirecting to login');
@@ -122,6 +132,11 @@ export async function middleware(request: NextRequest) {
 
         default:
             // Unknown state?
+            if (pathname === '/' || pathname === '/app' || pathname === '/app/') {
+                console.log(`[Middleware] Root access with unknown flow '${flow}' - allowing pass through`);
+                return NextResponse.next();
+            }
+
             console.log(`[Middleware] Unknown flow '${flow}' - allowing pass through`);
             return NextResponse.next();
     }

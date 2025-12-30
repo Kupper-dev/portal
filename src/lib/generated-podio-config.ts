@@ -8,7 +8,7 @@ export interface PodioAppConfig {
 export const PODIO_APPS: PodioAppConfig[] = [
   {
     appId: 30429788,
-    token: process.env.PODIO_TOKEN_CUSTOMERS || "",
+    token: process.env.PODIO_TOKEN_CUSTOMERS || process.env.PODIO_APP_TOKEN_CUSTOMERS || "",
     name: "customers",
     urlLabel: "customers"
   },

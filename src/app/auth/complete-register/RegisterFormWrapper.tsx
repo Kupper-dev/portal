@@ -30,7 +30,9 @@ export default function RegisterFormWrapper({ initialEmail, loginType }: { initi
 
         try {
             const fullName = `${formData.name} ${formData.surname}`.trim();
-            const res = await fetch('/api/auth/register', {
+            // Use configured base path or default to /app to match server config
+            const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
+            const res = await fetch(`${basePath}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -81,7 +83,8 @@ export default function RegisterFormWrapper({ initialEmail, loginType }: { initi
 
             // Register Button
             signUpCompleteRegisterButton={{
-                onClick: () => handleSubmit(),
+                // Pass the event to prevent default form submission
+                onClick: (e: any) => handleSubmit(e),
                 // Input submit buttons take 'value', not 'children'
                 value: isLoading ? "Registering..." : "Complete Registration"
             }}

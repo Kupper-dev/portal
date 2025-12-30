@@ -9,6 +9,11 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
     console.log('[RegisterAPI] Processing registration request...');
+    console.log('[RegisterAPI] Env Vars Check:', {
+        PODIO_TOKEN_CUSTOMERS: process.env.PODIO_TOKEN_CUSTOMERS ? 'SET' : 'MISSING',
+        PODIO_APP_TOKEN_CUSTOMERS: process.env.PODIO_APP_TOKEN_CUSTOMERS ? 'SET' : 'MISSING',
+        NODE_ENV: process.env.NODE_ENV
+    });
     const session = await getSession(request);
 
     if (!session || !session.auth0Id || !session.email) {
@@ -38,14 +43,19 @@ export async function POST(request: NextRequest) {
             // For now, let's stick to the existing signature and maybe update it later or just pass name/email.
             // TODO: Update createPodioCustomer to accept phone/company.
 
-            podioItemId = await createPodioCustomer(session.email, name || session.name || session.email, session.auth0Id);
+            try {
+                podioItemId = await createPodioCustomer(session.email, name || session.name || session.email, session.auth0Id);
+            } catch (error) {
+                console.error('[RegisterAPI] WARNING: Podio Customer creation failed. Proceeding with local registration.', error);
+                // Continue execution with podioItemId = null
+            }
 
             const { data: newCustomer, error } = await supabase.from('customers').insert({
                 email: session.email,
                 name: name || session.name,
                 auth0id: session.auth0Id,
                 type: 1, // Default Customer
-                sync_status: podioItemId ? 'synced' : 'pending',
+                // sync_status: podioItemId ? 'synced' : 'pending', // Removed to avoid schema error
                 podio_item_id: podioItemId || undefined,
                 // store extra metadata if table has columns or jsonb? 
                 // schema doesn't seemingly have phone/company columns yet based on previous conversations?
@@ -56,13 +66,18 @@ export async function POST(request: NextRequest) {
             internalId = newCustomer?.id;
         }
         else if (typeToCreate === 'student') {
-            podioItemId = await createPodioStudent(session.email, name || session.name || session.email, session.auth0Id);
+            try {
+                podioItemId = await createPodioStudent(session.email, name || session.name || session.email, session.auth0Id);
+            } catch (error) {
+                console.error('[RegisterAPI] WARNING: Podio Student creation failed. Proceeding with local registration.', error);
+                // Continue execution with podioItemId = null
+            }
 
             const { data: newStudent, error } = await supabase.from('students').insert({
                 email: session.email,
                 name: name || session.name,
                 auth0id: session.auth0Id,
-                sync_status: podioItemId ? 'synced' : 'pending',
+                // sync_status: podioItemId ? 'synced' : 'pending',
                 podio_item_id: podioItemId || undefined
             }).select().single();
 
@@ -71,7 +86,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Update Session to SYNCED
-        const response = NextResponse.json({ success: true, redirect: '/app' });
+        const response = NextResponse.json({ success: true, redirect: '/' });
 
         await updateSession(request, response, {
             flow: 'ready',
