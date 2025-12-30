@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, updateSession } from '@/lib/auth-edge';
+import { getSession, updateSession, getPublicUrl } from '@/lib/auth-edge';
 import { linkUserIdentity } from '@/lib/identity-linker';
 
 export const dynamic = 'force-dynamic'; // Ensure no caching
@@ -36,10 +36,7 @@ export async function GET(request: NextRequest) {
             // request.url often reflects the internal worker URL (e.g. webflow.services)
             // We must respect the Host or X-Forwarded-Host header to keep the user on the custom domain.
 
-            const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
-            const proto = request.headers.get('x-forwarded-proto') || 'https';
-            const baseUrl = host ? `${proto}://${host}` : request.url;
-
+            const baseUrl = getPublicUrl(request);
             const targetUrl = new URL('/app', baseUrl);
             console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()} (Host: ${host})`);
 
@@ -62,12 +59,9 @@ export async function GET(request: NextRequest) {
             console.log('[PostLogin] User Not Found. Transitioning to ONBOARDING_REQUIRED.');
 
             // Fix Protocol & Host: Ensure we redirect to the correct PUBLIC domain
-            const host = request.headers.get('x-forwarded-host') || request.headers.get('host');
-            const proto = request.headers.get('x-forwarded-proto') || 'https';
-            const baseUrl = host ? `${proto}://${host}` : request.url;
-
+            const baseUrl = getPublicUrl(request);
             const targetUrl = new URL('/app/auth/complete-register', baseUrl);
-            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()} (Host: ${host})`);
+            console.log(`[PostLogin] Redirecting to: ${targetUrl.toString()}`);
 
             // 1. Create the Redirect Response specifically for registration
             const registerResponse = NextResponse.redirect(targetUrl);

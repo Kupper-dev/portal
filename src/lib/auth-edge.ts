@@ -18,7 +18,7 @@ const APP_BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '/app';
 // const REDIRECT_URI = `${ORIGIN}${APP_BASE_PATH}/auth/callback`;
 
 // Helper for dynamic public URL
-function getPublicUrl(request: Request): string {
+export function getPublicUrl(request: Request): string {
     // 1. Priority: Explicit Environment Variable (Correct Public Domain)
     if (process.env.AUTH0_BASE_URL) {
         try {
