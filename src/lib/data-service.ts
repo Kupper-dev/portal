@@ -43,10 +43,11 @@ export async function getUserServiceData() {
     console.log(`[DataService] Resolved Podio ID: ${podioId} for Internal ID: ${userId}`);
 
     // 2. Fetch All Services for this user using Podio ID
+    // Note: We MUST stringify the array for .contains() to work correctly with this column/client version.
     const { data: services, error: serviceError } = await supabase
         .from('services')
         .select('*')
-        .contains('customer', [podioId])
+        .contains('customer', JSON.stringify([podioId]))
         .order('last_updated_at', { ascending: false });
 
     if (serviceError) {
