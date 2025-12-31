@@ -93,3 +93,42 @@ If a deployment fails:
 1.  **Check the Build Logs:** Look for lines starting with `ERROR`.
 2.  **Verify Local Build:** Run `npm run build` locally. Note that local builds might be more permissive than the Cloud environment.
 3.  **Check Imports:** Ensure no server-only code (like `fs`) is imported in client-side components or Edge-compatible routes.
+
+### 5. Deployment Build Errors
+- **Symptom:** `next build` fails with `Error: You're importing a component that needs next/headers`.
+- **Cause:** A Client Component (e.g., `ServiceStatusWrapper`) imports a file (e.g., `data-service.ts`) that imports `cookies()` from `next/headers`. Even if the function using `cookies()` isn't called, the import acts as a poison pill for the client bundle.
+- **Solution:**
+  - **Split Files:** Move shared types (`ServiceItem`) and helper functions (`formatDate`) to a separate file (e.g., `service-types.ts`) that has NO server-only imports.
+  - Update Client Components to import from the Types file, not the Data file.
+
+### 6. Font Issues ("Messed Up" Fonts)
+- **Symptom:** The site loads but fonts look generic (Arial/Times) instead of the designed font (e.g., Inter Tight).
+- **Cause:** 
+  1. Webflow DevLink exports usually map `body` font to `Arial` in `global.css` as a fallback or default.
+  2. The actual Font File (e.g., from Google Fonts) is NOT automatically imported by DevLink's CSS.
+  3. Next.js `globals.css` might also set a default font that overrides Webflow's classes.
+- **Solution:**
+  1. **Import the Font:** Add the Google Fonts `<link>` tag to `src/app/layout.tsx` `metadata` or directly in `<head>` (if using custom document).
+     ```tsx
+     <head>
+       <link href="https://fonts.googleapis.com/css?family=Inter+Tight:..." rel="stylesheet" />
+     </head>
+     ```
+  2. **Set Default Font:** Update `src/app/globals.css` to use the correct font family on `body`.
+     ```css
+     body {
+       font-family: 'Inter Tight', sans-serif;
+     }
+     ```
+
+### 7. Data Mapping & Missing Content
+- **Symptom:** Components (like `ServicesDetailsAndStatus`) are not visible or show empty data, even when logged in.
+- **Cause:** ID Mismatch. 
+  - The `app_session` cookie often stores the **Supabase Primary Key** (e.g., `id: 15`) as `internalId`.
+  - The `services` table, however, references the Customer via their **Podio Item ID** (e.g., `3224408668`).
+  - Querying `services.contains('customer', [session.internalId])` fails because `15 != 3224408668`.
+- **Solution:** 
+  - In `data-service.ts`, perform a "Resolve" step:
+  - use `session.internalId` to query the `customers` table and get `podio_item_id`.
+  - Use that `podio_item_id` to query the `services` table.
+

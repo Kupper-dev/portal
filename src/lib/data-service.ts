@@ -13,24 +13,48 @@ export async function getUserServiceData() {
     const token = cookieStore.get('app_session')?.value;
     const session = token ? await decryptSession(token) : null;
 
+    console.log('[DataService] Session:', session ? 'Found' : 'Missing');
+    if (session) console.log('[DataService] Internal ID:', session.internalId);
+
     if (!session || !session.internalId) {
+        console.warn('[DataService] No valid session or internalId');
         return [];
     }
 
     const userId = parseInt(session.internalId);
+
     const supabase = getSupabaseAdmin();
 
-    // 1. Fetch All Services for this user
+    // 1. Resolve Podio Item ID from Internal ID (Supabase PK)
+    const table = session.userType === 'student' ? 'students' : 'customers';
+
+    const { data: userRecord, error: userError } = await supabase
+        .from(table)
+        .select('podio_item_id')
+        .eq('id', userId)
+        .single();
+
+    if (userError || !userRecord || !userRecord.podio_item_id) {
+        console.warn('[DataService] Could not resolve Podio ID for user:', userId, userError);
+        return [];
+    }
+
+    const podioId = userRecord.podio_item_id;
+    console.log(`[DataService] Resolved Podio ID: ${podioId} for Internal ID: ${userId}`);
+
+    // 2. Fetch All Services for this user using Podio ID
     const { data: services, error: serviceError } = await supabase
         .from('services')
         .select('*')
-        .contains('customer', [userId])
+        .contains('customer', [podioId])
         .order('last_updated_at', { ascending: false });
 
     if (serviceError) {
         console.error('Error fetching services:', serviceError);
         return [];
     }
+
+    console.log(`[DataService] Services found: ${services?.length}`);
 
     if (!services || services.length === 0) {
         return [];
