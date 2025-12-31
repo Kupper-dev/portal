@@ -33,8 +33,9 @@ export function Hero({
             <_Builtin.Block
               className="hero_title gradient_text"
               tag="div"
+              {...heroRecipientNameOnly}
             >
-              {heroRecipientName}
+              {"User"}
             </_Builtin.Block>
             <_Builtin.Block tag="div">
               {"¿Que quieres reparar el día de hoy?"}

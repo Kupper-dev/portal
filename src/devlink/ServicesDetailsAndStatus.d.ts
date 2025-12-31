@@ -41,4 +41,11 @@ declare function ServicesDetailsAndStatus(props: {
   servicesHourServicesStatusEnviarDiagnostico?: React.ReactNode;
   servicesHourServicesStatusRefaccionesEnCamino?: React.ReactNode;
   servicesServicePodioItemIdFormatted?: Types.Devlink.RuntimeProps;
+  servicesCreationDate?: Types.Devlink.RuntimeProps;
+  statusRow1Step1State?: "Base" | "active" | "check" | "no_state" | "hidden";
+  statusRow2Step2State?: "Base" | "active" | "check" | "no_state" | "hidden";
+  statusRow3Step3State?: "Base" | "active" | "check" | "no_state" | "hidden";
+  statusRow4Step4State?: "Base" | "active" | "check" | "no_state" | "hidden";
+  statusRow5Step5State?: "Base" | "active" | "check" | "no_state" | "hidden";
+  statusRow6Step6State?: "Base" | "active" | "check" | "no_state" | "hidden";
 }): React.JSX.Element;

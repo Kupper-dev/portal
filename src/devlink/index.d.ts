@@ -15,4 +15,5 @@ export * from "./Hero";
 export * from "./ServicesDetailsAndStatus";
 export * from "./Sidebar";
 export * from "./SignupForm";
+export * from "./StatusRow";
 export * from "./Table";
