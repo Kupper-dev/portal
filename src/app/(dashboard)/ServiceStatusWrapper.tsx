@@ -121,7 +121,7 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         statusRow4Step4State={getStepVariant(4)} // Refacciones
                         statusRow5Step5State={getStepVariant(5)}
                         statusRow6Step6State={getStepVariant(6)}
-                        statusRow7Step7State={getStepVariant(7)}
+                        // statusRow7Step7State={getStepVariant(7)} // Prop missing in DevLink export
 
                         // Actions
                         servicesDiagnosis={{ href: s.diagnosis || "#", target: "_blank" }}
