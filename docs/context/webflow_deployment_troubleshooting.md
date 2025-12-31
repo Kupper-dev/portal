@@ -25,9 +25,38 @@ Webflow Cloud apps run on Cloudflare Workers, which provided a limited "Edge Run
 -   Avoid using libraries that depend heavily on Node.js internals (e.g., standard `podio-js`).
 -   Use lightweight, fetch-based replacements. We created `SimplePodioClient` in `src/lib/podio-sync.ts` to replace `podio-js`.
 
-## 2. Build Process Strictness
+### Issue: Conflicting Runtime Flags (`export const runtime = 'edge'`)
+**Symptom:** Deployment fails with `app/auth/logout/route cannot use the edge runtime`.
+**Cause:** The `opennextjs-cloudflare` adapter automatically handles the Edge environment. Explicitly setting `export const runtime = 'edge'` in route handlers (e.g., `src/app/auth/logout/route.ts`) can conflict with OpenNext's internal bundling logic.
+**Solution:**
+-   Remove `export const runtime = 'edge'` from Next.js Route Handlers.
+
+## 2. Build Process Strictness & OpenNext Configuration
 
 The Webflow Cloud build process (using `opennextjs-cloudflare`) is very strict about TypeScript errors and missing exports.
+
+### Issue: ESLint Parsing Errors on Generated Files
+**Symptom:** Build fails with parsing errors (e.g., `Unexpected token <`) in generated files like `src/devlink/*.js`.
+**Cause:** The build process runs linting on all files, and generated DevLink files may contain syntax that ESLint tries to parse incorrectly if not ignored.
+**Solution:**
+-   Add the generated directory to `eslint.config.mjs` in the `globalIgnores` section:
+    ```javascript
+    {
+      ignores: ["src/devlink/**"]
+    }
+    ```
+
+### Issue: OpenNext "Standalone" Output Requirement
+**Symptom:** Deployment fails during the bundling phase (e.g., `copyTracedFiles`).
+**Cause:** OpenNext requires Next.js to be configured for standalone output to correctly trace and bundle dependencies for the Edge worker.
+**Solution:**
+-   Ensure `next.config.ts` includes:
+    ```typescript
+    const nextConfig: NextConfig = {
+      output: "standalone",
+      // ...
+    };
+    ```
 
 ### Issue: Type Errors Stop Build
 **Symptom:** Build fails with `TypeScript error in ...` logic that works fine in local development.
@@ -46,12 +75,17 @@ The Webflow Cloud build process (using `opennextjs-cloudflare`) is very strict a
 -   Ensure that any function used in `app/api/.../route.ts` is explicitly exported from its source file.
 -   If a feature is disabled, export a **stub** or placeholder function instead of removing the export entirely.
 
-## 3. Environment Variables
+## 3. Environment Variables & Authentication
 
 **Important:** Webflow Cloud does **not** automatically inherit `.env` files from your repo for security reasons.
+
+### Issue: Auth Redirect Loop (Internal Hostname Mismatch)
+**Symptom:** Users get stuck in a login loop ("Redirected too many times") or see a "State Mismatch" error on the deployed site.
+**Cause:** In the Webflow/Cloudflare environment, `request.url` or headers like `host`/`x-forwarded-host` often resolve to the **internal worker hostname** (e.g., `...cosmic.webflow.services`) rather than your custom domain. Logic that relies on these for redirect URLs will send the user to the internal domain, causing cookie loss.
 **Solution:**
--   You must manually add all required keys (e.g., `PODIO_CLIENT_ID`, `SUPABASE_URL`, `PODIO_TOKEN_*`) in the **Webflow Designer > Site Settings > App > Environment Variables**.
--   Ensure variable names match exactly what is used in the code.
+-   **Always** prioritize `process.env.AUTH0_BASE_URL` for constructing public-facing URLs.
+-   Use the `getPublicUrl` helper in `src/lib/auth-edge.ts` which implements this priority.
+-   Ensure `AUTH0_BASE_URL` is set correctly in **Webflow Designer > Site Settings > App > Environment Variables**.
 
 ## 4. Troubleshooting Workflow
 
