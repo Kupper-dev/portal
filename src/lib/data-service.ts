@@ -1,30 +1,9 @@
 import { getSupabaseAdmin } from './supabase';
 import { decryptSession } from './auth-edge';
 import { cookies } from 'next/headers';
+import { ServiceItem, DeviceItem } from './service-types';
 
-export interface ServiceItem {
-    podio_item_id: number;
-    podio_formatted_id: string;
-    date: string; // "2025-12-24T00:00:00+00:00"
-    last_updated_at: string;
-    customer: number[];
-    device: number[]; // Array of device item IDs
-    status: string; // "Dispositivo en revision", "Enviar diagnostico", etc.
-    servicetype: string; // Request or issue
-    observations: string;
-    type: string;
-    databackup: string;
-    poweradapter: string;
-    accessories: string;
-    diagnosis: string;
-    advancepayment: string; // Maybe price?
-}
-
-export interface DeviceItem {
-    podio_item_id: number;
-    brandmodel: string;
-    serial: string;
-}
+// Re-export specific things if needed, but better to import from service-types directly in other files.
 
 // Statuses considered "Finished"
 const FINISHED_STATUSES = ["Dispositivo entregado", "Dispositivo entregado sin reparar"];
@@ -95,16 +74,4 @@ export async function getUserServiceData() {
         const device = devices.find(d => d.podio_item_id === deviceId) || null;
         return { service, device };
     });
-}
-
-
-// Helper to format date
-export function formatDate(isoString: string | null) {
-    if (!isoString) return '';
-    return new Date(isoString).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-
-export function formatTime(isoString: string | null) {
-    if (!isoString) return '';
-    return new Date(isoString).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
 }

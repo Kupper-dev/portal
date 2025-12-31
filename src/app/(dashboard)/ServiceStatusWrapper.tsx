@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ServicesDetailsAndStatus } from '@/devlink';
-import { ServiceItem, DeviceItem, formatDate, formatTime } from '@/lib/data-service';
+import { ServiceItem, DeviceItem, formatDate, formatTime } from '@/lib/service-types';
 import { acceptDiagnosis } from '@/app/actions/service-actions';
 
 interface ServiceStatusWrapperProps {
