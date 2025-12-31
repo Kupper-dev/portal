@@ -312,7 +312,7 @@ async function fetchPodioItem(itemId: number, webhookAppId?: number): Promise<{ 
                 return { appConfig: app, data: item };
             }
         } catch (err) {
-            // Ignore mismatch/404
+            console.error(`Error fetching from App ${app.name} (${app.appId}):`, err);
         }
     }
 
