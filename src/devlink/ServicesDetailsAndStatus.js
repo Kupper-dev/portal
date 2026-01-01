@@ -74,6 +74,27 @@ export function ServicesDetailsAndStatus({
   statusRow5StatusStatusMessage = "Message",
   statusRow6StatusStatusMessage = "Message",
   statusRow7StatusStatusMessage = "Message",
+  statusRow1StatusDate = {},
+  statusRow1StatusHour = {},
+  statusRow1AlertMessage = {},
+  statusRow2StatusDate = {},
+  statusRow2StatusHour = {},
+  statusRow2AlertMessage = {},
+  statusRow3StatusDate = {},
+  statusRow3StatusHour = {},
+  statusRow3AlertMessage = {},
+  statusRow4StatusDate = {},
+  statusRow4StatusHour = {},
+  statusRow4AlertMessage = {},
+  statusRow5StatusDate = {},
+  statusRow5StatusHour = {},
+  statusRow5AlertMessage = {},
+  statusRow6StatusDate = {},
+  statusRow6StatusHour = {},
+  statusRow6AlertMessage = {},
+  statusRow7StatusDate = {},
+  statusRow7StatusHour = {},
+  statusRow7AlertMessage = {},
 }) {
   return (
     <_Component
@@ -197,6 +218,9 @@ export function ServicesDetailsAndStatus({
           statusStatusActionButton={statusRow1StatusStatusButton1}
           statusActionPopup={statusRow1StatusActionPopup}
           statusStatusMessage={statusRow1StatusStatusMessage}
+          statusDate={statusRow1StatusDate}
+          statusHour={statusRow1StatusHour}
+          alertMessage={statusRow1AlertMessage}
         />
         <StatusRow
           servicesDateServiceStatusEnviarDiagnostico={
@@ -213,6 +237,9 @@ export function ServicesDetailsAndStatus({
           statusStatusActionButton={statusRow2StatusStatusButton1}
           statusActionPopup={statusRow2StatusActionPopup}
           statusStatusMessage={statusRow2StatusStatusMessage}
+          statusDate={statusRow2StatusDate}
+          statusHour={statusRow2StatusHour}
+          alertMessage={statusRow2AlertMessage}
           statusTitle="Dispositivo en revisión "
         />
         <StatusRow
@@ -230,6 +257,9 @@ export function ServicesDetailsAndStatus({
           variant={statusRow3Step3State}
           alert={statusRow3Alert}
           statusStatusMessage={statusRow3StatusStatusMessage}
+          statusDate={statusRow3StatusDate}
+          statusHour={statusRow3StatusHour}
+          alertMessage={statusRow3AlertMessage}
           statusTitle="Revisa tu diagnóstico"
         />
         <StatusRow
@@ -247,6 +277,9 @@ export function ServicesDetailsAndStatus({
           statusActionPopup={statusRow4StatusActionPopup}
           alert={statusRow4Alert}
           statusStatusMessage={statusRow4StatusStatusMessage}
+          statusDate={statusRow4StatusDate}
+          statusHour={statusRow4StatusHour}
+          alertMessage={statusRow4AlertMessage}
           statusTitle="Refacciones en camino"
         />
         <StatusRow
@@ -264,6 +297,9 @@ export function ServicesDetailsAndStatus({
           statusActionPopup={statusRow5StatusActionPopup}
           alert={statusRow5Alert}
           statusStatusMessage={statusRow5StatusStatusMessage}
+          statusDate={statusRow5StatusDate}
+          statusHour={statusRow5StatusHour}
+          alertMessage={statusRow5AlertMessage}
           statusTitle="Inicia reparación"
         />
         <StatusRow
@@ -281,6 +317,9 @@ export function ServicesDetailsAndStatus({
           statusActionPopup={statusRow6StatusActionPopup}
           alert={statusRow6Alert}
           statusStatusMessage={statusRow6StatusStatusMessage}
+          statusDate={statusRow6StatusDate}
+          statusHour={statusRow6StatusHour}
+          alertMessage={statusRow6AlertMessage}
           statusTitle="Lista para recolección"
         />
         <StatusRow
@@ -298,6 +337,9 @@ export function ServicesDetailsAndStatus({
           statusActionPopup={statusRow7StatusActionPopup}
           alert={statusRow7Alert}
           statusStatusMessage={statusRow7StatusStatusMessage}
+          statusDate={statusRow7StatusDate}
+          statusHour={statusRow7StatusHour}
+          alertMessage={statusRow7AlertMessage}
           statusTitle="Dispositivo entregado"
         />
       </_Builtin.Block>

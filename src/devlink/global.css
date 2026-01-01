@@ -2936,7 +2936,7 @@ a {
 }
 
 .status_check_icon:where(.w-variant-1272c514-8402-5171-ef79-3e73d85db63e) {
-  background-color: var(--green);
+  background-color: var(--blue-2);
 }
 
 .status_check_icon:where(.w-variant-300ccf83-b3d7-9b81-48e8-cd2c711433c7) {
