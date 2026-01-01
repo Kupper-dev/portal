@@ -373,20 +373,13 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
         const field = item.fields.find((f: any) => f.external_id === externalId);
         if (!field) return null;
         if (field.type === 'date') return field.values?.[0]?.start;
-        // If value is object with 'value' prop (like money, duration, etc)
-        // If it is category, values[0].value.text might be what we want? 
-        // Or values[0].value.id?
-        // Let's try to be smart or generic.
-
         const firstVal = field.values?.[0];
         if (!firstVal) return null;
 
         if (firstVal.value && typeof firstVal.value === 'object') {
             if (firstVal.value.text) return firstVal.value.text; // Category/App ref
             if (firstVal.value.name) return firstVal.value.name; // Contact
-            // Map/Location
         }
-
         return firstVal.value || null;
     };
 
@@ -399,14 +392,33 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
     };
 
     // Generic Field Mapping
-    // We mapped ALL fields in the migration. 
-    // We should iterate over item.fields and mapping them to column names.
-    // The migration used sanitized external_id as column name.
-
     for (const field of item.fields) {
-        // Sanitize external_id to match migration column naming
-        // .replace(/[^a-z0-9]/gi, '_').toLowerCase()
-        const colName = field.external_id.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        // Default sanitization
+        let colName = field.external_id.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+        // Fix for legacy flat columns and new date columns which use flat naming in Supabase
+        // Example: 'service-type' -> 'servicetype', 'date-received' -> 'datereceived'
+        const flatName = field.external_id.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
+        // precise whitelist of columns that use flat naming in Supabase
+        const FLAT_COLUMNS = [
+            'servicetype',
+            'databackup',
+            'poweradapter',
+            'accessories',
+            'advancepayment',
+            'datereceived',
+            'datecheckupstart',
+            'datediagnosed',
+            'datepartsordered',
+            'daterepairstart',
+            'daterepairready',
+            'datedevicedelivered'
+        ];
+
+        if (FLAT_COLUMNS.includes(flatName)) {
+            colName = flatName;
+        }
 
         // Extract value
         let value: any = null;
@@ -414,29 +426,19 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
 
         if (values.length > 0) {
             if (field.type === 'app') {
-                // App Reference: Store Array of Item IDs
-                // Schema type: jsonb
                 value = values.map((v: any) => v.value?.item_id).filter((id: any) => id !== undefined);
             } else if (field.type === 'contact') {
-                // Contact: Store Array of Names (or objects if preferred, but names are easier for AI)
-                // Schema type: jsonb
                 value = values.map((v: any) => v.value?.name).filter((n: any) => n);
             } else if (field.type === 'category') {
-                // Category: Join multiple values with comma
-                // Schema type: text
                 const cats = values.map((v: any) => v.value?.text || v.value?.id).filter((c: any) => c);
                 value = cats.length > 0 ? cats.join(', ') : null;
             } else if (field.type === 'date') {
-                // Date: usually single, take start of first
                 value = values[0].start;
             } else if (field.type === 'location') {
-                // Location: take first address
                 value = values[0].value;
             } else if (field.type === 'money') {
-                // Money: take first value
                 value = values[0].value;
             } else {
-                // Default: take first value
                 value = values[0].value;
             }
         }
@@ -445,8 +447,6 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
             mapped[colName] = value;
         }
     }
-
-    // Explicit overrides if needed (e.g. auth0id) - but generic loop handles 'auth0id' external_id too.
 
     return mapped;
 }
