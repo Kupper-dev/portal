@@ -6,17 +6,17 @@ export function Hero({
   as: _Component = _Builtin.Block,
   heroRecipientName = "User",
 
-  heroRequestService = {
+  heroButton1 = {
     href: "#",
   },
 
-  heroRequestAppointment = {
+  button1 = "Solicitar servicio",
+
+  heroButton2 = {
     href: "#",
   },
 
-  heroRequestServicePopup = {},
-  heroRequestAppointmentPopup = {},
-  heroRecipientNameOnly = {},
+  heroButton22 = "Agendar cita",
 }) {
   return (
     <_Component className="dashboard_bg" tag="div">
@@ -30,12 +30,8 @@ export function Hero({
             <_Builtin.Block className="hero_title" tag="div">
               {"Hola "}
             </_Builtin.Block>
-            <_Builtin.Block
-              className="hero_title gradient_text"
-              tag="div"
-              {...heroRecipientNameOnly}
-            >
-              {"User"}
+            <_Builtin.Block className="hero_title gradient_text" tag="div">
+              {heroRecipientName}
             </_Builtin.Block>
             <_Builtin.Block tag="div">
               {"¿Que quieres reparar el día de hoy?"}
@@ -50,23 +46,17 @@ export function Hero({
                 className="dashboard_link"
                 button={false}
                 block=""
-                options={{
-                  href: "#",
-                }}
-                {...heroRequestAppointmentPopup}
+                options={heroButton2}
               >
-                {"Agendar cita"}
+                {heroButton22}
               </_Builtin.Link>
               <_Builtin.Link
                 className="dashboard_button"
                 button={true}
                 block=""
-                options={{
-                  href: "#",
-                }}
-                {...heroRequestServicePopup}
+                options={heroButton1}
               >
-                {"Solicitar servicio"}
+                {button1}
               </_Builtin.Link>
             </_Builtin.Block>
           </_Builtin.Block>

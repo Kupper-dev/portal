@@ -5,11 +5,8 @@ declare function Hero(props: {
   as?: React.ElementType;
   /** Just name no surnames*/
   heroRecipientName?: React.ReactNode;
-  /** PopUp displays available services to request*/
-  heroRequestService?: Types.Basic.Link;
-  /** Link To request appointment PopUp*/
-  heroRequestAppointment?: Types.Basic.Link;
-  heroRequestServicePopup?: Types.Devlink.RuntimeProps;
-  heroRequestAppointmentPopup?: Types.Devlink.RuntimeProps;
-  heroRecipientNameOnly?: Types.Devlink.RuntimeProps;
+  heroButton1?: Types.Basic.Link;
+  button1?: React.ReactNode;
+  heroButton2?: Types.Basic.Link;
+  heroButton22?: React.ReactNode;
 }): React.JSX.Element;

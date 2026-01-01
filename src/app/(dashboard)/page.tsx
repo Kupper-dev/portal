@@ -32,7 +32,6 @@ export default async function DashboardPage() {
                 userLogOut={{ href: '/app/auth/logout' }}
             />
             <Hero
-                heroRecipientNameOnly={{ children: userName }}
                 heroRecipientName={userName}
             />
             <ServiceStatusWrapper items={serviceItems || []} />
