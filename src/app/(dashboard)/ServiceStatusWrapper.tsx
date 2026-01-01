@@ -165,44 +165,44 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         servicesObservations={s.observations || "None"}
                         servicesPrice={s.advancepayment || "Pending"}
 
-                        servicesServicePodioItemIdFormatted={{ children: s.podio_formatted_id }}
+                        servicePodioItemIdFormatted={s.podio_formatted_id}
 
                         // Dates & Times
                         servicesDate={formatDate(s.date)}
 
 
                         // Status Dates (Text Bindings via RuntimeProps)
-                        statusRow1StatusDate={{ children: formatDate(s.date) }}
-                        statusRow2StatusDate={{ children: getDateIfStatus("Dispositivo en revision") }}
-                        statusRow3StatusDate={{ children: getDateIfStatus("Enviar diagnostico") }}
-                        statusRow4StatusDate={{ children: getDateIfStatus("Refacciones en camino") }}
-                        statusRow5StatusDate={{ children: getDateIfStatus("Inicia reparación") }}
-                        statusRow6StatusDate={{ children: getDateIfStatus("Enviar código de seguridad") }}
-                        statusRow7StatusDate={{
-                            children: (s.status === "Dispositivo entregado" || s.status === "Dispositivo entregado sin reparar")
+                        statusRow1StatusDate={formatDate(s.date)}
+                        statusRow2StatusDate={getDateIfStatus("Dispositivo en revision")}
+                        statusRow3StatusDate={getDateIfStatus("Enviar diagnostico")}
+                        statusRow4StatusDate={getDateIfStatus("Refacciones en camino")}
+                        statusRow5StatusDate={getDateIfStatus("Inicia reparación")}
+                        statusRow6StatusDate={getDateIfStatus("Enviar código de seguridad")}
+                        statusRow7StatusDate={
+                            (s.status === "Dispositivo entregado" || s.status === "Dispositivo entregado sin reparar")
                                 ? formatDate(s.last_updated_at) : ""
-                        }}
+                        }
 
                         // Status Hours (Text Bindings via RuntimeProps)
-                        statusRow1StatusHour={{ children: formatTime(s.date) }}
-                        statusRow2StatusHour={{ children: getTimeIfStatus("Dispositivo en revision") }}
-                        statusRow3StatusHour={{ children: getTimeIfStatus("Enviar diagnostico") }}
-                        statusRow4StatusHour={{ children: getTimeIfStatus("Refacciones en camino") }}
-                        statusRow5StatusHour={{ children: getTimeIfStatus("Inicia reparación") }}
-                        statusRow6StatusHour={{ children: getTimeIfStatus("Enviar código de seguridad") }}
-                        statusRow7StatusHour={{
-                            children: (s.status === "Dispositivo entregado" || s.status === "Dispositivo entregado sin reparar")
+                        statusRow1StatusHour={formatTime(s.date)}
+                        statusRow2StatusHour={getTimeIfStatus("Dispositivo en revision")}
+                        statusRow3StatusHour={getTimeIfStatus("Enviar diagnostico")}
+                        statusRow4StatusHour={getTimeIfStatus("Refacciones en camino")}
+                        statusRow5StatusHour={getTimeIfStatus("Inicia reparación")}
+                        statusRow6StatusHour={getTimeIfStatus("Enviar código de seguridad")}
+                        statusRow7StatusHour={
+                            (s.status === "Dispositivo entregado" || s.status === "Dispositivo entregado sin reparar")
                                 ? formatTime(s.last_updated_at) : ""
-                        }}
+                        }
 
-                        // Alert Messages (Text Bindings via RuntimeProps)
-                        statusRow1AlertMessage={{ children: alert1.message }}
-                        statusRow2AlertMessage={{ children: alert2.message }}
-                        statusRow3AlertMessage={{ children: alert3.message }}
-                        statusRow4AlertMessage={{ children: alert4.message }}
-                        statusRow5AlertMessage={{ children: alert5.message }}
-                        statusRow6AlertMessage={{ children: alert6.message }}
-                        statusRow7AlertMessage={{ children: alert7.message }}
+                        // Alert Messages (Text Bindings via ReactNode)
+                        statusRow1AlertMessageText={alert1.message}
+                        statusRow2AlertMessageText={alert2.message}
+                        statusRow3AlertMessageText={alert3.message}
+                        statusRow4AlertMessageText={alert4.message}
+                        statusRow5AlertMessageText={alert5.message}
+                        statusRow6AlertMessageText={alert6.message}
+                        statusRow7AlertMessageText={alert7.message}
 
                         // State Variants
                         statusRow1Step1State={getStepVariant(1)}

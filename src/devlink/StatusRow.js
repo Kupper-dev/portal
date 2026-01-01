@@ -27,6 +27,9 @@ export function StatusRow({
   statusHour = {},
   alert = true,
   alertMessage = {},
+  statusDate = "DD/MM/YY",
+  statusHour = "00:00",
+  alertMessageText = "Alert message",
 }) {
   const _styleVariantMap = {
     Base: "",
@@ -62,14 +65,14 @@ export function StatusRow({
             tag="div"
             {...statusDate}
           >
-            {"DD/MM/YY"}
+            {statusDate}
           </_Builtin.Block>
           <_Builtin.Block
             className={`small_text text_gray ${_activeStyleVariant}`}
             tag="div"
             {...statusHour}
           >
-            {"00:00"}
+            {statusHour}
           </_Builtin.Block>
         </_Builtin.Block>
       </_Builtin.Block>
@@ -138,9 +141,8 @@ export function StatusRow({
             <_Builtin.Block
               className={`alert_message ${_activeStyleVariant}`}
               tag="div"
-              {...alertMessage}
             >
-              {"Alert message"}
+              {alertMessageText}
             </_Builtin.Block>
           </_Builtin.Block>
         ) : null}

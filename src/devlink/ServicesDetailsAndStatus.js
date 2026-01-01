@@ -95,6 +95,28 @@ export function ServicesDetailsAndStatus({
   statusRow7StatusDate = {},
   statusRow7StatusHour = {},
   statusRow7AlertMessage = {},
+  servicePodioItemIdFormatted = "Folio",
+  statusRow1StatusDate = "DD/MM/YY",
+  statusRow1StatusHour = "00:00",
+  statusRow2StatusDate = "DD/MM/YY",
+  statusRow2StatusHour = "00:00",
+  statusRow3StatusDate = "DD/MM/YY",
+  statusRow3StatusHour = "00:00",
+  statusRow4StatusDate = "DD/MM/YY",
+  statusRow4StatusHour = "00:00",
+  statusRow5StatusDate = "DD/MM/YY",
+  statusRow5StatusHour = "00:00",
+  statusRow6StatusDate = "DD/MM/YY",
+  statusRow6StatusHour = "00:00",
+  statusRow7StatusDate = "DD/MM/YY",
+  statusRow7StatusHour = "00:00",
+  statusRow1AlertMessageText = "Alert message",
+  statusRow2AlertMessageText = "Alert message",
+  statusRow3AlertMessageText = "Alert message",
+  statusRow4AlertMessageText = "Alert message",
+  statusRow5AlertMessageText = "Alert message",
+  statusRow6AlertMessageText = "Alert message",
+  statusRow7AlertMessageText = "Alert message",
 }) {
   return (
     <_Component
@@ -122,7 +144,7 @@ export function ServicesDetailsAndStatus({
               tag="div"
               {...servicesServicePodioItemIdFormatted}
             >
-              {"Folio"}
+              {servicePodioItemIdFormatted}
             </_Builtin.Block>
             <_Builtin.Block className="text_inflex_wrapper" tag="div">
               <_Builtin.Block className="small_text text_gray" tag="div">
@@ -221,6 +243,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow1StatusDate}
           statusHour={statusRow1StatusHour}
           alertMessage={statusRow1AlertMessage}
+          alertMessageText={statusRow1AlertMessageText}
         />
         <StatusRow
           servicesDateServiceStatusEnviarDiagnostico={
@@ -240,6 +263,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow2StatusDate}
           statusHour={statusRow2StatusHour}
           alertMessage={statusRow2AlertMessage}
+          alertMessageText={statusRow2AlertMessageText}
           statusTitle="Dispositivo en revisión "
         />
         <StatusRow
@@ -260,6 +284,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow3StatusDate}
           statusHour={statusRow3StatusHour}
           alertMessage={statusRow3AlertMessage}
+          alertMessageText={statusRow3AlertMessageText}
           statusTitle="Revisa tu diagnóstico"
         />
         <StatusRow
@@ -280,6 +305,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow4StatusDate}
           statusHour={statusRow4StatusHour}
           alertMessage={statusRow4AlertMessage}
+          alertMessageText={statusRow4AlertMessageText}
           statusTitle="Refacciones en camino"
         />
         <StatusRow
@@ -300,6 +326,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow5StatusDate}
           statusHour={statusRow5StatusHour}
           alertMessage={statusRow5AlertMessage}
+          alertMessageText={statusRow5AlertMessageText}
           statusTitle="Inicia reparación"
         />
         <StatusRow
@@ -320,6 +347,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow6StatusDate}
           statusHour={statusRow6StatusHour}
           alertMessage={statusRow6AlertMessage}
+          alertMessageText={statusRow6AlertMessageText}
           statusTitle="Lista para recolección"
         />
         <StatusRow
@@ -340,6 +368,7 @@ export function ServicesDetailsAndStatus({
           statusDate={statusRow7StatusDate}
           statusHour={statusRow7StatusHour}
           alertMessage={statusRow7AlertMessage}
+          alertMessageText={statusRow7AlertMessageText}
           statusTitle="Dispositivo entregado"
         />
       </_Builtin.Block>
