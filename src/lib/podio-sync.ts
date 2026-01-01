@@ -201,6 +201,18 @@ export class SimplePodioClient {
 
         return res.json();
     }
+
+    async updateItemFieldValue(itemId: number, externalId: string, value: any, silent: boolean = true) {
+        // Prepare value based on field type - simplified for now (assuming string/date)
+        // For date, Podio expects { start: "YYYY-MM-DD HH:MM:SS" }
+        // For text, just string
+        // For now, simpler implementation:
+        return this.request('PUT', `/item/${itemId}/value/${externalId}`, {
+            value: value,
+            silent: silent, // Avoid triggering another webhook (prevent loops)
+            hook: !silent
+        });
+    }
 }
 
 /**
@@ -364,6 +376,11 @@ export async function syncPodioToSupabase(
         console.error(`Error syncing to Supabase table ${tableName}:`, error);
     } else {
         console.log(`Successfully synced Item ${itemId} to table ${tableName}.`);
+
+        // AUTO-TIMESTAMP LOGIC FOR SERVICES
+        if (appConfig.name === 'services') {
+            await processServicesAutoTimestamping(appConfig, data);
+        }
     }
 }
 
@@ -449,6 +466,73 @@ function mapPodioItemToSupabase(appConfig: typeof PODIO_APPS[0], item: any) {
     }
 
     return mapped;
+}
+
+// ----------------------------------------------------------------------
+// Auto-Timestamp Logic
+// ----------------------------------------------------------------------
+
+const STATUS_TO_DATE_FIELD: Record<string, string> = {
+    // Exact status text from Podio -> External ID of Date field
+    'Dispositivo recibido': 'datereceived',
+    'Dispositivo recibido ': 'datereceived', // Handle trailing space
+    'Dispositivo en revisión': 'datecheckupstart',
+    'En revisión': 'datecheckupstart',
+    'Diagnóstico listo': 'datediagnosed',
+    'Enviar diagnóstico': 'datediagnosed',
+    'Enviar diagnostico': 'datediagnosed', // variations
+    'Diagnostico enviado': 'datediagnosed',
+    'Refacciones en camino': 'datepartsordered',
+    'Esperando refacciones': 'datepartsordered',
+    'Inicia reparación': 'daterepairstart',
+    'Reparación finalizada': 'daterepairready',
+    'Dispositivo entregado': 'datedevicedelivered'
+};
+
+async function processServicesAutoTimestamping(appConfig: typeof PODIO_APPS[0], item: any) {
+    // 1. Get Status
+    const statusField = item.fields.find((f: any) => f.external_id === 'status');
+    // Status is category, usually: values[0].value.text
+    const statusText = statusField?.values?.[0]?.value?.text;
+
+    if (!statusText) return;
+
+    // 2. Determine target date field
+    const targetDateField = STATUS_TO_DATE_FIELD[statusText] || STATUS_TO_DATE_FIELD[statusText.trim()];
+
+    if (!targetDateField) {
+        console.log(`No timestamp mapping found for status: '${statusText}'`);
+        return;
+    }
+
+    // 3. Check if date field is already filled
+    const dateField = item.fields.find((f: any) => f.external_id === targetDateField);
+    const hasValue = dateField && dateField.values && dateField.values.length > 0;
+
+    if (hasValue) {
+        console.log(`Timestamp '${targetDateField}' already exists. Skipping.`);
+        return;
+    }
+
+    // 4. Update Podio
+    console.log(`Auto-timestamping '${targetDateField}' for status '${statusText}'...`);
+
+    // Format: YYYY-MM-DD HH:mm:ss
+    const now = new Date();
+    // Podio expects UTC usually, or local time string. 
+    // Best practice: "YYYY-MM-DD HH:MM:SS" in UTC.
+    const iso = now.toISOString().replace('T', ' ').split('.')[0];
+    // Wait, ISO is UTC. Podio treats "YYYY-MM-DD HH:MM:SS" as "User's Local Time" unless timezone provided?
+    // Actually passing { "start": "YYYY-MM-DD HH:MM:SS" } usually works as UTC if no TZ.
+    // Let's rely on standard ISO string "YYYY-MM-DD HH:MM:SS"
+
+    try {
+        const podio = await getPodioAppClient(appConfig.appId);
+        await podio.updateItemFieldValue(item.item_id, targetDateField, { start: iso });
+        console.log(`Successfully updated '${targetDateField}' with '${iso}'.`);
+    } catch (err) {
+        console.error(`Failed to auto-timestamp item ${item.item_id}:`, err);
+    }
 }
 
 // ----------------------------------------------------------------------
