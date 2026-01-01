@@ -21,22 +21,10 @@ export function ServicesDetailsAndStatus({
     href: "#",
   },
 
-  servicesDateServicesStatusDispositivoRecibido = "DD/MM/YY",
-  servicesDateServicesStatusDispositivoEnRevision = "DD/MM/YY",
   servicesDateServiceStatusEnviarDiagnostico = "DD/MM/YY",
-  servicesDateServicesStatusRefaccionesEnCamino = "DD/MM/YY",
-  servicesDateServicesStatusIniciaReparacion = "DD/MM/YY",
-  servicesDateServicesStatusEnviarCodigoDeSeguridad = "DD/MM/YY",
-  servicesDateServicesStatusDispositivoEntregado = "DD/MM/YY",
   servicesAccessories = "Sin accesorios",
-  servicesHourServicesStatusDispositivoRecibido = "00:00",
-  servicesHourServicesStatusDispositivoEnRevision = "00:00",
-  servicesHourServicesStatusIniciaReparacion = "00:00",
-  servicesHourServicesStatusEnviarCodigoDeSeguridad = "00:00",
-  servicesHourServicesStatusDispositivoEntregado = "00:00",
   servicesPrice = "Cargando precio...",
   servicesHourServicesStatusEnviarDiagnostico = "00:00",
-  servicesHourServicesStatusRefaccionesEnCamino = "00:00",
   servicesServicePodioItemIdFormatted = {},
   servicesCreationDate = {},
   statusRow1Step1State = null,
@@ -74,27 +62,6 @@ export function ServicesDetailsAndStatus({
   statusRow5StatusStatusMessage = "Message",
   statusRow6StatusStatusMessage = "Message",
   statusRow7StatusStatusMessage = "Message",
-  statusRow1StatusDate = {},
-  statusRow1StatusHour = {},
-  statusRow1AlertMessage = {},
-  statusRow2StatusDate = {},
-  statusRow2StatusHour = {},
-  statusRow2AlertMessage = {},
-  statusRow3StatusDate = {},
-  statusRow3StatusHour = {},
-  statusRow3AlertMessage = {},
-  statusRow4StatusDate = {},
-  statusRow4StatusHour = {},
-  statusRow4AlertMessage = {},
-  statusRow5StatusDate = {},
-  statusRow5StatusHour = {},
-  statusRow5AlertMessage = {},
-  statusRow6StatusDate = {},
-  statusRow6StatusHour = {},
-  statusRow6AlertMessage = {},
-  statusRow7StatusDate = {},
-  statusRow7StatusHour = {},
-  statusRow7AlertMessage = {},
   servicePodioItemIdFormatted = "Folio",
   statusRow1StatusDate = "DD/MM/YY",
   statusRow1StatusHour = "00:00",
@@ -226,15 +193,6 @@ export function ServicesDetailsAndStatus({
           tag="div"
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow1Step1State}
           alert={statusRow1Alert}
           statusStatusActionButton={statusRow1StatusStatusButton1}
@@ -242,19 +200,9 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow1StatusStatusMessage}
           statusDate={statusRow1StatusDate}
           statusHour={statusRow1StatusHour}
-          alertMessage={statusRow1AlertMessage}
           alertMessageText={statusRow1AlertMessageText}
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow2Step2State}
           alert={statusRow2Alert}
           statusStatusActionButton={statusRow2StatusStatusButton1}
@@ -262,20 +210,10 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow2StatusStatusMessage}
           statusDate={statusRow2StatusDate}
           statusHour={statusRow2StatusHour}
-          alertMessage={statusRow2AlertMessage}
           alertMessageText={statusRow2AlertMessageText}
           statusTitle="Dispositivo en revisión "
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           statusActionPopup={statusRow3StatusActionPopup}
           statusStatusActionButton={statusRow3StatusStatusButton1}
           variant={statusRow3Step3State}
@@ -283,20 +221,10 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow3StatusStatusMessage}
           statusDate={statusRow3StatusDate}
           statusHour={statusRow3StatusHour}
-          alertMessage={statusRow3AlertMessage}
           alertMessageText={statusRow3AlertMessageText}
           statusTitle="Revisa tu diagnóstico"
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow4Step4State}
           statusStatusActionButton={statusRow4StatusStatusButton1}
           statusActionPopup={statusRow4StatusActionPopup}
@@ -304,20 +232,10 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow4StatusStatusMessage}
           statusDate={statusRow4StatusDate}
           statusHour={statusRow4StatusHour}
-          alertMessage={statusRow4AlertMessage}
           alertMessageText={statusRow4AlertMessageText}
           statusTitle="Refacciones en camino"
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow5Step5State}
           statusStatusActionButton={statusRow5StatusStatusButton1}
           statusActionPopup={statusRow5StatusActionPopup}
@@ -325,20 +243,10 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow5StatusStatusMessage}
           statusDate={statusRow5StatusDate}
           statusHour={statusRow5StatusHour}
-          alertMessage={statusRow5AlertMessage}
           alertMessageText={statusRow5AlertMessageText}
           statusTitle="Inicia reparación"
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow6Step6State}
           statusStatusActionButton={statusRow6StatusStatusButton1}
           statusActionPopup={statusRow6StatusActionPopup}
@@ -346,20 +254,10 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow6StatusStatusMessage}
           statusDate={statusRow6StatusDate}
           statusHour={statusRow6StatusHour}
-          alertMessage={statusRow6AlertMessage}
           alertMessageText={statusRow6AlertMessageText}
           statusTitle="Lista para recolección"
         />
         <StatusRow
-          servicesDateServiceStatusEnviarDiagnostico={
-            servicesDateServiceStatusEnviarDiagnostico
-          }
-          servicesHourServicesStatusEnviarDiagnostico={
-            servicesHourServicesStatusEnviarDiagnostico
-          }
-          servicesPrice={servicesPrice}
-          servicesDiagnosis={servicesDiagnosis}
-          servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow7Step7State}
           statusStatusActionButton={statusRow7StatusStatusButton1}
           statusActionPopup={statusRow7StatusActionPopup}
@@ -367,7 +265,6 @@ export function ServicesDetailsAndStatus({
           statusStatusMessage={statusRow7StatusStatusMessage}
           statusDate={statusRow7StatusDate}
           statusHour={statusRow7StatusHour}
-          alertMessage={statusRow7AlertMessage}
           alertMessageText={statusRow7AlertMessageText}
           statusTitle="Dispositivo entregado"
         />

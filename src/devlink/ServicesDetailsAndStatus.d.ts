@@ -21,25 +21,13 @@ declare function ServicesDetailsAndStatus(props: {
   servicesDiagnosis?: Types.Basic.Link;
   /** Button that notifies system that customer accept diagnosis and price so we can proceed with service*/
   servicesDiagnosisAcceptance?: Types.Basic.Link;
-  servicesDateServicesStatusDispositivoRecibido?: React.ReactNode;
-  servicesDateServicesStatusDispositivoEnRevision?: React.ReactNode;
   servicesDateServiceStatusEnviarDiagnostico?: React.ReactNode;
-  servicesDateServicesStatusRefaccionesEnCamino?: React.ReactNode;
-  servicesDateServicesStatusIniciaReparacion?: React.ReactNode;
-  servicesDateServicesStatusEnviarCodigoDeSeguridad?: React.ReactNode;
-  servicesDateServicesStatusDispositivoEntregado?: React.ReactNode;
   /** Customer gave accessories*/
   servicesAccessories?: React.ReactNode;
-  servicesHourServicesStatusDispositivoRecibido?: React.ReactNode;
-  servicesHourServicesStatusDispositivoEnRevision?: React.ReactNode;
-  servicesHourServicesStatusIniciaReparacion?: React.ReactNode;
-  servicesHourServicesStatusEnviarCodigoDeSeguridad?: React.ReactNode;
-  servicesHourServicesStatusDispositivoEntregado?: React.ReactNode;
   /** Price of the service/diagnosis*/
   servicesPrice?: React.ReactNode;
   /** Hour Services Status:*/
   servicesHourServicesStatusEnviarDiagnostico?: React.ReactNode;
-  servicesHourServicesStatusRefaccionesEnCamino?: React.ReactNode;
   servicesServicePodioItemIdFormatted?: Types.Devlink.RuntimeProps;
   servicesCreationDate?: Types.Devlink.RuntimeProps;
   statusRow1Step1State?: "Base" | "active" | "check" | "no_state" | "hidden";
@@ -77,27 +65,6 @@ declare function ServicesDetailsAndStatus(props: {
   statusRow5StatusStatusMessage?: React.ReactNode;
   statusRow6StatusStatusMessage?: React.ReactNode;
   statusRow7StatusStatusMessage?: React.ReactNode;
-  statusRow1StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow1StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow1AlertMessage?: Types.Devlink.RuntimeProps;
-  statusRow2StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow2StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow2AlertMessage?: Types.Devlink.RuntimeProps;
-  statusRow3StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow3StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow3AlertMessage?: Types.Devlink.RuntimeProps;
-  statusRow4StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow4StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow4AlertMessage?: Types.Devlink.RuntimeProps;
-  statusRow5StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow5StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow5AlertMessage?: Types.Devlink.RuntimeProps;
-  statusRow6StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow6StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow6AlertMessage?: Types.Devlink.RuntimeProps;
-  statusRow7StatusDate?: Types.Devlink.RuntimeProps;
-  statusRow7StatusHour?: Types.Devlink.RuntimeProps;
-  statusRow7AlertMessage?: Types.Devlink.RuntimeProps;
   servicePodioItemIdFormatted?: React.ReactNode;
   statusRow1StatusDate?: React.ReactNode;
   statusRow1StatusHour?: React.ReactNode;

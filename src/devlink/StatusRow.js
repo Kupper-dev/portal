@@ -5,28 +5,11 @@ import * as _Builtin from "./_Builtin";
 export function StatusRow({
   as: _Component = _Builtin.Block,
   variant = "Base",
-  servicesDateServiceStatusEnviarDiagnostico = "DD/MM/YY",
-  servicesHourServicesStatusEnviarDiagnostico = "00:00",
-  servicesPrice = "Cargando precio...",
-
-  servicesDiagnosis = {
-    href: "#",
-  },
-
-  servicesDiagnosisAcceptance = {
-    href: "#",
-  },
-
-  statusStatusTitle = {},
-  statusDate = {},
   statusStatusActionButton = false,
   statusActionPopup = false,
-  statusStatusCurrentMessage = {},
   statusTitle = "Dispositivo recibido ",
   statusStatusMessage = "Message",
-  statusHour = {},
   alert = true,
-  alertMessage = {},
   statusDate = "DD/MM/YY",
   statusHour = "00:00",
   alertMessageText = "Alert message",
@@ -63,14 +46,12 @@ export function StatusRow({
           <_Builtin.Block
             className={`small_text text_gray ${_activeStyleVariant}`}
             tag="div"
-            {...statusDate}
           >
             {statusDate}
           </_Builtin.Block>
           <_Builtin.Block
             className={`small_text text_gray ${_activeStyleVariant}`}
             tag="div"
-            {...statusHour}
           >
             {statusHour}
           </_Builtin.Block>
