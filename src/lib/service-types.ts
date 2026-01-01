@@ -14,6 +14,15 @@ export interface ServiceItem {
     accessories: string;
     diagnosis: string;
     advancepayment: string; // Maybe price?
+    // Timestamps from Podio (External IDs sanitized)
+    datereceived?: string;
+    datecheckupstart?: string;
+    datediagnosed?: string;
+    date_diagnosis?: string; // from 'date-diagnosis'
+    datepartsordered?: string;
+    daterepairstart?: string;
+    daterepairready?: string;
+    datedevicedelivered?: string;
 }
 
 export interface DeviceItem {

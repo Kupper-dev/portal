@@ -172,28 +172,23 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
 
 
                         // Status Dates (Text Bindings via RuntimeProps)
-                        statusRow1StatusDate={formatDate(s.date)}
-                        statusRow2StatusDate={getDateIfStatus("Dispositivo en revision")}
-                        statusRow3StatusDate={getDateIfStatus("Enviar diagnostico")}
-                        statusRow4StatusDate={getDateIfStatus("Refacciones en camino")}
-                        statusRow5StatusDate={getDateIfStatus("Inicia reparación")}
-                        statusRow6StatusDate={getDateIfStatus("Enviar código de seguridad")}
-                        statusRow7StatusDate={
-                            (s.status === "Dispositivo entregado" || s.status === "Dispositivo entregado sin reparar")
-                                ? formatDate(s.last_updated_at) : ""
-                        }
+                        // Status Dates (Text Bindings via ReactNode)
+                        statusRow1StatusDate={formatDate(s.datereceived || s.date)}
+                        statusRow2StatusDate={formatDate(s.datecheckupstart || "")}
+                        statusRow3StatusDate={formatDate(s.datediagnosed || "")}
+                        statusRow4StatusDate={formatDate(s.datepartsordered || "")}
+                        statusRow5StatusDate={formatDate(s.daterepairstart || "")}
+                        statusRow6StatusDate={formatDate(s.daterepairready || "")}
+                        statusRow7StatusDate={formatDate(s.datedevicedelivered || "")}
 
-                        // Status Hours (Text Bindings via RuntimeProps)
-                        statusRow1StatusHour={formatTime(s.date)}
-                        statusRow2StatusHour={getTimeIfStatus("Dispositivo en revision")}
-                        statusRow3StatusHour={getTimeIfStatus("Enviar diagnostico")}
-                        statusRow4StatusHour={getTimeIfStatus("Refacciones en camino")}
-                        statusRow5StatusHour={getTimeIfStatus("Inicia reparación")}
-                        statusRow6StatusHour={getTimeIfStatus("Enviar código de seguridad")}
-                        statusRow7StatusHour={
-                            (s.status === "Dispositivo entregado" || s.status === "Dispositivo entregado sin reparar")
-                                ? formatTime(s.last_updated_at) : ""
-                        }
+                        // Status Hours (Text Bindings via ReactNode)
+                        statusRow1StatusHour={formatTime(s.datereceived || s.date)}
+                        statusRow2StatusHour={formatTime(s.datecheckupstart || "")}
+                        statusRow3StatusHour={formatTime(s.datediagnosed || "")}
+                        statusRow4StatusHour={formatTime(s.datepartsordered || "")}
+                        statusRow5StatusHour={formatTime(s.daterepairstart || "")}
+                        statusRow6StatusHour={formatTime(s.daterepairready || "")}
+                        statusRow7StatusHour={formatTime(s.datedevicedelivered || "")}
 
                         // Alert Messages (Text Bindings via ReactNode)
                         statusRow1AlertMessageText={alert1.message}

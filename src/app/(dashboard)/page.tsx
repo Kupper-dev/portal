@@ -20,8 +20,8 @@ export default async function DashboardPage() {
     // Fetch service data
     const serviceItems = await getUserServiceData();
 
-    // Placeholder image since session doesn't store it to save space
-    const userImage = "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
+    // Use session picture or placeholder
+    const userImage = session.picture || "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
 
     return (
         <div className="dashboard_section">
