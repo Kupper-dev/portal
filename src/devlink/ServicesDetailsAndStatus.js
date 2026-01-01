@@ -45,6 +45,35 @@ export function ServicesDetailsAndStatus({
   statusRow4Step4State = null,
   statusRow5Step5State = null,
   statusRow6Step6State = null,
+  statusRow7Step7State = null,
+  statusRow3StatusStatusButton1 = false,
+  statusRow1StatusStatusButton1 = false,
+  statusRow2StatusStatusButton1 = false,
+  statusRow4StatusStatusButton1 = false,
+  statusRow5StatusStatusButton1 = false,
+  statusRow6StatusStatusButton1 = false,
+  statusRow7StatusStatusButton1 = false,
+  statusRow1StatusActionPopup = false,
+  statusRow2StatusActionPopup = false,
+  statusRow3StatusActionPopup = false,
+  statusRow4StatusActionPopup = false,
+  statusRow5StatusActionPopup = false,
+  statusRow6StatusActionPopup = false,
+  statusRow7StatusActionPopup = false,
+  statusRow1Alert = false,
+  statusRow2Alert = false,
+  statusRow3Alert = false,
+  statusRow4Alert = true,
+  statusRow5Alert = true,
+  statusRow6Alert = true,
+  statusRow7Alert = true,
+  statusRow1StatusStatusMessage = "Message",
+  statusRow2StatusStatusMessage = "Message",
+  statusRow3StatusStatusMessage = "Message",
+  statusRow4StatusStatusMessage = "Message",
+  statusRow5StatusStatusMessage = "Message",
+  statusRow6StatusStatusMessage = "Message",
+  statusRow7StatusStatusMessage = "Message",
 }) {
   return (
     <_Component
@@ -148,6 +177,11 @@ export function ServicesDetailsAndStatus({
         >
           <_Builtin.Heading tag="h4">{"Status del servicios"}</_Builtin.Heading>
         </_Builtin.Block>
+        <_Builtin.Block
+          className="spacer_1_rem"
+          id="w-node-_09909b0b-1f76-8022-75ec-a3ba1ce6b334-74e77201"
+          tag="div"
+        />
         <StatusRow
           servicesDateServiceStatusEnviarDiagnostico={
             servicesDateServiceStatusEnviarDiagnostico
@@ -159,6 +193,10 @@ export function ServicesDetailsAndStatus({
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow1Step1State}
+          alert={statusRow1Alert}
+          statusStatusActionButton={statusRow1StatusStatusButton1}
+          statusActionPopup={statusRow1StatusActionPopup}
+          statusStatusMessage={statusRow1StatusStatusMessage}
         />
         <StatusRow
           servicesDateServiceStatusEnviarDiagnostico={
@@ -171,6 +209,10 @@ export function ServicesDetailsAndStatus({
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow2Step2State}
+          alert={statusRow2Alert}
+          statusStatusActionButton={statusRow2StatusStatusButton1}
+          statusActionPopup={statusRow2StatusActionPopup}
+          statusStatusMessage={statusRow2StatusStatusMessage}
           statusTitle="Dispositivo en revisión "
         />
         <StatusRow
@@ -183,10 +225,12 @@ export function ServicesDetailsAndStatus({
           servicesPrice={servicesPrice}
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
+          statusActionPopup={statusRow3StatusActionPopup}
+          statusStatusActionButton={statusRow3StatusStatusButton1}
           variant={statusRow3Step3State}
+          alert={statusRow3Alert}
+          statusStatusMessage={statusRow3StatusStatusMessage}
           statusTitle="Revisa tu diagnóstico"
-          statusActionPopup={true}
-          statusStatusActionButton={true}
         />
         <StatusRow
           servicesDateServiceStatusEnviarDiagnostico={
@@ -199,6 +243,10 @@ export function ServicesDetailsAndStatus({
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow4Step4State}
+          statusStatusActionButton={statusRow4StatusStatusButton1}
+          statusActionPopup={statusRow4StatusActionPopup}
+          alert={statusRow4Alert}
+          statusStatusMessage={statusRow4StatusStatusMessage}
           statusTitle="Refacciones en camino"
         />
         <StatusRow
@@ -212,6 +260,10 @@ export function ServicesDetailsAndStatus({
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow5Step5State}
+          statusStatusActionButton={statusRow5StatusStatusButton1}
+          statusActionPopup={statusRow5StatusActionPopup}
+          alert={statusRow5Alert}
+          statusStatusMessage={statusRow5StatusStatusMessage}
           statusTitle="Inicia reparación"
         />
         <StatusRow
@@ -225,6 +277,10 @@ export function ServicesDetailsAndStatus({
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
           variant={statusRow6Step6State}
+          statusStatusActionButton={statusRow6StatusStatusButton1}
+          statusActionPopup={statusRow6StatusActionPopup}
+          alert={statusRow6Alert}
+          statusStatusMessage={statusRow6StatusStatusMessage}
           statusTitle="Lista para recolección"
         />
         <StatusRow
@@ -237,7 +293,11 @@ export function ServicesDetailsAndStatus({
           servicesPrice={servicesPrice}
           servicesDiagnosis={servicesDiagnosis}
           servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
-          variant="Base"
+          variant={statusRow7Step7State}
+          statusStatusActionButton={statusRow7StatusStatusButton1}
+          statusActionPopup={statusRow7StatusActionPopup}
+          alert={statusRow7Alert}
+          statusStatusMessage={statusRow7StatusStatusMessage}
           statusTitle="Dispositivo entregado"
         />
       </_Builtin.Block>

@@ -53,27 +53,107 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         currentStatus = "Dispositivo entregado";
                     }
 
-                    // Normalize for accent safety if needed, utilizing exact strings from prompt for now
                     const currentIndex = STATUS_ORDER.indexOf(currentStatus);
                     const targetIndex = stepIndex - 1;
 
                     // Step 4 "Refacciones en camino" Special Logic
-                    // "Always hidden, removed hidden if status is updated to 4"
                     if (stepIndex === 4) {
                         return currentIndex === targetIndex ? "active" : "hidden";
                     }
 
-                    if (currentIndex === -1) return "Base"; // Unknown status
+                    if (currentIndex === -1) return "Base";
 
                     if (currentIndex === targetIndex) return "active";
                     if (currentIndex > targetIndex) return "check";
-                    return "Base"; // Future
+                    return "Base";
                 };
+
+                // Helper to parse dates (assuming ISO format from Supabase/Podio)
+                const parseDate = (dateStr: string) => new Date(dateStr);
+
+                // Alert Logic
+                const getAlertConfig = (stepIndex: number): { show: boolean, message: string } => {
+                    const variant = getStepVariant(stepIndex);
+                    // Alerts only show on active steps (usually)
+                    if (variant !== 'active') return { show: false, message: "" };
+
+                    const creationDate = parseDate(s.date); // 'date' is creation date
+                    const lastUpdated = parseDate(s.last_updated_at);
+                    const now = new Date();
+
+                    // Scenario 1: Service added after 16:00 (4 PM) - Warn about next day revision
+                    // This likely applies to Step 1 (Received) or 2 (Revision)
+                    if (stepIndex === 1 || stepIndex === 2) {
+                        const hour = creationDate.getHours();
+                        if (hour >= 16) {
+                            return {
+                                show: true,
+                                message: "Tu dispositivo fue recibido después de las 4:00 PM. La revisión podría iniciar hasta el día siguiente hábil."
+                            };
+                        }
+                    }
+
+                    // Scenario 2: Step 6 (Ready/Collection) updated after 18:00 (6 PM) - Warn about closing
+                    if (stepIndex === 6) { // "Lista para recolección" is Step 6
+                        const hour = lastUpdated.getHours();
+                        if (hour >= 18) {
+                            return {
+                                show: true,
+                                message: "Tu dispositivo estuvo listo después de las 6:00 PM. Podríamos haber cerrado, por favor verifica antes de venir."
+                            };
+                        }
+                    }
+
+                    // Scenario 3: More than a month (General warning/reminder)
+                    // Maybe for "Dispositivo entregado" or just lingering in "Ready"? User said "step 6 is current and more than a month"
+                    if (stepIndex === 6) {
+                        const diffTime = Math.abs(now.getTime() - lastUpdated.getTime());
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        if (diffDays > 30) {
+                            return {
+                                show: true,
+                                message: "Tu dispositivo lleva más de 30 días listo. Podrían aplicar cargos de almacenamiento."
+                            };
+                        }
+                    }
+
+                    return { show: false, message: "" };
+                };
+
+                // Status Message Logic (Descriptions for active steps)
+                const getStatusMessage = (stepIndex: number): string => {
+                    const variant = getStepVariant(stepIndex);
+                    if (variant !== 'active') return ""; // Only show message for active step? Or all? Usually active.
+
+                    switch (stepIndex) {
+                        case 1: return "Hemos recibido tu dispositivo y empezaremos la revisión tan pronto como sea posible.";
+                        case 2: return "Nuestros técnicos están diagnosticando tu dispositivo para encontrar la falla.";
+                        case 3: return "Tu diagnóstico está listo. Por favor revísalo y autoriza la reparación.";
+                        case 4: return "Estamos esperando las refacciones necesarias para reparar tu equipo.";
+                        case 5: return "La reparación está en curso. Te notificaremos cuando termine.";
+                        case 6: return "¡Tu dispositivo está listo! Puedes pasar a recogerlo en nuestros horarios de atención.";
+                        case 7: return "Gracias por confiar en nosotros. Tu dispositivo ha sido entregado.";
+                        default: return "";
+                    }
+                };
+
+                // Button Visibility Logic
+                // Only visible if Step 3 is ACTIVE (Diagnosis ready)
+                const showButtons = getStepVariant(3) === 'active';
+                const showPopup = getStepVariant(3) === 'active'; // Assuming same logic for popup triggers
+
+                const alert1 = getAlertConfig(1);
+                const alert2 = getAlertConfig(2);
+                const alert3 = getAlertConfig(3);
+                const alert4 = getAlertConfig(4);
+                const alert5 = getAlertConfig(5);
+                const alert6 = getAlertConfig(6);
+                const alert7 = getAlertConfig(7);
 
                 return (
                     <ServicesDetailsAndStatus
                         key={s.podio_item_id}
-                        // Device Info
+                        // ... existing props ...
                         devicesDeviceBrandModel={d?.brandmodel || "Unknown Device"}
                         devicesSerial={d?.serial || "N/A"}
 
@@ -83,12 +163,12 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         servicesPowerAdapter={s.poweradapter || "No"}
                         servicesAccessories={s.accessories || "None"}
                         servicesObservations={s.observations || "None"}
-                        servicesPrice={s.advancepayment || "Pending"} // Assuming advancepayment/price
+                        servicesPrice={s.advancepayment || "Pending"}
 
                         servicesServicePodioItemIdFormatted={{ children: s.podio_formatted_id }}
 
                         // Dates & Times
-                        servicesDate={formatDate(s.date)} // Creation date
+                        servicesDate={formatDate(s.date)}
 
                         // Status Dates
                         servicesDateServicesStatusDispositivoRecibido={formatDate(s.date)}
@@ -118,10 +198,46 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         statusRow1Step1State={getStepVariant(1)}
                         statusRow2Step2State={getStepVariant(2)}
                         statusRow3Step3State={getStepVariant(3)}
-                        statusRow4Step4State={getStepVariant(4)} // Refacciones
+                        statusRow4Step4State={getStepVariant(4)}
                         statusRow5Step5State={getStepVariant(5)}
                         statusRow6Step6State={getStepVariant(6)}
-                        // statusRow7Step7State={getStepVariant(7)} // Prop missing in DevLink export
+                        statusRow7Step7State={getStepVariant(7)}
+
+                        // Alert Visibility
+                        statusRow1Alert={alert1.show}
+                        statusRow2Alert={alert2.show}
+                        statusRow3Alert={alert3.show}
+                        statusRow4Alert={alert4.show}
+                        statusRow5Alert={alert5.show}
+                        statusRow6Alert={alert6.show}
+                        statusRow7Alert={alert7.show}
+
+                        // Status Messages (Descriptions)
+                        statusRow1StatusStatusMessage={getStatusMessage(1)}
+                        statusRow2StatusStatusMessage={getStatusMessage(2)}
+                        statusRow3StatusStatusMessage={getStatusMessage(3)}
+                        statusRow4StatusStatusMessage={getStatusMessage(4)}
+                        statusRow5StatusStatusMessage={getStatusMessage(5)}
+                        statusRow6StatusStatusMessage={getStatusMessage(6)}
+                        statusRow7StatusStatusMessage={getStatusMessage(7)}
+
+                        // Button/Popup Visibility (Step 3 mainly)
+                        statusRow3StatusActionPopup={showPopup}
+                        statusRow3StatusStatusButton1={showButtons}
+
+                        // Cleanup/Default bindings for others if needed to prevent errors
+                        statusRow1StatusActionPopup={false}
+                        statusRow1StatusStatusButton1={false}
+                        statusRow2StatusActionPopup={false}
+                        statusRow2StatusStatusButton1={false}
+                        statusRow4StatusActionPopup={false}
+                        statusRow4StatusStatusButton1={false}
+                        statusRow5StatusActionPopup={false}
+                        statusRow5StatusStatusButton1={false}
+                        statusRow6StatusActionPopup={false}
+                        statusRow6StatusStatusButton1={false}
+                        statusRow7StatusActionPopup={false}
+                        statusRow7StatusStatusButton1={false}
 
                         // Actions
                         servicesDiagnosis={{ href: s.diagnosis || "#", target: "_blank" }}
@@ -129,6 +245,8 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                     />
                 );
             })}
+
+
         </div>
     );
 }

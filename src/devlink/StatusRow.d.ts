@@ -21,4 +21,6 @@ declare function StatusRow(props: {
   statusTitle?: React.ReactNode;
   statusStatusMessage?: React.ReactNode;
   statusHour?: Types.Devlink.RuntimeProps;
+  alert?: Types.Visibility.VisibilityConditions;
+  alertMessage?: Types.Devlink.RuntimeProps;
 }): React.JSX.Element;

@@ -2171,6 +2171,8 @@ textarea.w-select {
   --green: hsla(118, 65.88%, 62.88%, 1.00);
   --safe-gray: hsla(207.27272727272728, 16.43%, 91.23%, 1.00);
   --text-gray-2: hsla(219, 43.31%, 52.96%, 1.00);
+  --alert-orange: hsla(51, 87.50%, 96.86%, 1.00);
+  --alert-text: hsla(34, 34.39%, 51.23%, 1.00);
 }
 
 body {
@@ -3776,6 +3778,33 @@ a {
   display: none;
 }
 
+.spacer_1_rem {
+  height: 1rem;
+}
+
+.alert {
+  display: flex;
+  width: 100%;
+  min-height: 2rem;
+  padding-left: 1rem;
+  justify-content: flex-start;
+  align-items: center;
+
+  border-radius: var(--05-rem);
+
+  background-color: var(--alert-orange);
+
+  color: var(--alert-text);
+}
+
+.alert:where(.w-variant-950f7ec7-6ade-871a-9d0e-b3048a46e0ed) {
+  display: none;
+}
+
+.alert_message {
+  margin-left: 0.5rem;
+}
+
 
  #w-node-b33d686b-1fc0-5200-0a6f-d13c74e77201-74e77201 {
 }
@@ -3784,6 +3813,8 @@ a {
 #w-node-b33d686b-1fc0-5200-0a6f-d13c74e7720f-74e77201 {
 }
 #w-node-_31c2c3bf-5a84-809e-fbce-b39972e5f07c-74e77201 {
+}
+#w-node-_09909b0b-1f76-8022-75ec-a3ba1ce6b334-74e77201 {
 }
  #w-node-_8fbc53b0-423e-d8c4-831c-9bc7c8be43eb-c8be43bd {
   align-self: center;
