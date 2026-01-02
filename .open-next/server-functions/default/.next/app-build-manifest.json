@@ -7,14 +7,6 @@
       "static/chunks/main-app-11c11b4846ca6f15.js",
       "static/chunks/app/_not-found/page-01b2e81bb317dc9b.js"
     ],
-    "/layout": [
-      "static/chunks/webpack-fa3ab0eee46cb299.js",
-      "static/chunks/4bd1b696-21f374d1156f834a.js",
-      "static/chunks/255-1d5aeaa7ca3f0f94.js",
-      "static/chunks/main-app-11c11b4846ca6f15.js",
-      "static/css/be99ef0e418720fd.css",
-      "static/chunks/app/layout-82709c7fdc84cc49.js"
-    ],
     "/api/version/route": [
       "static/chunks/webpack-fa3ab0eee46cb299.js",
       "static/chunks/4bd1b696-21f374d1156f834a.js",
@@ -29,12 +21,27 @@
       "static/chunks/main-app-11c11b4846ca6f15.js",
       "static/chunks/app/auth/logout/route-d36753058c12a234.js"
     ],
+    "/layout": [
+      "static/chunks/webpack-fa3ab0eee46cb299.js",
+      "static/chunks/4bd1b696-21f374d1156f834a.js",
+      "static/chunks/255-1d5aeaa7ca3f0f94.js",
+      "static/chunks/main-app-11c11b4846ca6f15.js",
+      "static/css/be99ef0e418720fd.css",
+      "static/chunks/app/layout-82709c7fdc84cc49.js"
+    ],
     "/api/sync/outbound/route": [
       "static/chunks/webpack-fa3ab0eee46cb299.js",
       "static/chunks/4bd1b696-21f374d1156f834a.js",
       "static/chunks/255-1d5aeaa7ca3f0f94.js",
       "static/chunks/main-app-11c11b4846ca6f15.js",
       "static/chunks/app/api/sync/outbound/route-d36753058c12a234.js"
+    ],
+    "/api/webhooks/podio/route": [
+      "static/chunks/webpack-fa3ab0eee46cb299.js",
+      "static/chunks/4bd1b696-21f374d1156f834a.js",
+      "static/chunks/255-1d5aeaa7ca3f0f94.js",
+      "static/chunks/main-app-11c11b4846ca6f15.js",
+      "static/chunks/app/api/webhooks/podio/route-d36753058c12a234.js"
     ],
     "/api/auth/register/route": [
       "static/chunks/webpack-fa3ab0eee46cb299.js",
@@ -56,13 +63,6 @@
       "static/chunks/255-1d5aeaa7ca3f0f94.js",
       "static/chunks/main-app-11c11b4846ca6f15.js",
       "static/chunks/app/auth/post-login/route-d36753058c12a234.js"
-    ],
-    "/api/webhooks/podio/route": [
-      "static/chunks/webpack-fa3ab0eee46cb299.js",
-      "static/chunks/4bd1b696-21f374d1156f834a.js",
-      "static/chunks/255-1d5aeaa7ca3f0f94.js",
-      "static/chunks/main-app-11c11b4846ca6f15.js",
-      "static/chunks/app/api/webhooks/podio/route-d36753058c12a234.js"
     ],
     "/auth/complete-register/page": [
       "static/chunks/webpack-fa3ab0eee46cb299.js",

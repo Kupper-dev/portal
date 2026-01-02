@@ -1,13 +1,13 @@
 {
-  "/_not-found/page": "/_not-found",
   "/api/version/route": "/api/version",
-  "/favicon.ico/route": "/favicon.ico",
   "/auth/logout/route": "/auth/logout",
+  "/favicon.ico/route": "/favicon.ico",
+  "/_not-found/page": "/_not-found",
   "/api/sync/outbound/route": "/api/sync/outbound",
+  "/api/webhooks/podio/route": "/api/webhooks/podio",
   "/api/auth/register/route": "/api/auth/register",
   "/auth/signup/route": "/auth/signup",
   "/auth/post-login/route": "/auth/post-login",
-  "/api/webhooks/podio/route": "/api/webhooks/podio",
   "/auth/complete-register/page": "/auth/complete-register",
   "/(dashboard)/page": "/"
 }
