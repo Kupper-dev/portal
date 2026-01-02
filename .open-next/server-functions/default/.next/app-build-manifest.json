@@ -29,13 +29,6 @@
       "static/css/be99ef0e418720fd.css",
       "static/chunks/app/layout-82709c7fdc84cc49.js"
     ],
-    "/api/sync/outbound/route": [
-      "static/chunks/webpack-fa3ab0eee46cb299.js",
-      "static/chunks/4bd1b696-21f374d1156f834a.js",
-      "static/chunks/255-1d5aeaa7ca3f0f94.js",
-      "static/chunks/main-app-11c11b4846ca6f15.js",
-      "static/chunks/app/api/sync/outbound/route-d36753058c12a234.js"
-    ],
     "/api/webhooks/podio/route": [
       "static/chunks/webpack-fa3ab0eee46cb299.js",
       "static/chunks/4bd1b696-21f374d1156f834a.js",
@@ -49,6 +42,13 @@
       "static/chunks/255-1d5aeaa7ca3f0f94.js",
       "static/chunks/main-app-11c11b4846ca6f15.js",
       "static/chunks/app/api/auth/register/route-d36753058c12a234.js"
+    ],
+    "/api/sync/outbound/route": [
+      "static/chunks/webpack-fa3ab0eee46cb299.js",
+      "static/chunks/4bd1b696-21f374d1156f834a.js",
+      "static/chunks/255-1d5aeaa7ca3f0f94.js",
+      "static/chunks/main-app-11c11b4846ca6f15.js",
+      "static/chunks/app/api/sync/outbound/route-d36753058c12a234.js"
     ],
     "/auth/signup/route": [
       "static/chunks/webpack-fa3ab0eee46cb299.js",
