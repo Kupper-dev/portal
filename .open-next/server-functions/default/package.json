@@ -4,27 +4,37 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx patch-package && next build",
+    "build": "next build",
     "start": "next start",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "lint": "eslint",
-    "postinstall": "patch-package"
+    "deploy": "opennextjs-cloudflare build && wrangler deploy",
+    "devlink": "webflow devlink sync"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^4.14.0",
     "@opennextjs/cloudflare": "^1.6.5",
     "@supabase/supabase-js": "^2.89.0",
-    "next": "^15.1.6",
+    "@types/pg": "^8.16.0",
+    "jose": "^6.1.3",
+    "next": "^15.1.4",
+    "pg": "^8.16.3",
+    "podio-js": "^1.6.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "unenv": "file:./vendor/unenv"
+  },
+  "overrides": {
+    "unenv": "$unenv"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@webflow/data-types": "^1.1.0",
+    "@webflow/react": "^1.1.0",
+    "@webflow/webflow-cli": "^1.10.0",
     "eslint": "^9",
-    "eslint-config-next": "^15.1.6",
-    "patch-package": "^8.0.1",
+    "eslint-config-next": "^15.1.4",
     "typescript": "^5",
     "wrangler": "^4.56.0"
   }

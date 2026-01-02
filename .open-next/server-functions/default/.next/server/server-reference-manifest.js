@@ -1,1 +1,1 @@
-self.__RSC_SERVER_MANIFEST="{\"node\":{},\"edge\":{},\"encryptionKey\":\"process.env.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY\"}"
+self.__RSC_SERVER_MANIFEST="{\"node\":{\"4081cae55b107dbdec3865a2f4bbb51ff1d1e02eb8\":{\"workers\":{\"app/(dashboard)/page\":{\"moduleId\":\"30433\",\"async\":false}},\"layer\":{\"app/(dashboard)/page\":\"action-browser\"},\"filename\":\"app/actions/service-actions.ts\",\"exportedName\":\"acceptDiagnosis\"}},\"edge\":{},\"encryptionKey\":\"process.env.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY\"}"

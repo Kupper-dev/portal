@@ -1,8 +1,13 @@
 {
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/api/version/route": "app/api/version/route.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/version/route": "app/api/version/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/auth/logout/route": "app/auth/logout/route.js",
   "/api/sync/outbound/route": "app/api/sync/outbound/route.js",
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/auth/signup/route": "app/auth/signup/route.js",
+  "/auth/post-login/route": "app/auth/post-login/route.js",
   "/api/webhooks/podio/route": "app/api/webhooks/podio/route.js",
-  "/page": "app/page.js"
+  "/auth/complete-register/page": "app/auth/complete-register/page.js",
+  "/(dashboard)/page": "app/(dashboard)/page.js"
 }
