@@ -486,7 +486,8 @@ const STATUS_TO_DATE_FIELD: Record<string, string> = {
     'Esperando refacciones': 'datepartsordered',
     'Inicia reparación': 'daterepairstart',
     'Reparación finalizada': 'daterepairready',
-    'Dispositivo entregado': 'datedevicedelivered'
+    'Dispositivo entregado': 'datedevicedelivered',
+    'Dispositivo entregado sin reparar': 'datedevicedelivered'
 };
 
 async function processServicesAutoTimestamping(appConfig: typeof PODIO_APPS[0], item: any) {
