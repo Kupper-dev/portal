@@ -2,7 +2,33 @@
 import React from "react";
 import * as _Builtin from "./_Builtin";
 
-export function Sidebar({ as: _Component = _Builtin.Block }) {
+export function Sidebar({
+  as: _Component = _Builtin.Block,
+
+  sIdebarServices = {
+    href: "#",
+  },
+
+  dashboard = {
+    href: "https://kupper-34ef94.webflow.io/app",
+  },
+
+  warranties = {
+    href: "#",
+  },
+
+  devices = {
+    href: "#",
+  },
+
+  approvals = {
+    href: "#",
+  },
+
+  invoices = {
+    href: "#",
+  },
+}) {
   return (
     <_Component className="sidebar" tag="div">
       <_Builtin.Block className="sidebar_header" tag="div">
@@ -25,9 +51,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           button={false}
           id="dashboard"
           block="inline"
-          options={{
-            href: "https://kupper-34ef94.webflow.io/app",
-          }}
+          options={dashboard}
         >
           <_Builtin.Block className="square" tag="div">
             <_Builtin.Image
@@ -48,9 +72,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           button={false}
           id="services"
           block="inline"
-          options={{
-            href: "#",
-          }}
+          options={sIdebarServices}
         >
           <_Builtin.Block className="square" tag="div">
             <_Builtin.Image
@@ -70,9 +92,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           button={false}
           id="warranties"
           block="inline"
-          options={{
-            href: "#",
-          }}
+          options={warranties}
         >
           <_Builtin.Block className="square" tag="div">
             <_Builtin.Image
@@ -92,9 +112,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           button={false}
           id="devices"
           block="inline"
-          options={{
-            href: "#",
-          }}
+          options={devices}
         >
           <_Builtin.Block className="square" tag="div">
             <_Builtin.Image
@@ -114,9 +132,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           button={false}
           id="approvals"
           block="inline"
-          options={{
-            href: "#",
-          }}
+          options={approvals}
         >
           <_Builtin.Block className="square" tag="div">
             <_Builtin.Image
@@ -136,9 +152,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
           button={false}
           id="invoices"
           block="inline"
-          options={{
-            href: "#",
-          }}
+          options={invoices}
         >
           <_Builtin.Block className="square" tag="div">
             <_Builtin.Image

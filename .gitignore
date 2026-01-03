@@ -46,3 +46,7 @@ next-env.d.ts
 
 # webflow
 .webflowrc.js
+
+# open-next
+.open-next/
+.worker-next/

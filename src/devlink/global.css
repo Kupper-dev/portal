@@ -3847,7 +3847,7 @@ a {
 .dynamic_row {
   display: flex;
   overflow: clip;
-  height: 100%;
+  height: 4rem;
   margin-bottom: 1rem;
   flex-direction: column;
   flex-wrap: nowrap;

@@ -40,3 +40,29 @@ a {
     color-scheme: dark;
   }
 }
+
+.module {
+  display: flex;
+  padding: 1.5rem;
+  flex-direction: column;
+  border-top-left-radius: var(--small-radius);
+  border-top-right-radius: var(--small-radius);
+  border-bottom-left-radius: var(--small-radius);
+  border-bottom-right-radius: var(--small-radius);
+  background-color: var(--white);
+  backdrop-filter: blur(10px);
+}
+
+.main-grid {
+  width: 100%;
+  padding-left: 16rem;
+  gap: 1.4rem;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+}
+
+@media screen and (max-width: 991px) {
+  .main-grid {
+    padding-left: 0rem;
+  }
+}
