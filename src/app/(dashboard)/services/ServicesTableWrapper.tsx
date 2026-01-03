@@ -73,7 +73,7 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
     });
 
     return (
-        <div className="table-module">
+        <div className="table-module" style={{ paddingLeft: '16rem' }}>
             {/* Header */}
             <div className="table-header">
                 <h4 className="no_space_bottom">Ultimas solicitudes</h4>
@@ -142,26 +142,28 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
             </div>
 
             {/* Pagination */}
-            <TablePagination
-                anterior={{
-                    href: "#",
-                    onClick: (e: React.MouseEvent) => {
-                        e.preventDefault();
-                        if (table.getCanPreviousPage()) table.previousPage();
-                    }
-                } as any}
-                siguiente={{
-                    href: "#",
-                    onClick: (e: React.MouseEvent) => {
-                        e.preventDefault();
-                        if (table.getCanNextPage()) table.nextPage();
-                    }
-                } as any}
-                paginationCountFirst={{ href: "#", text: `${table.getState().pagination.pageIndex + 1}` } as any}
-                paginationPaginationCountSecondVisibility={false}
-                paginationPaginationCountThirdVisibility={false}
-                paginationPaginationCountLastVisibility={false}
-            />
+            {table.getPageCount() > 1 && (
+                <TablePagination
+                    anterior={{
+                        href: "#",
+                        onClick: (e: React.MouseEvent) => {
+                            e.preventDefault();
+                            if (table.getCanPreviousPage()) table.previousPage();
+                        }
+                    } as any}
+                    siguiente={{
+                        href: "#",
+                        onClick: (e: React.MouseEvent) => {
+                            e.preventDefault();
+                            if (table.getCanNextPage()) table.nextPage();
+                        }
+                    } as any}
+                    paginationCountFirst={{ href: "#", text: `${table.getState().pagination.pageIndex + 1}` } as any}
+                    paginationPaginationCountSecondVisibility={false}
+                    paginationPaginationCountThirdVisibility={false}
+                    paginationPaginationCountLastVisibility={false}
+                />
+            )}
         </div>
     );
 }
