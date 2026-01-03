@@ -10,7 +10,7 @@ export function Table({ as: _Component = _Builtin.Block }) {
       tag="div"
     >
       <_Builtin.Block className="table-header" tag="div">
-        <_Builtin.Heading className="no-space-bottom" tag="h4">
+        <_Builtin.Heading className="no_space_bottom" tag="h4">
           {"Ultimas solicitudes"}
         </_Builtin.Heading>
       </_Builtin.Block>
@@ -34,7 +34,7 @@ export function Table({ as: _Component = _Builtin.Block }) {
               src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/694f25afc7362a817525a199_e98059ea8a10d79ee634ca9e8d9d8f07_Laptop%20Ok%20Icon.png"
             />
             <_Builtin.Block tag="div">
-              <_Builtin.Heading className="no-space-bottom" tag="h6">
+              <_Builtin.Heading className="no_space_bottom" tag="h6">
                 {"Hp 14-DK001LA"}
               </_Builtin.Heading>
               <_Builtin.Block className="small_text text_gray" tag="div">
@@ -64,7 +64,7 @@ export function Table({ as: _Component = _Builtin.Block }) {
               src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/694f2d99aa511c706a0ed3d3_Service%20StandBy.png"
             />
             <_Builtin.Block tag="div">
-              <_Builtin.Heading className="no-space-bottom" tag="h6">
+              <_Builtin.Heading className="no_space_bottom" tag="h6">
                 {"Hp 14-DK001LA"}
               </_Builtin.Heading>
               <_Builtin.Block className="small_text text_gray" tag="div">

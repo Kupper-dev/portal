@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import * as _Builtin from "./_Builtin";
-import { StatusRow } from "./StatusRow";
+import { StatusCard } from "./StatusCard";
 
 export function ServicesDetailsAndStatus({
   as: _Component = _Builtin.Grid,
@@ -107,7 +107,7 @@ export function ServicesDetailsAndStatus({
               {devicesDeviceBrandModel}
             </_Builtin.Block>
             <_Builtin.Block
-              className="no-space-bottom blue"
+              className="no_space_bottom blue"
               tag="div"
               {...servicesServicePodioItemIdFormatted}
             >
@@ -128,7 +128,7 @@ export function ServicesDetailsAndStatus({
             />
             <_Builtin.Block className="wrapper_flex_v_space_between" tag="div">
               <_Builtin.Block className="detail_vertical" tag="div">
-                <_Builtin.Block className="no-space-bottom" tag="div">
+                <_Builtin.Block className="no_space_bottom" tag="div">
                   {"Solicitud o falla:"}
                 </_Builtin.Block>
                 <_Builtin.Block tag="div">
@@ -136,13 +136,13 @@ export function ServicesDetailsAndStatus({
                 </_Builtin.Block>
               </_Builtin.Block>
               <_Builtin.Block className="detail_vertical" tag="div">
-                <_Builtin.Block className="no-space-bottom" tag="div">
+                <_Builtin.Block className="no_space_bottom" tag="div">
                   {"Respaldo:"}
                 </_Builtin.Block>
                 <_Builtin.Block tag="div">{servicesDataBackup}</_Builtin.Block>
               </_Builtin.Block>
               <_Builtin.Block className="detail_vertical" tag="div">
-                <_Builtin.Block className="no-space-bottom" tag="div">
+                <_Builtin.Block className="no_space_bottom" tag="div">
                   {"Cargador:"}
                 </_Builtin.Block>
                 <_Builtin.Block tag="div">
@@ -150,7 +150,7 @@ export function ServicesDetailsAndStatus({
                 </_Builtin.Block>
               </_Builtin.Block>
               <_Builtin.Block className="detail_vertical" tag="div">
-                <_Builtin.Block className="no-space-bottom" tag="div">
+                <_Builtin.Block className="no_space_bottom" tag="div">
                   {"Observaciones:"}
                 </_Builtin.Block>
                 <_Builtin.Block tag="div">
@@ -158,13 +158,13 @@ export function ServicesDetailsAndStatus({
                 </_Builtin.Block>
               </_Builtin.Block>
               <_Builtin.Block className="detail_vertical" tag="div">
-                <_Builtin.Block className="no-space-bottom" tag="div">
+                <_Builtin.Block className="no_space_bottom" tag="div">
                   {"Accesorios:"}
                 </_Builtin.Block>
                 <_Builtin.Block tag="div">{servicesAccessories}</_Builtin.Block>
               </_Builtin.Block>
               <_Builtin.Block className="detail_vertical" tag="div">
-                <_Builtin.Block className="no-space-bottom" tag="div">
+                <_Builtin.Block className="no_space_bottom" tag="div">
                   {"Fecha:"}
                 </_Builtin.Block>
                 <_Builtin.Block
@@ -179,96 +179,73 @@ export function ServicesDetailsAndStatus({
           </_Builtin.Block>
         </_Builtin.Block>
       </_Builtin.Block>
-      <_Builtin.Block className="status_card" tag="div">
-        <_Builtin.Block
-          className="card_header"
-          id="w-node-_31c2c3bf-5a84-809e-fbce-b39972e5f07c-74e77201"
-          tag="div"
-        >
-          <_Builtin.Heading tag="h4">{"Status del servicios"}</_Builtin.Heading>
-        </_Builtin.Block>
-        <_Builtin.Block
-          className="spacer_1_rem"
-          id="w-node-_09909b0b-1f76-8022-75ec-a3ba1ce6b334-74e77201"
-          tag="div"
-        />
-        <StatusRow
-          variant={statusRow1Step1State}
-          alert={statusRow1Alert}
-          statusStatusActionButton={statusRow1StatusStatusButton1}
-          statusActionPopup={statusRow1StatusActionPopup}
-          statusStatusMessage={statusRow1StatusStatusMessage}
-          statusDate={statusRow1StatusDate}
-          statusHour={statusRow1StatusHour}
-          alertMessageText={statusRow1AlertMessageText}
-        />
-        <StatusRow
-          variant={statusRow2Step2State}
-          alert={statusRow2Alert}
-          statusStatusActionButton={statusRow2StatusStatusButton1}
-          statusActionPopup={statusRow2StatusActionPopup}
-          statusStatusMessage={statusRow2StatusStatusMessage}
-          statusDate={statusRow2StatusDate}
-          statusHour={statusRow2StatusHour}
-          alertMessageText={statusRow2AlertMessageText}
-          statusTitle="Dispositivo en revisión "
-        />
-        <StatusRow
-          statusActionPopup={statusRow3StatusActionPopup}
-          statusStatusActionButton={statusRow3StatusStatusButton1}
-          variant={statusRow3Step3State}
-          alert={statusRow3Alert}
-          statusStatusMessage={statusRow3StatusStatusMessage}
-          statusDate={statusRow3StatusDate}
-          statusHour={statusRow3StatusHour}
-          alertMessageText={statusRow3AlertMessageText}
-          statusTitle="Revisa tu diagnóstico"
-        />
-        <StatusRow
-          variant={statusRow4Step4State}
-          statusStatusActionButton={statusRow4StatusStatusButton1}
-          statusActionPopup={statusRow4StatusActionPopup}
-          alert={statusRow4Alert}
-          statusStatusMessage={statusRow4StatusStatusMessage}
-          statusDate={statusRow4StatusDate}
-          statusHour={statusRow4StatusHour}
-          alertMessageText={statusRow4AlertMessageText}
-          statusTitle="Refacciones en camino"
-        />
-        <StatusRow
-          variant={statusRow5Step5State}
-          statusStatusActionButton={statusRow5StatusStatusButton1}
-          statusActionPopup={statusRow5StatusActionPopup}
-          alert={statusRow5Alert}
-          statusStatusMessage={statusRow5StatusStatusMessage}
-          statusDate={statusRow5StatusDate}
-          statusHour={statusRow5StatusHour}
-          alertMessageText={statusRow5AlertMessageText}
-          statusTitle="Inicia reparación"
-        />
-        <StatusRow
-          variant={statusRow6Step6State}
-          statusStatusActionButton={statusRow6StatusStatusButton1}
-          statusActionPopup={statusRow6StatusActionPopup}
-          alert={statusRow6Alert}
-          statusStatusMessage={statusRow6StatusStatusMessage}
-          statusDate={statusRow6StatusDate}
-          statusHour={statusRow6StatusHour}
-          alertMessageText={statusRow6AlertMessageText}
-          statusTitle="Lista para recolección"
-        />
-        <StatusRow
-          variant={statusRow7Step7State}
-          statusStatusActionButton={statusRow7StatusStatusButton1}
-          statusActionPopup={statusRow7StatusActionPopup}
-          alert={statusRow7Alert}
-          statusStatusMessage={statusRow7StatusStatusMessage}
-          statusDate={statusRow7StatusDate}
-          statusHour={statusRow7StatusHour}
-          alertMessageText={statusRow7AlertMessageText}
-          statusTitle="Dispositivo entregado"
-        />
-      </_Builtin.Block>
+      <StatusCard
+        servicesDateServiceStatusEnviarDiagnostico={
+          servicesDateServiceStatusEnviarDiagnostico
+        }
+        servicesHourServicesStatusEnviarDiagnostico={
+          servicesHourServicesStatusEnviarDiagnostico
+        }
+        servicesPrice={servicesPrice}
+        servicesDiagnosis={servicesDiagnosis}
+        servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
+        statusRow1Step1State={statusRow1Step1State}
+        statusRow1Alert={statusRow1Alert}
+        statusRow1StatusStatusButton1={statusRow1StatusStatusButton1}
+        statusRow1StatusActionPopup={statusRow1StatusActionPopup}
+        statusRow1StatusStatusMessage={statusRow1StatusStatusMessage}
+        statusRow1StatusDate={statusRow1StatusDate}
+        statusRow1StatusHour={statusRow1StatusHour}
+        statusRow1AlertMessageText={statusRow1AlertMessageText}
+        statusRow2Step2State={statusRow2Step2State}
+        statusRow2Alert={statusRow2Alert}
+        statusRow2StatusStatusButton1={statusRow2StatusStatusButton1}
+        statusRow2StatusActionPopup={statusRow2StatusActionPopup}
+        statusRow2StatusStatusMessage={statusRow2StatusStatusMessage}
+        statusRow2StatusDate={statusRow2StatusDate}
+        statusRow2StatusHour={statusRow2StatusHour}
+        statusRow2AlertMessageText={statusRow2AlertMessageText}
+        statusRow3StatusActionPopup={statusRow3StatusActionPopup}
+        statusRow3StatusStatusButton1={statusRow3StatusStatusButton1}
+        statusRow3Step3State={statusRow3Step3State}
+        statusRow3Alert={statusRow3Alert}
+        statusRow3StatusStatusMessage={statusRow3StatusStatusMessage}
+        statusRow3StatusDate={statusRow3StatusDate}
+        statusRow3StatusHour={statusRow3StatusHour}
+        statusRow3AlertMessageText={statusRow3AlertMessageText}
+        statusRow4Step4State={statusRow4Step4State}
+        statusRow4StatusStatusButton1={statusRow4StatusStatusButton1}
+        statusRow4StatusActionPopup={statusRow4StatusActionPopup}
+        statusRow4Alert={statusRow4Alert}
+        statusRow4StatusStatusMessage={statusRow4StatusStatusMessage}
+        statusRow4StatusDate={statusRow4StatusDate}
+        statusRow4StatusHour={statusRow4StatusHour}
+        statusRow4AlertMessageText={statusRow4AlertMessageText}
+        statusRow5Step5State={statusRow5Step5State}
+        statusRow5StatusStatusButton1={statusRow5StatusStatusButton1}
+        statusRow5StatusActionPopup={statusRow5StatusActionPopup}
+        statusRow5Alert={statusRow5Alert}
+        statusRow5StatusStatusMessage={statusRow5StatusStatusMessage}
+        statusRow5StatusDate={statusRow5StatusDate}
+        statusRow5StatusHour={statusRow5StatusHour}
+        statusRow5AlertMessageText={statusRow5AlertMessageText}
+        statusRow6Step6State={statusRow6Step6State}
+        statusRow6StatusStatusButton1={statusRow6StatusStatusButton1}
+        statusRow6StatusActionPopup={statusRow6StatusActionPopup}
+        statusRow6Alert={statusRow6Alert}
+        statusRow6StatusStatusMessage={statusRow6StatusStatusMessage}
+        statusRow6StatusDate={statusRow6StatusDate}
+        statusRow6StatusHour={statusRow6StatusHour}
+        statusRow6AlertMessageText={statusRow6AlertMessageText}
+        statusRow7Step7State={statusRow7Step7State}
+        statusRow7StatusStatusButton1={statusRow7StatusStatusButton1}
+        statusRow7StatusActionPopup={statusRow7StatusActionPopup}
+        statusRow7Alert={statusRow7Alert}
+        statusRow7StatusStatusMessage={statusRow7StatusStatusMessage}
+        statusRow7StatusDate={statusRow7StatusDate}
+        statusRow7StatusHour={statusRow7StatusHour}
+        statusRow7AlertMessageText={statusRow7AlertMessageText}
+      />
     </_Component>
   );
 }

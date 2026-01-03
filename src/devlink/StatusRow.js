@@ -63,7 +63,7 @@ export function StatusRow({
         tag="div"
       >
         <_Builtin.Heading
-          className={`no-space-bottom ${_activeStyleVariant}`}
+          className={`no_space_bottom ${_activeStyleVariant}`}
           tag="h6"
         >
           {statusTitle}

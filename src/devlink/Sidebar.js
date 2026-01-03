@@ -124,7 +124,7 @@ export function Sidebar({ as: _Component = _Builtin.Block }) {
               width="auto"
               height="auto"
               alt=""
-              src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68d89975a25a3ad066aa985c_405fb3806a923d7fd91bdf47a9c1204b_invoices%20.svg"
+              src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/69593bcacae3e2f32468687b_price_chec.svg"
             />
           </_Builtin.Block>
           <_Builtin.Block className="hide_text" tag="div">
