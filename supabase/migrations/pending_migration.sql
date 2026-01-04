@@ -487,6 +487,18 @@ BEGIN
 END$$;
 DO $$
 BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'datestart') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "datestart" timestamptz;
+  END IF;
+END$$;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'dateends') THEN
+    ALTER TABLE service_or_spare_part ADD COLUMN "dateends" timestamptz;
+  END IF;
+END$$;
+DO $$
+BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'service_or_spare_part' AND column_name = 'observations') THEN
     ALTER TABLE service_or_spare_part ADD COLUMN "observations" text;
   END IF;
