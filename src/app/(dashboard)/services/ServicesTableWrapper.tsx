@@ -99,14 +99,21 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                             const s = row.original.service;
                             const d = row.original.device;
 
-                            // 1. Determine Badge Variant based on Status
+                            // 1. Determine Badge Variant AND Row Variant based on Status
                             let badgeVariant: "Base" | "positive" | "negative" = "Base";
+                            let rowVariant: "Base" | "status process" | "status finished" | "status negative" = "status process"; // Default to status process
                             const statusLower = s.status?.toLowerCase()?.trim() || "";
 
                             if (statusLower === "dispositivo entregado") {
                                 badgeVariant = "positive";
+                                rowVariant = "status finished";
                             } else if (statusLower === "dispositivo entregado sin reparar") {
                                 badgeVariant = "negative";
+                                rowVariant = "status negative";
+                            } else {
+                                // Default case
+                                badgeVariant = "Base";
+                                rowVariant = "status process";
                             }
 
                             // Calculate Alerts using shared logic
@@ -121,7 +128,7 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                             return (
                                 <TableBodyRow
                                     key={row.id}
-                                    variant="Base" // Reset to Base as requested for default behavior
+                                    variant={rowVariant}
 
                                     // Status Badge Specifics
                                     statusBadgeStatusTitle={s.status || "Sin status"}
