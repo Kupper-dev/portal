@@ -27,6 +27,7 @@ export interface ServiceItem {
     daterepairstart?: string;
     daterepairready?: string;
     datedevicedelivered?: string;
+    serviceorsparepart?: number[];
 }
 
 export interface DeviceItem {
@@ -35,10 +36,28 @@ export interface DeviceItem {
     serial: string;
 }
 
+export interface WarrantyItem {
+    podio_item_id: number;
+    description: string;
+    quantity: number;
+    warranty: string; // e.g., "1 year", "6 months"
+    datestart: string;
+    dateends: string;
+    observations: string;
+    status?: string; // Derived status
+    validity?: string; // Derived validity text
+}
+
+export interface TicketItem {
+    podio_item_id: number;
+    planadministrator: number[]; // Array of customer IDs
+    serviceorsparepart?: number[];
+}
+
 // Helper to format date
 export function formatDate(isoString: string | null) {
     if (!isoString) return '';
-    return new Date(isoString).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+    return new Date(isoString).toLocaleDateString('es-MX', { year: '2-digit', month: '2-digit', day: '2-digit' });
 }
 
 export function formatTime(isoString: string | null) {

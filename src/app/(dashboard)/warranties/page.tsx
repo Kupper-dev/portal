@@ -4,6 +4,8 @@ import { Sidebar, Header } from '@/devlink';
 import { redirect } from 'next/navigation';
 import WarrantiesTableWrapper from './WarrantiesTableWrapper';
 
+import { getUserWarrantiesData } from '@/lib/data-service';
+
 export default async function WarrantiesPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get('app_session')?.value;
@@ -14,6 +16,9 @@ export default async function WarrantiesPage() {
     }
 
     const userImage = session.picture || "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
+
+    // Fetch warranties data
+    const warranties = await getUserWarrantiesData();
 
     return (
         <div className="dashboard_section">
@@ -32,7 +37,7 @@ export default async function WarrantiesPage() {
             />
             {/* Main Content Area */}
             <div className="dashboard_content">
-                <WarrantiesTableWrapper items={[]} />
+                <WarrantiesTableWrapper items={warranties} />
             </div>
         </div>
     );

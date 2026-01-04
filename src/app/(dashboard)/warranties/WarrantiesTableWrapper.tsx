@@ -13,16 +13,7 @@ import {
 import { TableHeaderRow, TableWarranties, TablePagination, TableHeaderCell } from '@/devlink';
 import { Block } from '@/devlink/_Builtin';
 
-// Placeholder type until we have real warranty data
-interface WarrantyItem {
-    id: string;
-    description: string;
-    quantity: string;
-    warranty: string;
-    status: string;
-    validity: string;
-    observations: string;
-}
+import { WarrantyItem } from '@/lib/service-types';
 
 interface WarrantiesTableWrapperProps {
     items?: WarrantyItem[];
@@ -40,7 +31,11 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
         columnHelper.accessor('description', { id: 'Description', header: 'Descripción' }),
         columnHelper.accessor('quantity', { id: 'Quantity', header: 'Cantidad' }),
         columnHelper.accessor('warranty', { id: 'Warranty', header: 'Garantía' }),
-        columnHelper.accessor('status', { id: 'Status', header: 'Status' }),
+        // We will compute status for sorting if needed, or just use accessorFn
+        columnHelper.accessor((row) => {
+            if (!row.dateends) return 'N/A';
+            return new Date(row.dateends) > new Date() ? 'Activa' : 'Inactiva';
+        }, { id: 'Status', header: 'Status' }),
     ];
 
     const table = useReactTable({
@@ -132,20 +127,38 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                         {table.getRowModel().rows.map(row => {
                             const item = row.original;
 
+                            // Status Logic
+                            const now = new Date();
+                            const dateEnds = item.dateends ? new Date(item.dateends) : null;
+
+                            let statusText = "N/A";
                             let badgeVariant: "Base" | "positive" | "negative" = "Base";
-                            if (item.status?.toLowerCase() === 'activa') badgeVariant = "positive";
-                            if (item.status?.toLowerCase() === 'vencida') badgeVariant = "negative";
+                            let validityText = "";
+
+                            if (dateEnds) {
+                                const diffTime = dateEnds.getTime() - now.getTime();
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                validityText = `${diffDays} días`;
+
+                                if (dateEnds > now) {
+                                    statusText = "Activa";
+                                    badgeVariant = "positive";
+                                } else {
+                                    statusText = "Inactiva";
+                                    badgeVariant = "negative";
+                                }
+                            }
 
                             return (
                                 <TableWarranties
                                     key={row.id}
-                                    warrantiesItemDescription={item.description}
-                                    warrantiesItemQuantity={item.quantity}
-                                    warrantiesItemWarranty={item.warranty}
-                                    statusBadgeStatusTitle={item.status}
+                                    warrantiesItemDescription={item.description || 'Sin descripción'}
+                                    warrantiesItemQuantity={item.quantity ? String(item.quantity) : '0'}
+                                    warrantiesItemWarranty={item.warranty || 'N/A'}
+                                    statusBadgeStatusTitle={statusText}
                                     statusBadgeItemStatusBadgeVariant={badgeVariant}
-                                    warrantiesItemValidity={item.validity}
-                                    warrantiesItemObservations={item.observations}
+                                    warrantiesItemValidity={validityText}
+                                    warrantiesItemObservations={item.observations || ''}
                                 />
                             );
                         })}
