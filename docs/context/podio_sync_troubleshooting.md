@@ -67,9 +67,25 @@ Ensure `data-service.ts` uses `JSON.stringify`:
 .contains('customer', JSON.stringify([podioId]))
 ```
 
-## Helper Scripts
-| Script | Purpose |
+### 4. Podio Auto-Timestamping Failures
+**Symptoms**: The "status" changes in Podio, but the corresponding timestamp field (e.g., `datereceived`) remains empty or does not update. The sync logs might show success for the initial status update, but the date timestamp is missing in both Podio and Supabase.
+
+**Root Cause**:
+1.  **Invalid Date Format**: Podio's API is strict about date field inputs. Sending a direct object `{ start: ... }` or raw ISO string often fails with `400 invalid_value`. The robust format is an array containing the start object: `[{ start: "YYYY-MM-DD HH:MM:SS" }]`.
+2.  **Silent Updates**: If `updateItemFieldValue` is called with `silent=true` (or defaults to it), Podio updates the item *without* triggering a new webhook. Consequently, Supabase (which listens for webhooks) never receives the new timestamp.
+
+**Solution**:
+1.  **Format**: Always wrap date field values in an array: `[{ start: isoString }]`.
+2.  **Trigger Webhook**: Use `silent=false` (and `hook=true`) for the timestamp update call. This writes the date to Podio, which then fires an `item.update` webhook, ensuring the new timestamp propagates to Supabase.
+
+**Debugging**:
+Use the `/api/debug-podio` endpoint (see Helper Scripts below) to test the logic in isolation. It returns detailed field configs and the result of the timestamping logic (success/fail).
+
+## Helper Scripts & Tools
+| Script/Tool | Purpose |
 |--------|---------|
 | `scripts/verify-hooks.ts` | Checks if webhooks are registered for the Services app. |
 | `scripts/test-webhook.ts` | Simulates an `item.update` event for a real item to test sync logic. |
 | `scripts/check-schema.ts` | Lists columns in the `services` table to verify schema matches. |
+| `scripts/find-podio-id.ts` | Helper to search for an item ID by its app-specific unique ID (e.g., "S123"). |
+| `/app/api/debug-podio` | **GET Endpoint**. Pass `?itemId=...` to inspect an item's raw structure, field settings, and test the auto-timestamp logic logic safely. |

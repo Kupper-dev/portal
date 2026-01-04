@@ -5,18 +5,6 @@ import { StatusRow } from "./StatusRow";
 
 export function StatusCard({
   as: _Component = _Builtin.Block,
-  servicesDateServiceStatusEnviarDiagnostico = "DD/MM/YY",
-  servicesHourServicesStatusEnviarDiagnostico = "00:00",
-  servicesPrice = "Cargando precio...",
-
-  servicesDiagnosis = {
-    href: "#",
-  },
-
-  servicesDiagnosisAcceptance = {
-    href: "#",
-  },
-
   statusRow1Step1State = null,
   statusRow1Alert = false,
   statusRow1StatusStatusButton1 = false,

@@ -49,7 +49,7 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         devicesSerial={d?.serial || "N/A"}
 
                         // Service Info
-                        servicesRequestOrIssue={s.servicetype || "No info"}
+                        servicesRequestOrIssue={s.requestorissue || s.servicetype || "No info"}
                         servicesDataBackup={s.databackup || "No"}
                         servicesPowerAdapter={s.poweradapter || "No"}
                         servicesAccessories={s.accessories || "None"}
@@ -107,13 +107,13 @@ export default function ServiceStatusWrapper({ items }: ServiceStatusWrapperProp
                         statusRow7Alert={alert7.show}
 
                         // Status Messages (Passing s.status)
-                        statusRow1StatusStatusMessage={getStatusMessage(s.status, 1)}
-                        statusRow2StatusStatusMessage={getStatusMessage(s.status, 2)}
-                        statusRow3StatusStatusMessage={getStatusMessage(s.status, 3)}
-                        statusRow4StatusStatusMessage={getStatusMessage(s.status, 4)}
-                        statusRow5StatusStatusMessage={getStatusMessage(s.status, 5)}
-                        statusRow6StatusStatusMessage={getStatusMessage(s.status, 6)}
-                        statusRow7StatusStatusMessage={getStatusMessage(s.status, 7)}
+                        statusRow1StatusStatusMessage={getStatusMessage(s.status, 1, s.price)}
+                        statusRow2StatusStatusMessage={getStatusMessage(s.status, 2, s.price)}
+                        statusRow3StatusStatusMessage={getStatusMessage(s.status, 3, s.price)}
+                        statusRow4StatusStatusMessage={getStatusMessage(s.status, 4, s.price)}
+                        statusRow5StatusStatusMessage={getStatusMessage(s.status, 5, s.price)}
+                        statusRow6StatusStatusMessage={getStatusMessage(s.status, 6, s.price)}
+                        statusRow7StatusStatusMessage={getStatusMessage(s.status, 7, s.price)}
 
                         // Button/Popup Visibility
                         statusRow3StatusActionPopup={showPopup}

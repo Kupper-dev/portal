@@ -36,14 +36,17 @@ export const getStepVariant = (currentStatus: string | null | undefined, stepInd
     return "Base";
 };
 
-export const getStatusMessage = (currentStatus: string | null | undefined, stepIndex: number): string => {
+
+export const getStatusMessage = (currentStatus: string | null | undefined, stepIndex: number, price?: string | number): string => {
     const variant = getStepVariant(currentStatus, stepIndex);
     if (variant !== 'active') return "";
 
     switch (stepIndex) {
         case 1: return "Hemos recibido tu dispositivo y empezaremos la revisión tan pronto como sea posible.";
         case 2: return "Nuestros técnicos están diagnosticando tu dispositivo para encontrar la falla.";
-        case 3: return "Tu diagnóstico está listo. Por favor revísalo y autoriza la reparación.";
+        case 3:
+            const formattedPrice = price ? `$${Number(price).toLocaleString('es-MX', { minimumFractionDigits: 2 })}` : '(Pendiente)';
+            return `Tu diagnóstico está listo. El costo total es de ${formattedPrice}. Por favor revísalo y autoriza la reparación.`;
         case 4: return "Estamos esperando las refacciones necesarias para reparar tu equipo.";
         case 5: return "La reparación está en curso. Te notificaremos cuando termine.";
         case 6: return "¡Tu dispositivo está listo! Puedes pasar a recogerlo en nuestros horarios de atención.";
@@ -51,6 +54,7 @@ export const getStatusMessage = (currentStatus: string | null | undefined, stepI
         default: return "";
     }
 };
+
 
 interface AlertConfig {
     show: boolean;

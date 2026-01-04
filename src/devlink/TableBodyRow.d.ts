@@ -74,4 +74,5 @@ declare function TableBodyRow(props: {
   statusRow7AlertMessageText?: React.ReactNode;
   statusRow7StatusStatusActionButton?: Types.Visibility.VisibilityConditions;
   statusRow7StatusStatusMessage?: React.ReactNode;
+  issueReformulation?: React.ReactNode;
 }): React.JSX.Element;

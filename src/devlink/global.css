@@ -3847,7 +3847,7 @@ a {
 .dynamic_row {
   display: flex;
   overflow: clip;
-  height: 4rem;
+  height: 4.25rem;
   margin-bottom: 1rem;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -3905,6 +3905,7 @@ a {
 
 .table_body_row:where(.w-variant-33c30a45-1e0f-3ec8-797c-07591a649549) {
   border-left-color: var(--status-green-text);
+  background-color: var(--background);
 }
 
 .table_body_row:where(.w-variant-6f2c0dd4-4366-ecf1-3f7a-c51adbe0f49f) {
@@ -3932,7 +3933,6 @@ a {
 
   font-size: 0.8rem;
   line-height: 0.9em;
-  font-weight: 600;
 }
 
 .table_cell.h {
@@ -4032,8 +4032,8 @@ a {
 }
 
 .corner_box.image {
-  background-color: var(--blue-mid);
-  color: var(--white);
+  background-color: var(--status-blue);
+  color: var(--blue-mid);
 }
 
 .spacer_h_1rem {
@@ -4065,6 +4065,10 @@ a {
 
   color: var(--blue-mid);
   line-height: 1rem;
+}
+
+.spacer_-25_rem {
+  height: 0.25rem;
 }
 
 

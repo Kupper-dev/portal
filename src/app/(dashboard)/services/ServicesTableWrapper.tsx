@@ -115,11 +115,12 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                                     deviceBrandAndModel={d ? d.brandmodel : "Dispositivo desconocido"}
                                     date={formatDate(s.date)}
                                     hour={formatTime(s.date)}
-                                    aproxCompletationDate={formatDate(s.daterepairready)}
+                                    aproxCompletationDate={formatDate(s.aproxcompletationdate)}
 
                                     // Details
                                     serialNumber={d?.serial || "-"}
-                                    requestOrIssue={s.servicetype || "-"}
+                                    requestOrIssue={s.requestorissue || s.servicetype || "-"}
+                                    issueReformulation={s.issuereformulation || "-"}
                                     dataBackup={s.databackup || "No"}
                                     powerAdapter={s.poweradapter || "No"}
                                     accesories={s.accessories || "Ninguno"}
@@ -157,13 +158,13 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                                     statusRow3StatusActionPopup={false}
 
                                     // Status Messages
-                                    statusRow1StatusStatusMessage={getStatusMessage(s.status, 1)}
-                                    statusRow2StatusStatusMessage={getStatusMessage(s.status, 2)}
-                                    statusRow3StatusStatusMessage={getStatusMessage(s.status, 3)}
-                                    statusRow4StatusStatusMessage={getStatusMessage(s.status, 4)}
-                                    statusRow5StatusStatusMessage={getStatusMessage(s.status, 5)}
-                                    statusRow6StatusStatusMessage={getStatusMessage(s.status, 6)}
-                                    statusRow7StatusStatusMessage={getStatusMessage(s.status, 7)}
+                                    statusRow1StatusStatusMessage={getStatusMessage(s.status, 1, s.price)}
+                                    statusRow2StatusStatusMessage={getStatusMessage(s.status, 2, s.price)}
+                                    statusRow3StatusStatusMessage={getStatusMessage(s.status, 3, s.price)}
+                                    statusRow4StatusStatusMessage={getStatusMessage(s.status, 4, s.price)}
+                                    statusRow5StatusStatusMessage={getStatusMessage(s.status, 5, s.price)}
+                                    statusRow6StatusStatusMessage={getStatusMessage(s.status, 6, s.price)}
+                                    statusRow7StatusStatusMessage={getStatusMessage(s.status, 7, s.price)}
 
                                     // Alerts (Full Sync with Dashboard Logic)
                                     statusRow1Alert={alert1.show}

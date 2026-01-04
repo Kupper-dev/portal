@@ -13,6 +13,10 @@ export interface ServiceItem {
     poweradapter: string;
     accessories: string;
     diagnosis: string;
+    aproxcompletationdate?: string;
+    requestorissue?: string;
+    issuereformulation?: string;
+    price?: number;
     advancepayment: string; // Maybe price?
     // Timestamps from Podio (External IDs sanitized)
     datereceived?: string;

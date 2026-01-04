@@ -180,15 +180,6 @@ export function ServicesDetailsAndStatus({
         </_Builtin.Block>
       </_Builtin.Block>
       <StatusCard
-        servicesDateServiceStatusEnviarDiagnostico={
-          servicesDateServiceStatusEnviarDiagnostico
-        }
-        servicesHourServicesStatusEnviarDiagnostico={
-          servicesHourServicesStatusEnviarDiagnostico
-        }
-        servicesPrice={servicesPrice}
-        servicesDiagnosis={servicesDiagnosis}
-        servicesDiagnosisAcceptance={servicesDiagnosisAcceptance}
         statusRow1Step1State={statusRow1Step1State}
         statusRow1Alert={statusRow1Alert}
         statusRow1StatusStatusButton1={statusRow1StatusStatusButton1}

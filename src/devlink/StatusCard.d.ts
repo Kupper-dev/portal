@@ -3,15 +3,6 @@ import * as Types from "./types";
 
 declare function StatusCard(props: {
   as?: React.ElementType;
-  servicesDateServiceStatusEnviarDiagnostico?: React.ReactNode;
-  /** Hour Services Status:*/
-  servicesHourServicesStatusEnviarDiagnostico?: React.ReactNode;
-  /** Price of the service/diagnosis*/
-  servicesPrice?: React.ReactNode;
-  /** Link to popup that show the  diagnosis of the service.*/
-  servicesDiagnosis?: Types.Basic.Link;
-  /** Button that notifies system that customer accept diagnosis and price so we can proceed with service*/
-  servicesDiagnosisAcceptance?: Types.Basic.Link;
   statusRow1Step1State?: "Base" | "active" | "check" | "no_state" | "hidden";
   statusRow1Alert?: Types.Visibility.VisibilityConditions;
   statusRow1StatusStatusButton1?: Types.Visibility.VisibilityConditions;

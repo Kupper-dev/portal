@@ -3,13 +3,27 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Load env vars
+// Load env vars
+// Prioritize .env.local
+const envLocalPath = path.resolve(process.cwd(), '.env.local');
+if (fs.existsSync(envLocalPath)) {
+    const envContent = fs.readFileSync(envLocalPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+        const [key, value] = line.split('=');
+        if (key && value) { // Always override with local
+            process.env[key.trim()] = value.trim().replace(/^"|"$/g, '');
+        }
+    });
+}
+
+// Fallback to .env
 const envPath = path.resolve(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
     const envContent = fs.readFileSync(envPath, 'utf8');
     envContent.split('\n').forEach(line => {
         const [key, value] = line.split('=');
         if (key && value && !process.env[key]) {
-            process.env[key.trim()] = value.trim();
+            process.env[key.trim()] = value.trim().replace(/^"|"$/g, '');
         }
     });
 }
