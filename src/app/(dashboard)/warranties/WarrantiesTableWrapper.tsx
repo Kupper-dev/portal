@@ -27,15 +27,26 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
     });
 
     const columnHelper = createColumnHelper<WarrantyItem>();
+
+    // Helper to calculate Validity
+    const getValidityString = (dateEnds: string | undefined) => {
+        if (!dateEnds) return '0 días';
+        const now = new Date();
+        const end = new Date(dateEnds);
+        const diffTime = end.getTime() - now.getTime();
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    };
+
     const columns = [
         columnHelper.accessor('description', { id: 'Description', header: 'Descripción' }),
+        columnHelper.accessor('observations', { id: 'Observaciones', header: 'Observaciones' }),
         columnHelper.accessor('quantity', { id: 'Quantity', header: 'Cantidad' }),
         columnHelper.accessor('warranty', { id: 'Warranty', header: 'Garantía' }),
-        // We will compute status for sorting if needed, or just use accessorFn
         columnHelper.accessor((row) => {
             if (!row.dateends) return 'N/A';
             return new Date(row.dateends) > new Date() ? 'Activa' : 'Inactiva';
         }, { id: 'Status', header: 'Status' }),
+        columnHelper.accessor((row) => getValidityString(row.dateends), { id: 'Vigencia', header: 'Vigencia' }),
     ];
 
     const table = useReactTable({
@@ -52,11 +63,16 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
         onPaginationChange: setPagination,
     });
 
-    const getSortVariant = (columnId: string): "Base" | "up" | "down" => {
+    const getSortVariant = (columnId: string, isWide = false): any => {
         const sortState = table.getColumn(columnId)?.getIsSorted();
+        if (isWide) {
+            if (sortState === 'asc') return '2up';
+            // Default for wide is 2down if desc or unsorted (to keep layout)
+            return '2down';
+        }
         if (sortState === 'asc') return 'up';
         if (sortState === 'desc') return 'down';
-        return 'Base';
+        return 'Base'; // Or 'down' if Base is too plain
     };
 
     const toggleSort = (columnId: string) => {
@@ -67,11 +83,13 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
         <div className="main-grid">
             <div className="module">
                 {/* Header */}
-                {/* Header removed based on user feedback */}
+                <div className="table-header">
+                    <h4 className="no_space_bottom">Garantías</h4>
+                </div>
 
                 {/* Table Content Loop */}
                 <div className="table-content">
-                    <div className="table-list">
+                    <div className="table-list warranties-list">
 
                         {/* Manual Header Implementation for Sorting */}
                         <div className="table_body_row header">
@@ -83,8 +101,19 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         style={{ cursor: 'pointer' }}
                                     />
                                 )}
-                                variant={getSortVariant('Description')}
+                                variant={getSortVariant('Description', true)}
                                 cellTitle="Descripción"
+                            />
+                            <TableHeaderCell
+                                as={(props: any) => (
+                                    <Block
+                                        {...props}
+                                        onClick={() => toggleSort('Observaciones')}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                )}
+                                variant={getSortVariant('Observaciones', true)}
+                                cellTitle="Observaciones"
                             />
                             <TableHeaderCell
                                 as={(props: any) => (
@@ -95,7 +124,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                     />
                                 )}
                                 variant={getSortVariant('Quantity')}
-                                cellTitle="Cantidad"
+                                cellTitle="Cant"
                             />
                             <TableHeaderCell
                                 as={(props: any) => (
@@ -108,7 +137,6 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                 variant={getSortVariant('Warranty')}
                                 cellTitle="Garantía"
                             />
-
                             <TableHeaderCell
                                 as={(props: any) => (
                                     <Block
@@ -119,6 +147,17 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                 )}
                                 variant={getSortVariant('Status')}
                                 cellTitle="Status"
+                            />
+                            <TableHeaderCell
+                                as={(props: any) => (
+                                    <Block
+                                        {...props}
+                                        onClick={() => toggleSort('Vigencia')}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                )}
+                                variant={getSortVariant('Vigencia')}
+                                cellTitle="Vigencia"
                             />
                         </div>
 
@@ -131,7 +170,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
 
                             let statusText = "N/A";
                             let badgeVariant: "Base" | "positive" | "negative" = "Base";
-                            let validityText = "";
+                            let validityText = "0 días";
 
                             if (dateEnds) {
                                 const diffTime = dateEnds.getTime() - now.getTime();
@@ -156,7 +195,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                     statusBadgeStatusTitle={statusText}
                                     statusBadgeItemStatusBadgeVariant={badgeVariant}
                                     warrantiesItemValidity={validityText}
-                                    warrantiesItemObservations={item.observations || ''}
+                                    warrantiesItemObservations={item.observations || '-'}
                                 />
                             );
                         })}

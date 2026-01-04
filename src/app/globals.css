@@ -66,3 +66,9 @@ a {
     padding-left: 0rem;
   }
 }
+
+/* Hide repeated headers in Warranties list for continuous look */
+.warranties-list .table .header,
+.warranties-list .table_row_1.header {
+  display: none !important;
+}
