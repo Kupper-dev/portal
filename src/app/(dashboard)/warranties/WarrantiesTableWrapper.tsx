@@ -63,16 +63,12 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
         onPaginationChange: setPagination,
     });
 
-    const getSortVariant = (columnId: string, isWide = false): any => {
+    const getSortVariant = (columnId: string, isWide = false): "up" | "down" | "2up" | "2down" => {
         const sortState = table.getColumn(columnId)?.getIsSorted();
         if (isWide) {
-            if (sortState === 'asc') return '2up';
-            // Default for wide is 2down if desc or unsorted (to keep layout)
-            return '2down';
+            return sortState === 'asc' ? '2up' : '2down';
         }
-        if (sortState === 'asc') return 'up';
-        if (sortState === 'desc') return 'down';
-        return 'Base'; // Or 'down' if Base is too plain
+        return sortState === 'asc' ? 'up' : 'down';
     };
 
     const toggleSort = (columnId: string) => {

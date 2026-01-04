@@ -26,3 +26,4 @@ export * from "./TableHeaderCell";
 export * from "./TableHeaderRow";
 export * from "./TablePagination";
 export * from "./TableWarranties";
+export * from "./WarrantiesTableHeader";

@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import * as _Builtin from "./_Builtin";
-import { TableHeaderCell } from "./TableHeaderCell";
 import { StatusBadge } from "./StatusBadge";
 
 export function TableWarranties({
@@ -16,14 +15,6 @@ export function TableWarranties({
 }) {
   return (
     <_Component className="table" tag="div">
-      <_Builtin.Block className="table_row_1 header" tag="div">
-        <TableHeaderCell variant="2down" cellTitle="Descripción" />
-        <TableHeaderCell variant="2down" cellTitle="Observaciones" />
-        <TableHeaderCell variant="down" cellTitle="Cant" />
-        <TableHeaderCell variant="down" cellTitle="Garantía" />
-        <TableHeaderCell variant="down" cellTitle="Status" />
-        <TableHeaderCell variant="down" cellTitle="Vigencia" />
-      </_Builtin.Block>
       <_Builtin.Block className="table_row_1" tag="div">
         <_Builtin.Block
           className="table_cell"
