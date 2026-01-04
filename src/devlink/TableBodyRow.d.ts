@@ -75,4 +75,6 @@ declare function TableBodyRow(props: {
   statusRow7StatusStatusActionButton?: Types.Visibility.VisibilityConditions;
   statusRow7StatusStatusMessage?: React.ReactNode;
   issueReformulation?: React.ReactNode;
+  statusBadgeStatusTitle?: React.ReactNode;
+  statusBadgeVariant?: "Base" | "positive" | "negative";
 }): React.JSX.Element;

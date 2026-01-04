@@ -21,7 +21,6 @@ export function TableHeaderCell({
       id="w-node-_605b32d7-cd84-1e56-467a-f6fea90a1136-a90a1136"
       tag="div"
     >
-      <_Builtin.Block tag="div">{cellTitle}</_Builtin.Block>
       <_Builtin.Image
         className={`ui_icon_20 ${_activeStyleVariant}`}
         loading="lazy"
@@ -30,6 +29,7 @@ export function TableHeaderCell({
         alt=""
         src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695753ce9e48b631d8c05a69_arrow_down.svg"
       />
+      <_Builtin.Block tag="div">{cellTitle}</_Builtin.Block>
     </_Component>
   );
 }

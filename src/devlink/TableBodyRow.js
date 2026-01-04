@@ -88,6 +88,8 @@ export function TableBodyRow({
   statusRow7StatusStatusActionButton = false,
   statusRow7StatusStatusMessage = "Message",
   issueReformulation = "Falla del equipo",
+  statusBadgeStatusTitle = "Inicia reparación",
+  statusBadgeVariant = "Base",
 }) {
   _interactions.useInteractions(_interactionsData);
 
@@ -146,7 +148,10 @@ export function TableBodyRow({
           id="w-node-_7e9f016b-d977-bbc8-6141-c31db4de6a1e-b4de6a14"
           tag="div"
         >
-          <StatusBadge variant="Base" statusTitle="Inicia reparación" />
+          <StatusBadge
+            variant={statusBadgeVariant}
+            statusTitle={statusBadgeStatusTitle}
+          />
         </_Builtin.Block>
         <_Builtin.Block
           className={`table_cell v ${_activeStyleVariant}`}
@@ -158,12 +163,6 @@ export function TableBodyRow({
             tag="div"
           >
             {date}
-          </_Builtin.Block>
-          <_Builtin.Block
-            className={`small_text text_gray ${_activeStyleVariant}`}
-            tag="div"
-          >
-            {hour}
           </_Builtin.Block>
         </_Builtin.Block>
         <_Builtin.Block

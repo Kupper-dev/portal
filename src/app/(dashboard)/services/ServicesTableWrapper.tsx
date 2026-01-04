@@ -25,6 +25,17 @@ const formatDate = (dateStr: string | null | undefined) => {
     });
 };
 
+const formatDateTime = (dateStr: string | null | undefined) => {
+    if (!dateStr) return "-";
+    return new Date(dateStr).toLocaleString('es-MX', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+};
+
 const formatTime = (dateStr: string | null | undefined) => {
     if (!dateStr) return "";
     return new Date(dateStr).toLocaleTimeString('es-MX', {
@@ -88,12 +99,14 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                             const s = row.original.service;
                             const d = row.original.device;
 
-                            // 1. Determine Row Variant (General Status)
-                            let rowVariant: "Base" | "status process" | "status finished" | "status negative" = "Base";
-                            if (s.status?.toLowerCase().includes("reparado") || s.status?.toLowerCase().includes("entregado")) {
-                                rowVariant = "status finished";
-                            } else if (s.status?.toLowerCase().includes("diagnostico") || s.status?.toLowerCase().includes("revision")) {
-                                rowVariant = "status process";
+                            // 1. Determine Badge Variant based on Status
+                            let badgeVariant: "Base" | "positive" | "negative" = "Base";
+                            const statusLower = s.status?.toLowerCase()?.trim() || "";
+
+                            if (statusLower === "dispositivo entregado") {
+                                badgeVariant = "positive";
+                            } else if (statusLower === "dispositivo entregado sin reparar") {
+                                badgeVariant = "negative";
                             }
 
                             // Calculate Alerts using shared logic
@@ -108,14 +121,18 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                             return (
                                 <TableBodyRow
                                     key={row.id}
-                                    variant={rowVariant}
+                                    variant="Base" // Reset to Base as requested for default behavior
+
+                                    // Status Badge Specifics
+                                    statusBadgeStatusTitle={s.status || "Sin status"}
+                                    statusBadgeVariant={badgeVariant}
 
                                     // Basic Row Props
                                     servicesFormattedId={s.podio_formatted_id}
                                     deviceBrandAndModel={d ? d.brandmodel : "Dispositivo desconocido"}
                                     date={formatDate(s.date)}
-                                    hour={formatTime(s.date)}
-                                    aproxCompletationDate={formatDate(s.aproxcompletationdate)}
+                                    // hour={formatTime(s.date)} // Removed
+                                    aproxCompletationDate={formatDateTime(s.aproxcompletationdate)}
 
                                     // Details
                                     serialNumber={d?.serial || "-"}
