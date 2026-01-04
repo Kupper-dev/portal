@@ -2324,7 +2324,9 @@ a {
 
 .sidebar_header {
   padding: 1.3rem;
-  background-image: linear-gradient(90deg, var(--blue-1), var(--blue-mid) 50%, var(--blue-2));
+  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695a08bdf953f28b2b02c5c8_Card-BG-2.jpg"), linear-gradient(90deg, var(--blue-1), var(--blue-mid) 50%, var(--blue-2));
+  background-position: 0% 50%, 0px 0px;
+  background-size: auto 250%, auto;
 }
 
 @media screen and (max-width: 991px) {
@@ -2676,6 +2678,7 @@ a {
   z-index: -1;
 
   display: flex;
+  overflow: hidden;
   width: 100%;
   height: 30rem;
   padding-left: 16rem;
@@ -2745,15 +2748,9 @@ a {
 }
 
 .hero_image {
-  position: absolute;
-  left: auto;
-  top: 6%;
-  right: 0%;
-  bottom: 0%;
   z-index: -1;
-
-  height: 60vh;
   max-height: 25rem;
+  margin-left: 4vw;
 }
 
 @media screen and (max-width: 991px) {
@@ -3847,7 +3844,6 @@ a {
 .dynamic_row {
   display: flex;
   overflow: clip;
-  height: 4.25rem;
   margin-bottom: 1rem;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -3988,52 +3984,56 @@ a {
   width: 100%;
   min-height: 3rem;
   margin-top: 1rem;
-  padding: 1rem;
+  padding: 1.5rem 1rem 0.5rem 1.5rem;
 
   border-radius: var(--small-radius);
 
   background-color: var(--background);
-
-  color: var(--black);
+  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/6959fd95e561a98bc40efb33_f26a3c3b6a3f7bd71cdb7dae76837f44_Card-BG.jpg");
+  background-position: 0px 0px;
+  background-size: cover;
 }
 
 .corner_box.blue {
   background-color: var(--status-blue);
-  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68eeaa87d403c18a5ee2be65_Powercord%20Icon.png");
-  background-position: 94% -100%;
-  background-size: auto 110%;
-  background-repeat: no-repeat;
+  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68eeaa87d403c18a5ee2be65_Powercord%20Icon.png"), url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695a0dd03d6a23cb0065d37a_Card-BG-3.jpg");
+  background-position: 94% -100%, 100% 0%;
+  background-size: auto 110%, cover;
+  background-repeat: no-repeat, no-repeat;
 
   transition: background-position 500ms ease;
 
-  color: var(--blue-mid);
+  color: var(--white);
 }
 
 .corner_box.blue:hover {
-  background-position: 94% -30%;
-  background-size: auto 110%;
+  background-position: 94% -20%, 100% 0%;
 }
 
 .corner_box.purple {
+  position: relative;
+
   background-color: var(--status-purple);
-  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68eeaa873722a0bbefec8eba_Backup%20icon.png");
-  background-position: 94% -110%;
-  background-size: auto 110%;
-  background-repeat: no-repeat;
+  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68eeaa873722a0bbefec8eba_Backup%20icon.png"), url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695a0dd03ce0b9125c0a7589_Card-BG-4.jpg");
+  background-position: 94% -110%, 100% 0%;
+  background-size: auto 110%, cover;
+  background-repeat: no-repeat, repeat;
 
   transition: background-position 500ms ease;
 
-  color: hsla(258, 100.00%, 52.44%, 1.00);
+  color: var(--white);
 }
 
 .corner_box.purple:hover {
-  background-position: 94% -20%;
-  background-size: auto 110%;
+  background-position: 94% -30%, 100% 0%;
 }
 
 .corner_box.image {
   background-color: var(--status-blue);
-  color: var(--blue-mid);
+  background-image: url("https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695a08bdf953f28b2b02c5c8_Card-BG-2.jpg");
+  background-position: 0% 50%;
+  background-size: cover;
+  color: var(--white);
 }
 
 .spacer_h_1rem {

@@ -318,7 +318,7 @@ export function TableBodyRow({
               >
                 <_Builtin.Block tag="div">
                   <_Builtin.Block
-                    className={`small_text ${_activeStyleVariant}`}
+                    className={`no_space_bottom ${_activeStyleVariant}`}
                     tag="div"
                   >
                     {deviceBrandAndModel}
@@ -360,7 +360,7 @@ export function TableBodyRow({
                   height="auto"
                   loading="lazy"
                   alt=""
-                  src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/68d8ab4d19a030bafad06999_Dragonfly_4.png"
+                  src="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695a072d772f5c44ccf0f824_LAptop%201.png"
                 />
               </_Builtin.Block>
             </_Builtin.Block>
