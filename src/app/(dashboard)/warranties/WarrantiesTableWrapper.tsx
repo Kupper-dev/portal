@@ -92,73 +92,75 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                     <div className="table-list warranties-list">
 
                         {/* Manual Header Implementation for Sorting */}
-                        <div className="table_body_row header">
-                            <TableHeaderCell
-                                as={(props: any) => (
-                                    <Block
-                                        {...props}
-                                        onClick={() => toggleSort('Description')}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                )}
-                                variant={getSortVariant('Description', true)}
-                                cellTitle="Descripción"
-                            />
-                            <TableHeaderCell
-                                as={(props: any) => (
-                                    <Block
-                                        {...props}
-                                        onClick={() => toggleSort('Observaciones')}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                )}
-                                variant={getSortVariant('Observaciones', true)}
-                                cellTitle="Observaciones"
-                            />
-                            <TableHeaderCell
-                                as={(props: any) => (
-                                    <Block
-                                        {...props}
-                                        onClick={() => toggleSort('Quantity')}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                )}
-                                variant={getSortVariant('Quantity')}
-                                cellTitle="Cant"
-                            />
-                            <TableHeaderCell
-                                as={(props: any) => (
-                                    <Block
-                                        {...props}
-                                        onClick={() => toggleSort('Warranty')}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                )}
-                                variant={getSortVariant('Warranty')}
-                                cellTitle="Garantía"
-                            />
-                            <TableHeaderCell
-                                as={(props: any) => (
-                                    <Block
-                                        {...props}
-                                        onClick={() => toggleSort('Status')}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                )}
-                                variant={getSortVariant('Status')}
-                                cellTitle="Status"
-                            />
-                            <TableHeaderCell
-                                as={(props: any) => (
-                                    <Block
-                                        {...props}
-                                        onClick={() => toggleSort('Vigencia')}
-                                        style={{ cursor: 'pointer' }}
-                                    />
-                                )}
-                                variant={getSortVariant('Vigencia')}
-                                cellTitle="Vigencia"
-                            />
+                        <div className="table">
+                            <div className="table_row_1 header">
+                                <TableHeaderCell
+                                    as={(props: any) => (
+                                        <Block
+                                            {...props}
+                                            onClick={() => toggleSort('Description')}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                    variant={getSortVariant('Description', true)}
+                                    cellTitle="Descripción"
+                                />
+                                <TableHeaderCell
+                                    as={(props: any) => (
+                                        <Block
+                                            {...props}
+                                            onClick={() => toggleSort('Observaciones')}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                    variant={getSortVariant('Observaciones', true)}
+                                    cellTitle="Observaciones"
+                                />
+                                <TableHeaderCell
+                                    as={(props: any) => (
+                                        <Block
+                                            {...props}
+                                            onClick={() => toggleSort('Quantity')}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                    variant={getSortVariant('Quantity')}
+                                    cellTitle="Cant"
+                                />
+                                <TableHeaderCell
+                                    as={(props: any) => (
+                                        <Block
+                                            {...props}
+                                            onClick={() => toggleSort('Warranty')}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                    variant={getSortVariant('Warranty')}
+                                    cellTitle="Garantía"
+                                />
+                                <TableHeaderCell
+                                    as={(props: any) => (
+                                        <Block
+                                            {...props}
+                                            onClick={() => toggleSort('Status')}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                    variant={getSortVariant('Status')}
+                                    cellTitle="Status"
+                                />
+                                <TableHeaderCell
+                                    as={(props: any) => (
+                                        <Block
+                                            {...props}
+                                            onClick={() => toggleSort('Vigencia')}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                    variant={getSortVariant('Vigencia')}
+                                    cellTitle="Vigencia"
+                                />
+                            </div>
                         </div>
 
                         {table.getRowModel().rows.map(row => {
