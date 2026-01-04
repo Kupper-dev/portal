@@ -3901,7 +3901,6 @@ a {
 
 .table_body_row:where(.w-variant-33c30a45-1e0f-3ec8-797c-07591a649549) {
   border-left-color: var(--status-green-text);
-  background-color: var(--background);
 }
 
 .table_body_row:where(.w-variant-6f2c0dd4-4366-ecf1-3f7a-c51adbe0f49f) {

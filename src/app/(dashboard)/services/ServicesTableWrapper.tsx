@@ -111,17 +111,41 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                                 <Block tag="div">{"Servicio"}</Block>
                             </Block>
 
-                            <div onClick={() => toggleSort('Status')} style={{ cursor: 'pointer' }}>
-                                <TableHeaderCell variant={getSortVariant('Status')} cellTitle="Status" />
-                            </div>
+                            <TableHeaderCell
+                                as={(props: any) => (
+                                    <Block
+                                        {...props}
+                                        onClick={() => toggleSort('Status')}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                )}
+                                variant={getSortVariant('Status')}
+                                cellTitle="Status"
+                            />
 
-                            <div onClick={() => toggleSort('Fecha')} style={{ cursor: 'pointer' }}>
-                                <TableHeaderCell variant={getSortVariant('Fecha')} cellTitle="Fecha" />
-                            </div>
+                            <TableHeaderCell
+                                as={(props: any) => (
+                                    <Block
+                                        {...props}
+                                        onClick={() => toggleSort('Fecha')}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                )}
+                                variant={getSortVariant('Fecha')}
+                                cellTitle="Fecha"
+                            />
 
-                            <div onClick={() => toggleSort('AproxDate')} style={{ cursor: 'pointer' }}>
-                                <TableHeaderCell variant={getSortVariant('AproxDate')} cellTitle="Resolución estimada" />
-                            </div>
+                            <TableHeaderCell
+                                as={(props: any) => (
+                                    <Block
+                                        {...props}
+                                        onClick={() => toggleSort('AproxDate')}
+                                        style={{ cursor: 'pointer' }}
+                                    />
+                                )}
+                                variant={getSortVariant('AproxDate')}
+                                cellTitle="Resolución estimada"
+                            />
                         </div>
 
                         {table.getRowModel().rows.map(row => {
