@@ -17,7 +17,14 @@ export default async function ApprovalsPage() {
 
     return (
         <div className="dashboard_section">
-            <Sidebar />
+            <Sidebar
+                sIdebarServices={{ href: "/services" }}
+                dashboard={{ href: "/" }}
+                warranties={{ href: "/warranties" }}
+                devices={{ href: "/devices" }}
+                invoices={{ href: "/invoices" }}
+                approvals={{ href: "/approvals" }}
+            />
             <Header
                 userProfilePicture={{ src: userImage }}
                 userProfileLink={{ href: '/profile' }}

@@ -1,8 +1,8 @@
-
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 import { Sidebar, Header } from '@/devlink';
 import { redirect } from 'next/navigation';
+import WarrantiesTableWrapper from './WarrantiesTableWrapper';
 
 export default async function WarrantiesPage() {
     const cookieStore = await cookies();
@@ -17,7 +17,14 @@ export default async function WarrantiesPage() {
 
     return (
         <div className="dashboard_section">
-            <Sidebar />
+            <Sidebar
+                sIdebarServices={{ href: "/services" }}
+                dashboard={{ href: "/" }}
+                warranties={{ href: "/warranties" }}
+                devices={{ href: "/devices" }}
+                invoices={{ href: "/invoices" }}
+                approvals={{ href: "/approvals" }}
+            />
             <Header
                 userProfilePicture={{ src: userImage }}
                 userProfileLink={{ href: '/profile' }}
@@ -25,19 +32,7 @@ export default async function WarrantiesPage() {
             />
             {/* Main Content Area */}
             <div className="dashboard_content">
-                <div className="main-grid">
-                    <div className="module">
-                        <div className="table-header">
-                            <h4 className="no_space_bottom">Garantías</h4>
-                        </div>
-                        {/* Content goes here */}
-                        <div className="table-content">
-                            <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                                Próximamente
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <WarrantiesTableWrapper items={[]} />
             </div>
         </div>
     );
