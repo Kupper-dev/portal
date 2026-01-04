@@ -11,9 +11,10 @@ import {
     createColumnHelper,
     SortingState,
 } from '@tanstack/react-table';
-import { TableHeaderRow, TableBodyRow, TablePagination } from '@/devlink';
+import { TableHeaderRow, TableBodyRow, TablePagination, TableHeaderCell } from '@/devlink';
 import { ServiceItem, DeviceItem } from '@/lib/service-types';
 import { getStepVariant, getStatusMessage, getAlertConfig } from '@/lib/status-logic';
+import { Block } from '@/devlink/_Builtin';
 
 // Helper to format dates
 const formatDate = (dateStr: string | null | undefined) => {
@@ -64,8 +65,8 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
     const columns = [
         columnHelper.accessor(row => row.service.podio_item_id, { id: 'ID', header: 'ID' }),
         columnHelper.accessor(row => row.service.date, { id: 'Fecha', header: 'Fecha' }),
-        columnHelper.accessor(row => row.device?.brandmodel, { id: 'Dispositivo', header: 'Dispositivo' }),
         columnHelper.accessor(row => row.service.status, { id: 'Status', header: 'Status' }),
+        columnHelper.accessor(row => row.service.aproxcompletationdate, { id: 'AproxDate', header: 'AproxDate' }),
     ];
 
     const table = useReactTable({
@@ -82,6 +83,17 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
         onPaginationChange: setPagination,
     });
 
+    const getSortVariant = (columnId: string): "Base" | "up" | "down" => {
+        const sortState = table.getColumn(columnId)?.getIsSorted();
+        if (sortState === 'asc') return 'up';
+        if (sortState === 'desc') return 'down';
+        return 'Base';
+    };
+
+    const toggleSort = (columnId: string) => {
+        table.getColumn(columnId)?.toggleSorting(table.getColumn(columnId)?.getIsSorted() === 'asc');
+    };
+
     return (
         <div className="main-grid">
             <div className="module">
@@ -93,7 +105,24 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                 {/* Table Content Loop */}
                 <div className="table-content">
                     <div className="table-list">
-                        <TableHeaderRow />
+                        {/* Manual Header Implementation for Sorting */}
+                        <div className="table_body_row header">
+                            <Block className="table_cell" tag="div">
+                                <Block tag="div">{"Servicio"}</Block>
+                            </Block>
+
+                            <div onClick={() => toggleSort('Status')} style={{ cursor: 'pointer' }}>
+                                <TableHeaderCell variant={getSortVariant('Status')} cellTitle="Status" />
+                            </div>
+
+                            <div onClick={() => toggleSort('Fecha')} style={{ cursor: 'pointer' }}>
+                                <TableHeaderCell variant={getSortVariant('Fecha')} cellTitle="Fecha" />
+                            </div>
+
+                            <div onClick={() => toggleSort('AproxDate')} style={{ cursor: 'pointer' }}>
+                                <TableHeaderCell variant={getSortVariant('AproxDate')} cellTitle="Resolución estimada" />
+                            </div>
+                        </div>
 
                         {table.getRowModel().rows.map(row => {
                             const s = row.original.service;
