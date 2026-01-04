@@ -11,6 +11,8 @@ export function TableHeaderCell({
     Base: "",
     up: "w-variant-d657ca9f-55c5-12e3-5c11-7e109e61dd79",
     down: "w-variant-1b3d8cc8-bbcf-ad51-c6d9-6743cb443ee6",
+    "2up": "w-variant-939332cf-6984-62e4-5f41-5df1efc5493d",
+    "2down": "w-variant-1d6fa919-3c6d-8b47-d178-565afc9ab4d9",
   };
 
   const _activeStyleVariant = _styleVariantMap[variant];
