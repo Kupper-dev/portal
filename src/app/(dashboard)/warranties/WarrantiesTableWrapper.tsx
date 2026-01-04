@@ -89,7 +89,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
 
                         {/* Manual Header Implementation for Sorting */}
                         {/* Used the synced DevLink component for perfect layout match */}
-                        <div className="table">
+                        <div className="table main-header-wrapper">
                             <WarrantiesTableHeader />
                         </div>
 
