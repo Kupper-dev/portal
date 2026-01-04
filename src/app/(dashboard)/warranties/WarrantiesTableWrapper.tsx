@@ -67,9 +67,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
         <div className="main-grid">
             <div className="module">
                 {/* Header */}
-                <div className="table-header">
-                    <h4 className="no_space_bottom">Garantías</h4>
-                </div>
+                {/* Header removed based on user feedback */}
 
                 {/* Table Content Loop */}
                 <div className="table-content">
