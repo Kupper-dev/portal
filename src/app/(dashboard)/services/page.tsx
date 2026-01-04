@@ -29,14 +29,7 @@ export default async function ServicesPage() {
             />
             {/* Main Content Area */}
             <div className="dashboard_content">
-                {/* 
-                   We reuse 'dashboard_content' or similar class if it exists in your global css/DevLink 
-                   to apply correct padding/margin next to sidebar.
-                   For now using a generic div, but ideally this matches the layout structure.
-                */}
-                <div className="w-layout-blockcontainer container w-container">
-                    <ServicesTableWrapper items={serviceItems || []} />
-                </div>
+                <ServicesTableWrapper items={serviceItems || []} />
             </div>
         </div>
     );

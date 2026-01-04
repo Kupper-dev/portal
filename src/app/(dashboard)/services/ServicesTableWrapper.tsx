@@ -9,11 +9,11 @@ import {
     getFilteredRowModel,
     getSortedRowModel,
     createColumnHelper,
-    flexRender,
     SortingState,
 } from '@tanstack/react-table';
-import { TableHeaderRow, TableBodyRow, TablePagination, StatusBadge } from '@/devlink';
+import { TableHeaderRow, TableBodyRow, TablePagination } from '@/devlink';
 import { ServiceItem, DeviceItem } from '@/lib/service-types';
+import { getStepVariant, getStatusMessage, getAlertConfig } from '@/lib/status-logic';
 
 // Helper to format dates
 const formatDate = (dateStr: string | null | undefined) => {
@@ -49,7 +49,6 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
         pageSize: 5,
     });
 
-    // We only need columns for sorting/definition, but rendering is custom via DevLink
     const columnHelper = createColumnHelper<CombinedServiceData>();
     const columns = [
         columnHelper.accessor(row => row.service.podio_item_id, { id: 'ID', header: 'ID' }),
@@ -72,19 +71,6 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
         onPaginationChange: setPagination,
     });
 
-    // Status Logic Constants (Moved inside/formatted for component usage)
-    const STATUS_ORDER = [
-        "Dispositivo recibido",
-        "Dispositivo en revision",
-        "Enviar diagnostico",
-        "Refacciones en camino",
-        "Inicia reparación", // Assuming "Inicia reparación" is the correct string from Podio/ServiceStatusWrapper
-        "Enviar código de seguridad",
-        "Dispositivo entregado"
-    ];
-
-    type VariantState = "Base" | "active" | "check" | "no_state" | "hidden";
-
     return (
         <div className="main-grid">
             <div className="module">
@@ -96,7 +82,7 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                 {/* Table Content Loop */}
                 <div className="table-content">
                     <div className="table-list">
-                        <TableHeaderRow /> {/* Use the DevLink Header Row */}
+                        <TableHeaderRow />
 
                         {table.getRowModel().rows.map(row => {
                             const s = row.original.service;
@@ -110,61 +96,14 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                                 rowVariant = "status process";
                             }
 
-                            // 2. Determine Step Variants (Timeline)
-                            const getStepVariant = (stepIndex: number): VariantState => {
-                                let currentStatus = s.status;
-                                if (currentStatus === "Dispositivo entregado sin reparar") {
-                                    currentStatus = "Dispositivo entregado";
-                                }
-
-                                const currentIndex = STATUS_ORDER.indexOf(currentStatus);
-                                const targetIndex = stepIndex - 1;
-
-                                // Step 4 "Refacciones en camino" Special Logic
-                                if (stepIndex === 4) {
-                                    return currentIndex === targetIndex ? "active" : "hidden";
-                                }
-
-                                if (currentIndex === -1) return "Base";
-                                if (currentIndex === targetIndex) return "active";
-                                if (currentIndex > targetIndex) return "check";
-                                return "Base"; // Default fallback
-                            };
-
-                            // 3. Status Messages (Descriptions)
-                            const getStatusMessage = (stepIndex: number): string => {
-                                const variant = getStepVariant(stepIndex);
-                                if (variant !== 'active') return "";
-
-                                switch (stepIndex) {
-                                    case 1: return "Hemos recibido tu dispositivo y empezaremos la revisión tan pronto como sea posible.";
-                                    case 2: return "Nuestros técnicos están diagnosticando tu dispositivo para encontrar la falla.";
-                                    case 3: return "Tu diagnóstico está listo. Por favor revísalo y autoriza la reparación.";
-                                    case 4: return "Estamos esperando las refacciones necesarias para reparar tu equipo.";
-                                    case 5: return "La reparación está en curso. Te notificaremos cuando termine.";
-                                    case 6: return "¡Tu dispositivo está listo! Puedes pasar a recogerlo en nuestros horarios de atención.";
-                                    case 7: return "Gracias por confiar en nosotros. Tu dispositivo ha sido entregado.";
-                                    default: return "";
-                                }
-                            };
-
-                            // 4. Alert Logic (Scenario 2: Ready after 6 PM)
-                            // Re-implementing simplified alert logic for the table view
-                            // We can add more scenarios if needed, sticking to primary ones for now to avoid clutter
-                            const getAlertMessage = (stepIndex: number) => {
-                                if (getStepVariant(stepIndex) !== 'active') return "";
-
-                                const lastUpdated = new Date(s.last_updated_at);
-                                if (stepIndex === 6) { // Ready for collection
-                                    const hour = lastUpdated.getHours();
-                                    if (hour >= 18) {
-                                        return "Tu dispositivo estuvo listo después de las 6:00 PM. Podríamos haber cerrado, verifica antes de venir.";
-                                    }
-                                }
-                                return "";
-                            };
-
-                            const alertMessage6 = getAlertMessage(6);
+                            // Calculate Alerts using shared logic
+                            const alert1 = getAlertConfig(s, 1);
+                            const alert2 = getAlertConfig(s, 2);
+                            const alert3 = getAlertConfig(s, 3);
+                            const alert4 = getAlertConfig(s, 4);
+                            const alert5 = getAlertConfig(s, 5);
+                            const alert6 = getAlertConfig(s, 6);
+                            const alert7 = getAlertConfig(s, 7);
 
                             return (
                                 <TableBodyRow
@@ -187,13 +126,13 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                                     observations={s.observations || "Ninguna"}
 
                                     // Status Timeline Variants
-                                    statusRow1Variant={getStepVariant(1)}
-                                    statusRow2Variant={getStepVariant(2)}
-                                    statusRow3Variant={getStepVariant(3)}
-                                    statusRow4Variant={getStepVariant(4)}
-                                    statusRow5Variant={getStepVariant(5)}
-                                    statusRow6Variant={getStepVariant(6)}
-                                    statusRow7Variant={getStepVariant(7)}
+                                    statusRow1Variant={getStepVariant(s.status, 1)}
+                                    statusRow2Variant={getStepVariant(s.status, 2)}
+                                    statusRow3Variant={getStepVariant(s.status, 3)}
+                                    statusRow4Variant={getStepVariant(s.status, 4)}
+                                    statusRow5Variant={getStepVariant(s.status, 5)}
+                                    statusRow6Variant={getStepVariant(s.status, 6)}
+                                    statusRow7Variant={getStepVariant(s.status, 7)}
 
                                     // Status Dates
                                     statusRow1StatusDate={formatDate(s.datereceived || s.date)}
@@ -213,22 +152,40 @@ export default function ServicesTableWrapper({ items }: ServicesTableWrapperProp
                                     statusRow6StatusHour={formatTime(s.daterepairready || "")}
                                     statusRow7StatusHour={formatTime(s.datedevicedelivered || "")}
 
-                                    // Status Access Control / Visibility (simplified)
+                                    // Status Access Control
                                     statusRow1StatusActionPopup={false}
-                                    statusRow3StatusActionPopup={false} // Disable popup in table view for now? Or implement if needed.
+                                    statusRow3StatusActionPopup={false}
 
                                     // Status Messages
-                                    statusRow1StatusStatusMessage={getStatusMessage(1)}
-                                    statusRow2StatusStatusMessage={getStatusMessage(2)}
-                                    statusRow3StatusStatusMessage={getStatusMessage(3)}
-                                    statusRow4StatusStatusMessage={getStatusMessage(4)}
-                                    statusRow5StatusStatusMessage={getStatusMessage(5)}
-                                    statusRow6StatusStatusMessage={getStatusMessage(6)}
-                                    statusRow7StatusStatusMessage={getStatusMessage(7)}
+                                    statusRow1StatusStatusMessage={getStatusMessage(s.status, 1)}
+                                    statusRow2StatusStatusMessage={getStatusMessage(s.status, 2)}
+                                    statusRow3StatusStatusMessage={getStatusMessage(s.status, 3)}
+                                    statusRow4StatusStatusMessage={getStatusMessage(s.status, 4)}
+                                    statusRow5StatusStatusMessage={getStatusMessage(s.status, 5)}
+                                    statusRow6StatusStatusMessage={getStatusMessage(s.status, 6)}
+                                    statusRow7StatusStatusMessage={getStatusMessage(s.status, 7)}
 
-                                    // Alerts
-                                    statusRow6Alert={!!alertMessage6}
-                                    statusRow6AlertMessageText={alertMessage6}
+                                    // Alerts (Full Sync with Dashboard Logic)
+                                    statusRow1Alert={alert1.show}
+                                    statusRow1AlertMessageText={alert1.message}
+
+                                    statusRow2Alert={alert2.show}
+                                    statusRow2AlertMessageText={alert2.message}
+
+                                    statusRow3Alert={alert3.show}
+                                    statusRow3AlertMessageText={alert3.message}
+
+                                    statusRow4Alert={alert4.show}
+                                    statusRow4AlertMessageText={alert4.message}
+
+                                    statusRow5Alert={alert5.show}
+                                    statusRow5AlertMessageText={alert5.message}
+
+                                    statusRow6Alert={alert6.show}
+                                    statusRow6AlertMessageText={alert6.message}
+
+                                    statusRow7Alert={alert7.show}
+                                    statusRow7AlertMessageText={alert7.message}
                                 />
                             );
                         })}
