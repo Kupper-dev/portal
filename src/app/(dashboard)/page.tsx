@@ -1,6 +1,7 @@
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
-import { Sidebar, Hero, Header } from '@/devlink';
+import { Hero, Header } from '@/devlink';
+import { PortalSidebar } from '@/components/PortalSidebar';
 import ServiceStatusWrapper from './ServiceStatusWrapper';
 import { getUserServiceData } from '@/lib/data-service';
 import { redirect } from 'next/navigation';
@@ -25,14 +26,7 @@ export default async function DashboardPage() {
 
     return (
         <div className="dashboard_section">
-            <Sidebar
-                sIdebarServices={{ href: "/app/services" }}
-                dashboard={{ href: "/app" }}
-                warranties={{ href: "/app/warranties" }}
-                devices={{ href: "/app/devices" }}
-                invoices={{ href: "/app/invoices" }}
-                approvals={{ href: "/app/approvals" }}
-            />
+            <PortalSidebar />
             <Header
                 userProfilePicture={{ src: userImage }}
                 userProfileLink={{ href: '/profile' }}

@@ -1,7 +1,8 @@
 
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
-import { Sidebar, Header } from '@/devlink';
+import { Header } from '@/devlink';
+import { PortalSidebar } from '@/components/PortalSidebar';
 import { redirect } from 'next/navigation';
 
 export default async function DevicesPage() {
@@ -17,14 +18,7 @@ export default async function DevicesPage() {
 
     return (
         <div className="dashboard_section">
-            <Sidebar
-                sIdebarServices={{ href: "/app/services" }}
-                dashboard={{ href: "/app" }}
-                warranties={{ href: "/app/warranties" }}
-                devices={{ href: "/app/devices" }}
-                invoices={{ href: "/app/invoices" }}
-                approvals={{ href: "/app/approvals" }}
-            />
+            <PortalSidebar />
             <Header
                 userProfilePicture={{ src: userImage }}
                 userProfileLink={{ href: '/profile' }}

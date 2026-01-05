@@ -1,7 +1,8 @@
 
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
-import { Sidebar, Header } from '@/devlink';
+import { Header } from '@/devlink';
+import { PortalSidebar } from '@/components/PortalSidebar';
 import { redirect } from 'next/navigation';
 
 export default async function ApprovalsPage() {
@@ -17,14 +18,7 @@ export default async function ApprovalsPage() {
 
     return (
         <div className="dashboard_section">
-            <Sidebar
-                sIdebarServices={{ href: "/services" }}
-                dashboard={{ href: "/" }}
-                warranties={{ href: "/warranties" }}
-                devices={{ href: "/devices" }}
-                invoices={{ href: "/invoices" }}
-                approvals={{ href: "/approvals" }}
-            />
+            <PortalSidebar />
             <Header
                 userProfilePicture={{ src: userImage }}
                 userProfileLink={{ href: '/profile' }}
