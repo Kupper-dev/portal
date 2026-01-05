@@ -4155,22 +4155,33 @@ a {
 }
 
 .progress_wrapper {
+  position: relative;
+
   overflow: hidden;
   width: 70%;
   height: 1rem;
   margin-right: 1rem;
 
+  border: 1px solid var(--status-yellow);
   border-radius: var(--05-rem);
 
   background-color: var(--status-orange);
 }
 
 .progress_wrapper:where(.w-variant-1a6a6d7f-6261-1164-f75e-8c94bd9b84e1) {
+  border-color: var(--status-green-text);
   background-color: var(--status-purple);
 }
 
 .progress_wrapper:where(.w-variant-a4c0d284-b693-e150-432b-15446da6fafa) {
+  border-color: var(--status-red-text);
   background-color: var(--status-red);
+}
+
+.progress_wrapper:where(.w-variant-e82b3dc5-ad80-5338-db21-9cf6140f7cc2) {
+  border-color: var(--blue-mid);
+  background-color: var(--status-blue);
+  color: var(--blue-mid);
 }
 
 .progress_bar {
@@ -4194,6 +4205,20 @@ a {
   grid-row-gap: 0.5rem;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
+}
+
+.progressbar-text {
+  position: absolute;
+  left: 0%;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  z-index: 1;
+
+  display: none;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 

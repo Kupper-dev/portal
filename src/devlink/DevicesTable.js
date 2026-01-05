@@ -24,6 +24,12 @@ export function DevicesTable({
   },
 
   devicesDeviceProgressBar = {},
+  progressBarVariantProgressBar = null,
+  progressBarProgressbarPercentage = {},
+
+  progressBarRequestMaintenance = {
+    href: "#",
+  },
 }) {
   return (
     <_Component className="dynamic_row" tag="div">
@@ -65,10 +71,11 @@ export function DevicesTable({
           id="w-node-_30873253-9fc0-0083-b6f8-6601c88e8d80-c88e8d73"
           tag="div"
         >
-          <ProgressBar />
-          <_Builtin.Block tag="div">
-            {devicesDeviceRemainingDaysToNextMaintenance}
-          </_Builtin.Block>
+          <ProgressBar
+            variant={progressBarVariantProgressBar}
+            progressbar={progressBarProgressbarPercentage}
+            requestMaintenance={progressBarRequestMaintenance}
+          />
         </_Builtin.Block>
         <_Builtin.Block
           className="table_cell h"

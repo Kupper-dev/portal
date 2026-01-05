@@ -9,7 +9,7 @@ import {
     createColumnHelper,
     SortingState,
 } from '@tanstack/react-table';
-import { TablePagination, TableHeaderCell, DevicesTable, ProgressBar } from '@/devlink';
+import { TablePagination, TableHeaderCell, DevicesTable, DevicesTableHeader, ProgressBar } from '@/devlink';
 import { DeviceItem } from '@/lib/service-types';
 
 interface DevicesTableWrapperProps {
@@ -79,44 +79,15 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                         {/* Manual Header Implementation - 4 Columns */}
                         {/* Manual Header Implementation - 4 Columns */}
                         <div className="table main-header-wrapper">
-                            <div className="table_row_1 header">
-                                {/* Column 1: Tipo */}
-                                <TableHeaderCell
-                                    cellTitle="Tipo"
-                                // Not strictly sortable in current logic, but using component for visual consistency.
-                                // You can add a sort key if 'type' becomes a real field.
-                                />
-
-                                {/* Column 2: Marca y Modelo */}
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('BrandModel')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('BrandModel', true)}
-                                    cellTitle="Marca y Modelo"
-                                />
-
-                                {/* Column 3: Proximo Mantenimiento */}
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Maintenance')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('Maintenance')}
-                                    cellTitle="Próximo Mantenimiento"
-                                />
-
-                                {/* Column 4: Status */}
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Status')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('Status')}
-                                    cellTitle="Status"
-                                />
-                            </div>
+                            <DevicesTableHeader />
                         </div>
-
                         {/* Rows */}
                         {table.getRowModel().rows.map(row => {
                             const item = row.original;
 
                             // Maintenance Progress Logic
                             const getMaintenanceStatus = (nextDateStr?: string) => {
-                                if (!nextDateStr) return { percent: 0, variant: 'Base' as const };
+                                if (!nextDateStr) return { percent: 0, variant: 'no-maintenance' as const };
 
                                 const nextDate = new Date(nextDateStr);
                                 const today = new Date();
@@ -134,7 +105,7 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                                 if (percent < 0) percent = 0;
                                 if (percent > 100) percent = 100;
 
-                                let variant: "positive" | "Base" | "negative" = "positive";
+                                let variant: "positive" | "Base" | "negative" | "no-maintenance" = "positive";
 
                                 if (percent <= 92) {
                                     variant = "positive";
@@ -147,7 +118,7 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                                 return { percent, variant };
                             };
 
-                            const maintenanceStatus = getMaintenanceStatus((item as any).nextmaintenance);
+                            const maintenanceStatus = getMaintenanceStatus(item.nextmaintenance);
 
                             // Mocking icon based on brand/model detection or generic fallback
                             const getDeviceIcon = (brandModel: string = '') => {

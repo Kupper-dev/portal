@@ -17,4 +17,11 @@ declare function DevicesTable(props: {
   devicesDeviceStorageType?: React.ReactNode;
   devicesDeviceLastService?: Types.Basic.Link;
   devicesDeviceProgressBar?: Types.Devlink.RuntimeProps;
+  progressBarVariantProgressBar?:
+    | "Base"
+    | "positive"
+    | "negative"
+    | "no-maintenance";
+  progressBarProgressbarPercentage?: Types.Devlink.RuntimeProps;
+  progressBarRequestMaintenance?: Types.Basic.Link;
 }): React.JSX.Element;
