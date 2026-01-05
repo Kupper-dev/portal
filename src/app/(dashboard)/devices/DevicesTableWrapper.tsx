@@ -148,7 +148,7 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                                     statusBadgeDeviceStatusText={item.status || 'N/A'}
                                     statusBadgeDeviceStatusBadgeVariant={statusBadgeVariant}
 
-                                    devicesDeviceRemainingDaysToNextMaintenance={`${getDaysRemaining((item as any).nextmaintenance)} días`}
+                                    devicesDeviceRemainingDaysToNextMaintenance={`${getDaysRemaining(item.nextmaintenance)} días`}
                                     devicesDeviceProgressBar={{
                                         render: () => (
                                             <ProgressBar
