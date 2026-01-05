@@ -77,12 +77,15 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                     <div className="table-list devices-list">
 
                         {/* Manual Header Implementation - 4 Columns */}
+                        {/* Manual Header Implementation - 4 Columns */}
                         <div className="table main-header-wrapper">
                             <div className="table_row_1 header">
                                 {/* Column 1: Tipo */}
-                                <div className="table_header_cell">
-                                    <div className="text-block-header">Tipo</div>
-                                </div>
+                                <TableHeaderCell
+                                    cellTitle="Tipo"
+                                // Not strictly sortable in current logic, but using component for visual consistency.
+                                // You can add a sort key if 'type' becomes a real field.
+                                />
 
                                 {/* Column 2: Marca y Modelo */}
                                 <TableHeaderCell
