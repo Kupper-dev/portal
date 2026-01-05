@@ -178,13 +178,9 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                                     statusBadgeDeviceStatusBadgeVariant={statusBadgeVariant}
 
                                     devicesDeviceRemainingDaysToNextMaintenance={`${getDaysRemaining(item.nextmaintenance)} días`}
-                                    devicesDeviceProgressBar={{
-                                        render: () => (
-                                            <ProgressBar
-                                                variant={maintenanceStatus.variant}
-                                                progressbar={{ style: { width: `${maintenanceStatus.percent}%` } }}
-                                            />
-                                        )
+                                    progressBarVariantProgressBar={maintenanceStatus.variant}
+                                    progressBarProgressbarPercentage={{
+                                        style: { width: `${maintenanceStatus.percent}%` }
                                     }}
                                 />
                             );
