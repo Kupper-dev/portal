@@ -2174,7 +2174,7 @@ textarea.w-select {
   --status-orange: hsla(51, 87.50%, 96.86%, 1.00);
   --status-orange-text: hsla(28, 66.67%, 31.20%, 1.00);
   --status-green: hsla(122, 87.50%, 96.86%, 1.00);
-  --status-red-text: hsla(351, 50.41%, 62.36%, 1.00);
+  --status-red-text: hsla(358, 100.00%, 65.78%, 1.00);
   --status-red: hsla(343, 100.00%, 94.89%, 1.00);
   --status-blue: hsla(187, 100.00%, 94.67%, 1.00);
   --status-purple: hsla(254, 100.00%, 94.89%, 1.00);
@@ -4170,8 +4170,8 @@ a {
 }
 
 .progress_wrapper:where(.w-variant-1a6a6d7f-6261-1164-f75e-8c94bd9b84e1) {
-  border-color: var(--status-purple-text);
-  background-color: var(--status-purple);
+  border-color: var(--blue-mid);
+  background-color: var(--status-blue);
 }
 
 .progress_wrapper:where(.w-variant-a4c0d284-b693-e150-432b-15446da6fafa) {
@@ -4192,7 +4192,7 @@ a {
 }
 
 .progress_bar:where(.w-variant-1a6a6d7f-6261-1164-f75e-8c94bd9b84e1) {
-  background-color: var(--status-purple-text);
+  background-color: var(--blue-mid);
 }
 
 .progress_bar:where(.w-variant-a4c0d284-b693-e150-432b-15446da6fafa) {

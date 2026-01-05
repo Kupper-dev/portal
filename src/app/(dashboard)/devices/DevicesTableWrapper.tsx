@@ -149,11 +149,16 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
 
                             const maintenanceStatus = getMaintenanceStatus(item.nextmaintenance);
 
-                            // Mocking icon based on brand/model detection or generic fallback
-                            const getDeviceIcon = (brandModel: string = '') => {
-                                const lower = brandModel.toLowerCase();
-                                if (lower.includes('mac') || lower.includes('laptop')) return "https://cdn.prod.website-files.com/6758835064db97561575239e/6758835064db9756157523e3_laptop-icon.svg";
-                                return "https://cdn.prod.website-files.com/6758835064db97561575239e/6758835064db9756157523e3_laptop-icon.svg";
+                            // Icon Mapping Logic
+                            const getDeviceIcon = (type: string = '') => {
+                                const typeLower = type.toLowerCase();
+                                const iconMap: Record<string, string> = {
+                                    'laptop': 'https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695bfd4e5b39ae5f0433564e_Laptop%20Icon.png',
+                                    'aio': 'https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695bfd4e650d70452456c089_AIO%20icon.png',
+                                    'pc': 'https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695bfd4f7c0ed258d3196a8f_PC%20Icon.png',
+                                    'otro': 'https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/695bfd4f7efd6d0463ee5d37_Other%20icon.png'
+                                };
+                                return iconMap[typeLower] || iconMap['laptop']; // Default to laptop if unknown
                             };
 
                             // Status Badge Logic
@@ -167,7 +172,7 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                                     // Mapping fields as requested; irrelevant visual props for columns are passed but not highlighted in header
                                     devicesDeviceAssignedTo={item.departmentorcontact || '-'}
                                     devicesDeviceFormattedId={item.podio_formatted_id || `#${item.podio_item_id}`}
-                                    devicesDeviceType={getDeviceIcon(item.brandmodel)}
+                                    devicesDeviceType={getDeviceIcon(item.type)}
 
                                     devicesDeviceCpu={item.cpu || '-'}
                                     devicesDeviceRam={item.ram || '-'}
