@@ -5,6 +5,7 @@ import * as _Builtin from "./_Builtin";
 export function ProgressBar({
   as: _Component = _Builtin.Block,
   variant = "Base",
+  progressbar = {},
 }) {
   const _styleVariantMap = {
     Base: "",
@@ -13,11 +14,13 @@ export function ProgressBar({
   };
 
   const _activeStyleVariant = _styleVariantMap[variant];
+
   return (
     <_Component className={`progress_wrapper ${_activeStyleVariant}`} tag="div">
       <_Builtin.Block
         className={`progress_bar ${_activeStyleVariant}`}
         tag="div"
+        {...progressbar}
       />
     </_Component>
   );

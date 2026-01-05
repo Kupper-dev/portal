@@ -5,7 +5,6 @@ import {
     useReactTable,
     getCoreRowModel,
     getPaginationRowModel,
-    getFilteredRowModel,
     getSortedRowModel,
     createColumnHelper,
     SortingState,
@@ -26,9 +25,7 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
 
     const columnHelper = createColumnHelper<DeviceItem>();
 
-    // Helper to calculate days remaining like in the spec
-    // Note: You'll need a real field for 'next_maintenance' if you want this to work.
-    // For now, I'll assume we can use 'last_updated_at' or if you add 'nextmaintenance' to type
+    // Helper to calculate days remaining
     const getDaysRemaining = (dateStr?: string) => {
         if (!dateStr) return 'N/A';
         const target = new Date(dateStr);
@@ -37,10 +34,8 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
         return Math.ceil(diff / (1000 * 60 * 60 * 24));
     };
 
-    // Updated columns to match request: Type (implied/icon), Brand/Model, Maintenance, Status
     const columns = [
         columnHelper.accessor('brandmodel', { id: 'BrandModel', header: 'Dispositivo' }),
-        // Using 'any' cast for potential future field
         columnHelper.accessor((row: any) => getDaysRemaining(row.nextmaintenance), { id: 'Maintenance', header: 'Mantenimiento' }),
         columnHelper.accessor('status', { id: 'Status', header: 'Status' }),
     ];
@@ -71,12 +66,9 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
         table.getColumn(columnId)?.toggleSorting(table.getColumn(columnId)?.getIsSorted() === 'asc');
     };
 
-    const getMemoryType = (type?: string) => type || 'N/A';
-
     return (
         <div className="main-grid">
             <div className="module">
-                {/* Header */}
                 <div className="table-header">
                     <h4 className="no_space_bottom">Dispositivos</h4>
                 </div>
@@ -87,7 +79,7 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                         {/* Manual Header Implementation - 4 Columns */}
                         <div className="table main-header-wrapper">
                             <div className="table_row_1 header">
-                                {/* Column 1: Tipo - usually specific width or just visual */}
+                                {/* Column 1: Tipo */}
                                 <div className="table_header_cell">
                                     <div className="text-block-header">Tipo</div>
                                 </div>
@@ -119,16 +111,51 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                         {table.getRowModel().rows.map(row => {
                             const item = row.original;
 
-                            // Status Logic
-                            const isActive = item.status === 'Funcional';
-                            const statusVariant = isActive ? 'positive' : 'negative';
+                            // Maintenance Progress Logic
+                            const getMaintenanceStatus = (nextDateStr?: string) => {
+                                if (!nextDateStr) return { percent: 0, variant: 'Base' as const };
+
+                                const nextDate = new Date(nextDateStr);
+                                const today = new Date();
+
+                                // Logic: Maintenance is every year. 
+                                const oneYearMs = 365 * 24 * 60 * 60 * 1000;
+                                const startDate = new Date(nextDate.getTime() - oneYearMs);
+
+                                const totalDuration = nextDate.getTime() - startDate.getTime();
+                                const elapsed = today.getTime() - startDate.getTime();
+
+                                let percent = (elapsed / totalDuration) * 100;
+
+                                // Clamp
+                                if (percent < 0) percent = 0;
+                                if (percent > 100) percent = 100;
+
+                                let variant: "positive" | "Base" | "negative" = "positive";
+
+                                if (percent <= 92) {
+                                    variant = "positive";
+                                } else if (percent > 92 && percent <= 97) {
+                                    variant = "Base";
+                                } else {
+                                    variant = "negative";
+                                }
+
+                                return { percent, variant };
+                            };
+
+                            const maintenanceStatus = getMaintenanceStatus((item as any).nextmaintenance);
 
                             // Mocking icon based on brand/model detection or generic fallback
                             const getDeviceIcon = (brandModel: string = '') => {
                                 const lower = brandModel.toLowerCase();
-                                if (lower.includes('mac') || lower.includes('laptop')) return "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
-                                return "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
+                                if (lower.includes('mac') || lower.includes('laptop')) return "https://cdn.prod.website-files.com/6758835064db97561575239e/6758835064db9756157523e3_laptop-icon.svg";
+                                return "https://cdn.prod.website-files.com/6758835064db97561575239e/6758835064db9756157523e3_laptop-icon.svg";
                             };
+
+                            // Status Badge Logic
+                            const isFunctional = item.status === 'Funcional';
+                            const statusBadgeVariant = isFunctional ? 'positive' : 'negative';
 
                             return (
                                 <DevicesTable
@@ -145,11 +172,16 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                                     devicesDeviceStorageType={item.storagetype || ''}
 
                                     statusBadgeDeviceStatusText={item.status || 'N/A'}
-                                    statusBadgeDeviceStatusBadgeVariant={statusVariant}
+                                    statusBadgeDeviceStatusBadgeVariant={statusBadgeVariant}
 
                                     devicesDeviceRemainingDaysToNextMaintenance={`${getDaysRemaining((item as any).nextmaintenance)} días`}
                                     devicesDeviceProgressBar={{
-                                        render: () => <ProgressBar variant={statusVariant} />
+                                        render: () => (
+                                            <ProgressBar
+                                                variant={maintenanceStatus.variant}
+                                                progressbar={{ style: { width: `${maintenanceStatus.percent}%` } }}
+                                            />
+                                        )
                                     }}
                                 />
                             );
