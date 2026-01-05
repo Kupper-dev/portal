@@ -35,7 +35,9 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
     };
 
     const columns = [
+        columnHelper.accessor('type', { id: 'Type', header: 'Tipo' }),
         columnHelper.accessor('brandmodel', { id: 'BrandModel', header: 'Dispositivo' }),
+        // Using 'any' cast for potential future field
         columnHelper.accessor((row: any) => getDaysRemaining(row.nextmaintenance), { id: 'Maintenance', header: 'Mantenimiento' }),
         columnHelper.accessor('status', { id: 'Status', header: 'Status' }),
     ];
@@ -77,9 +79,36 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                     <div className="table-list devices-list">
 
                         {/* Manual Header Implementation - 4 Columns */}
-                        {/* Manual Header Implementation - 4 Columns */}
                         <div className="table main-header-wrapper">
-                            <DevicesTableHeader />
+                            <div className="table_row_2 header">
+                                {/* Column 1: Tipo */}
+                                <TableHeaderCell
+                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Type')} style={{ cursor: 'pointer' }} />}
+                                    variant={getSortVariant('Type', true)}
+                                    cellTitle="Tipo"
+                                />
+
+                                {/* Column 2: Marca y Modelo */}
+                                <TableHeaderCell
+                                    as={(props: any) => <div {...props} onClick={() => toggleSort('BrandModel')} style={{ cursor: 'pointer' }} />}
+                                    variant={getSortVariant('BrandModel', true)}
+                                    cellTitle="Marca y Modelo"
+                                />
+
+                                {/* Column 3: Proximo Mantenimiento */}
+                                <TableHeaderCell
+                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Maintenance')} style={{ cursor: 'pointer' }} />}
+                                    variant={getSortVariant('Maintenance')}
+                                    cellTitle="Próximo Mantenimiento"
+                                />
+
+                                {/* Column 4: Status */}
+                                <TableHeaderCell
+                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Status')} style={{ cursor: 'pointer' }} />}
+                                    variant={getSortVariant('Status')}
+                                    cellTitle="Status"
+                                />
+                            </div>
                         </div>
                         {/* Rows */}
                         {table.getRowModel().rows.map(row => {

@@ -76,6 +76,9 @@ export function DevicesTable({
             progressbar={progressBarProgressbarPercentage}
             requestMaintenance={progressBarRequestMaintenance}
           />
+          <_Builtin.Block tag="div">
+            {devicesDeviceRemainingDaysToNextMaintenance}
+          </_Builtin.Block>
         </_Builtin.Block>
         <_Builtin.Block
           className="table_cell h"
