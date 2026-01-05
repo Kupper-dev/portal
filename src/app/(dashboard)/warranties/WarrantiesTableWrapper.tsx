@@ -96,7 +96,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         <div
                                             {...props}
                                             onClick={() => toggleSort('Description')}
-                                            style={{ cursor: 'pointer', display: 'contents' }}
+                                            style={{ cursor: 'pointer' }}
                                         />
                                     )}
                                     variant={getSortVariant('Description', true)}
@@ -107,7 +107,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         <div
                                             {...props}
                                             onClick={() => toggleSort('Observaciones')}
-                                            style={{ cursor: 'pointer', display: 'contents' }}
+                                            style={{ cursor: 'pointer' }}
                                         />
                                     )}
                                     variant={getSortVariant('Observaciones', true)}
@@ -118,7 +118,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         <div
                                             {...props}
                                             onClick={() => toggleSort('Quantity')}
-                                            style={{ cursor: 'pointer', display: 'contents' }}
+                                            style={{ cursor: 'pointer' }}
                                         />
                                     )}
                                     variant={getSortVariant('Quantity')}
@@ -129,7 +129,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         <div
                                             {...props}
                                             onClick={() => toggleSort('Warranty')}
-                                            style={{ cursor: 'pointer', display: 'contents' }}
+                                            style={{ cursor: 'pointer' }}
                                         />
                                     )}
                                     variant={getSortVariant('Warranty')}
@@ -140,7 +140,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         <div
                                             {...props}
                                             onClick={() => toggleSort('Status')}
-                                            style={{ cursor: 'pointer', display: 'contents' }}
+                                            style={{ cursor: 'pointer' }}
                                         />
                                     )}
                                     variant={getSortVariant('Status')}
@@ -151,7 +151,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                                         <div
                                             {...props}
                                             onClick={() => toggleSort('Vigencia')}
-                                            style={{ cursor: 'pointer', display: 'contents' }}
+                                            style={{ cursor: 'pointer' }}
                                         />
                                     )}
                                     variant={getSortVariant('Vigencia')}
