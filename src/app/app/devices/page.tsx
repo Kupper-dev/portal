@@ -18,12 +18,12 @@ export default async function DevicesPage() {
     return (
         <div className="dashboard_section">
             <Sidebar
-                sIdebarServices={{ href: "/services" }}
-                dashboard={{ href: "/" }}
-                warranties={{ href: "/warranties" }}
-                devices={{ href: "/devices" }}
-                invoices={{ href: "/invoices" }}
-                approvals={{ href: "/approvals" }}
+                sIdebarServices={{ href: "/app/services" }}
+                dashboard={{ href: "/app" }}
+                warranties={{ href: "/app/warranties" }}
+                devices={{ href: "/app/devices" }}
+                invoices={{ href: "/app/invoices" }}
+                approvals={{ href: "/app/approvals" }}
             />
             <Header
                 userProfilePicture={{ src: userImage }}
