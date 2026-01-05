@@ -162,8 +162,15 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                             };
 
                             // Status Badge Logic
-                            const isFunctional = item.status === 'Funcional';
-                            const statusBadgeVariant = isFunctional ? 'positive' : 'negative';
+                            const getStatusVariant = (status: string) => {
+                                switch (status) {
+                                    case 'Operacional': return 'positive';
+                                    case 'En revisión': return 'Base';
+                                    case 'No reparable': return 'negative';
+                                    default: return 'Base';
+                                }
+                            };
+                            const statusBadgeVariant = getStatusVariant(item.status || '');
 
                             return (
                                 <DevicesTable
