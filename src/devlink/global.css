@@ -3845,6 +3845,7 @@ a {
 .dynamic_row {
   display: flex;
   overflow: clip;
+  height: 4.25rem;
   margin-bottom: 1rem;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -4169,7 +4170,7 @@ a {
 }
 
 .progress_wrapper:where(.w-variant-1a6a6d7f-6261-1164-f75e-8c94bd9b84e1) {
-  border-color: var(--status-green-text);
+  border-color: var(--status-purple-text);
   background-color: var(--status-purple);
 }
 
