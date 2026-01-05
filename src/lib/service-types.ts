@@ -34,6 +34,18 @@ export interface DeviceItem {
     podio_item_id: number;
     brandmodel: string;
     serial: string;
+    cpu?: string;
+    ram?: string;
+    storage?: string;
+    storagetype?: string;
+    plus1tb?: string;
+    // Added fields
+    status?: string;
+    departmentorcontact?: string; // "Asignado a"
+    podio_formatted_id?: string;
+    type?: string;
+    nextmaintenance?: string;
+    password?: string;
 }
 
 export interface WarrantyItem {

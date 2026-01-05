@@ -182,3 +182,48 @@ export async function getUserWarrantiesData() {
 
     return warranties as import('./service-types').WarrantyItem[];
 }
+
+
+
+export async function getUserDevicesData() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('app_session')?.value;
+    const session = token ? await decryptSession(token) : null;
+
+    if (!session || !session.internalId) {
+        console.warn('[DataService] No valid session');
+        return [];
+    }
+
+    const userId = parseInt(session.internalId);
+    const supabase = getSupabaseAdmin();
+
+    // 1. Resolve Podio Item ID from Internal ID
+    const table = session.userType === 'student' ? 'students' : 'customers';
+    const { data: userRecord, error: userError } = await supabase
+        .from(table)
+        .select('podio_item_id')
+        .eq('id', userId)
+        .single();
+
+    if (userError || !userRecord || !userRecord.podio_item_id) {
+        console.warn('[DataService] Could not resolve Podio ID for user:', userId, userError);
+        return [];
+    }
+
+    const podioId = userRecord.podio_item_id;
+
+    // 2. Fetch Devices where field 'customer' contains the user's Podio ID
+    const { data: devices, error: devicesError } = await supabase
+        .from('devices')
+        .select('*')
+        .contains('customer', JSON.stringify([podioId]))
+        .order('last_updated_at', { ascending: false });
+
+    if (devicesError) {
+        console.error('Error fetching devices:', devicesError);
+        return [];
+    }
+
+    return devices as DeviceItem[];
+}

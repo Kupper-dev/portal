@@ -4,6 +4,8 @@ import { cookies } from 'next/headers';
 import { Header } from '@/devlink';
 import { PortalSidebar } from '@/components/PortalSidebar';
 import { redirect } from 'next/navigation';
+import { getUserDevicesData } from '@/lib/data-service';
+import DevicesTableWrapper from './DevicesTableWrapper';
 
 export default async function DevicesPage() {
     const cookieStore = await cookies();
@@ -16,6 +18,9 @@ export default async function DevicesPage() {
 
     const userImage = session.picture || "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
 
+    // Fetch Devices Data
+    const devices = await getUserDevicesData();
+
     return (
         <div className="dashboard_section">
             <PortalSidebar />
@@ -26,19 +31,7 @@ export default async function DevicesPage() {
             />
             {/* Main Content Area */}
             <div className="dashboard_content">
-                <div className="main-grid">
-                    <div className="module">
-                        <div className="table-header">
-                            <h4 className="no_space_bottom">Dispositivos</h4>
-                        </div>
-                        {/* Content goes here */}
-                        <div className="table-content">
-                            <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                                Próximamente
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <DevicesTableWrapper items={devices} />
             </div>
         </div>
     );
