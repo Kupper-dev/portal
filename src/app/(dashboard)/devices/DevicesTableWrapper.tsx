@@ -37,15 +37,12 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
         return Math.ceil(diff / (1000 * 60 * 60 * 24));
     };
 
+    // Updated columns to match request: Type (implied/icon), Brand/Model, Maintenance, Status
     const columns = [
         columnHelper.accessor('brandmodel', { id: 'BrandModel', header: 'Dispositivo' }),
-        columnHelper.accessor('departmentorcontact', { id: 'Assigned', header: 'Asignado' }),
-        columnHelper.accessor('cpu', { id: 'CPU', header: 'Procesador' }),
-        columnHelper.accessor('ram', { id: 'RAM', header: 'RAM' }),
-        columnHelper.accessor('storage', { id: 'Storage', header: 'Almacenamiento' }),
-        columnHelper.accessor('status', { id: 'Status', header: 'Status' }),
         // Using 'any' cast for potential future field
         columnHelper.accessor((row: any) => getDaysRemaining(row.nextmaintenance), { id: 'Maintenance', header: 'Mantenimiento' }),
+        columnHelper.accessor('status', { id: 'Status', header: 'Status' }),
     ];
 
     const table = useReactTable({
@@ -87,43 +84,33 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                 <div className="table-content">
                     <div className="table-list devices-list">
 
-                        {/* Manual Header Implementation */}
+                        {/* Manual Header Implementation - 4 Columns */}
                         <div className="table main-header-wrapper">
                             <div className="table_row_1 header">
+                                {/* Column 1: Tipo - usually specific width or just visual */}
+                                <div className="table_header_cell">
+                                    <div className="text-block-header">Tipo</div>
+                                </div>
+
+                                {/* Column 2: Marca y Modelo */}
                                 <TableHeaderCell
                                     as={(props: any) => <div {...props} onClick={() => toggleSort('BrandModel')} style={{ cursor: 'pointer' }} />}
                                     variant={getSortVariant('BrandModel', true)}
-                                    cellTitle="Dispositivo"
+                                    cellTitle="Marca y Modelo"
                                 />
+
+                                {/* Column 3: Proximo Mantenimiento */}
                                 <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Assigned')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('Assigned', true)}
-                                    cellTitle="Asignado a"
+                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Maintenance')} style={{ cursor: 'pointer' }} />}
+                                    variant={getSortVariant('Maintenance')}
+                                    cellTitle="Próximo Mantenimiento"
                                 />
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('CPU')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('CPU')}
-                                    cellTitle="Procesador"
-                                />
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('RAM')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('RAM')}
-                                    cellTitle="RAM"
-                                />
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Storage')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('Storage')}
-                                    cellTitle="Almacenamiento"
-                                />
+
+                                {/* Column 4: Status */}
                                 <TableHeaderCell
                                     as={(props: any) => <div {...props} onClick={() => toggleSort('Status')} style={{ cursor: 'pointer' }} />}
                                     variant={getSortVariant('Status')}
                                     cellTitle="Status"
-                                />
-                                <TableHeaderCell
-                                    as={(props: any) => <div {...props} onClick={() => toggleSort('Maintenance')} style={{ cursor: 'pointer' }} />}
-                                    variant={getSortVariant('Maintenance')}
-                                    cellTitle="Mantenimiento"
                                 />
                             </div>
                         </div>
@@ -133,28 +120,34 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                             const item = row.original;
 
                             // Status Logic
-                            const isActive = item.status === 'Funcional'; // Example logic
+                            const isActive = item.status === 'Funcional';
                             const statusVariant = isActive ? 'positive' : 'negative';
 
-                            // Storage Display
-                            const storageDisplay = `${item.storage || '-'} ${getMemoryType(item.storagetype)}`;
+                            // Mocking icon based on brand/model detection or generic fallback
+                            const getDeviceIcon = (brandModel: string = '') => {
+                                const lower = brandModel.toLowerCase();
+                                if (lower.includes('mac') || lower.includes('laptop')) return "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
+                                return "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
+                            };
 
                             return (
                                 <DevicesTable
                                     key={row.id}
                                     devicesDeviceBrandAndModel={item.brandmodel || 'N/A'}
+                                    // Mapping fields as requested; irrelevant visual props for columns are passed but not highlighted in header
                                     devicesDeviceAssignedTo={item.departmentorcontact || '-'}
                                     devicesDeviceFormattedId={item.podio_formatted_id || `#${item.podio_item_id}`}
+                                    devicesDeviceType={getDeviceIcon(item.brandmodel)}
+
                                     devicesDeviceCpu={item.cpu || '-'}
                                     devicesDeviceRam={item.ram || '-'}
-                                    devicesDeviceStorage={storageDisplay}
+                                    devicesDeviceStorage={item.storage || '-'}
                                     devicesDeviceStorageType={item.storagetype || ''}
+
                                     statusBadgeDeviceStatusText={item.status || 'N/A'}
                                     statusBadgeDeviceStatusBadgeVariant={statusVariant}
-                                    // Assuming nextmaintenance exists on the item in DB even if not in type yet? 
-                                    // I'll cast to any for now since we just added the field to Supabase but maybe types need refresh
+
                                     devicesDeviceRemainingDaysToNextMaintenance={`${getDaysRemaining((item as any).nextmaintenance)} días`}
-                                    // Include ProgressBar
                                     devicesDeviceProgressBar={{
                                         render: () => <ProgressBar variant={statusVariant} />
                                     }}
