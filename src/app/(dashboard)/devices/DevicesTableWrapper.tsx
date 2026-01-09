@@ -9,7 +9,9 @@ import {
     createColumnHelper,
     SortingState,
 } from '@tanstack/react-table';
-import { TablePagination, TableHeaderCell, DevicesTable, DevicesTableHeader, ProgressBar } from '@/devlink';
+import { TablePagination, TableHeaderCell, ProgressBar } from '@/devlink/stubs';
+import { TableDevices } from '@/devlink/TableDevices';
+// const DevicesTableHeader = () => null; // Not used or stubbed
 import { DeviceItem } from '@/lib/service-types';
 
 interface DevicesTableWrapperProps {
@@ -173,25 +175,19 @@ export default function DevicesTableWrapper({ items = [] }: DevicesTableWrapperP
                             const statusBadgeVariant = getStatusVariant(item.status || '');
 
                             return (
-                                <DevicesTable
+                                <TableDevices
                                     key={row.id}
-                                    devicesDeviceBrandAndModel={item.brandmodel || 'N/A'}
+                                    devicesBrandAndModel={item.brandmodel || 'N/A'}
                                     // Mapping fields as requested; irrelevant visual props for columns are passed but not highlighted in header
-                                    devicesDeviceAssignedTo={item.departmentorcontact || '-'}
-                                    devicesDeviceFormattedId={item.podio_formatted_id || `#${item.podio_item_id}`}
-                                    devicesDeviceType={getDeviceIcon(item.type)}
+                                    devicesDepartmentOrContact={item.departmentorcontact || '-'}
+                                    devicesItemIdFormatted={item.podio_formatted_id || `#${item.podio_item_id}`}
+                                    devicesTypeIcon={getDeviceIcon(item.type)}
+                                    devicesStatusText={item.status || 'N/A'}
+                                    // statusBadgeDeviceStatusBadgeVariant={statusBadgeVariant} // Not in TableDevices props?
 
-                                    devicesDeviceCpu={item.cpu || '-'}
-                                    devicesDeviceRam={item.ram || '-'}
-                                    devicesDeviceStorage={item.storage || '-'}
-                                    devicesDeviceStorageType={item.storagetype || ''}
-
-                                    statusBadgeDeviceStatusText={item.status || 'N/A'}
-                                    statusBadgeDeviceStatusBadgeVariant={statusBadgeVariant}
-
-                                    devicesDeviceRemainingDaysToNextMaintenance={`${getDaysRemaining(item.nextmaintenance)} días`}
-                                    progressBarVariantProgressBar={maintenanceStatus.variant}
-                                    progressBarProgressbarPercentage={{
+                                    remainingDaysToNextMaintenance={`${getDaysRemaining(item.nextmaintenance)} días`}
+                                    // progressBarVariantProgressBar={maintenanceStatus.variant} // Not in TableDevices?
+                                    devicesProgressBar={{
                                         style: { width: `${maintenanceStatus.percent}%` }
                                     }}
                                 />

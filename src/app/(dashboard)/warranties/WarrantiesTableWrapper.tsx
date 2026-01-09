@@ -10,7 +10,8 @@ import {
     createColumnHelper,
     SortingState,
 } from '@tanstack/react-table';
-import { TableHeaderRow, TableWarranties, TablePagination, TableHeaderCell, WarrantiesTableHeader } from '@/devlink';
+import { TableHeaderRow, TablePagination, TableHeaderCell, WarrantiesTableHeader } from '@/devlink/stubs';
+import { WarrantiesTable } from '@/devlink/WarrantiesTable';
 import { Block } from '@/devlink/_Builtin';
 
 import { WarrantyItem } from '@/lib/service-types';
@@ -168,7 +169,7 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
                             const dateEnds = item.dateends ? new Date(item.dateends) : null;
 
                             let statusText = "N/A";
-                            let badgeVariant: "Base" | "positive" | "negative" = "Base";
+                            let badgeVariant: "Base" | "Positive" | "Negative" = "Base";
                             let validityText = "0 días";
 
                             if (dateEnds) {
@@ -178,23 +179,23 @@ export default function WarrantiesTableWrapper({ items = [] }: WarrantiesTableWr
 
                                 if (dateEnds > now) {
                                     statusText = "Activa";
-                                    badgeVariant = "positive";
+                                    badgeVariant = "Positive";
                                 } else {
                                     statusText = "Inactiva";
-                                    badgeVariant = "negative";
+                                    badgeVariant = "Negative";
                                 }
                             }
 
                             return (
-                                <TableWarranties
+                                <WarrantiesTable
                                     key={row.id}
-                                    warrantiesItemDescription={item.description || 'Sin descripción'}
-                                    warrantiesItemQuantity={item.quantity ? String(item.quantity) : '0'}
-                                    warrantiesItemWarranty={item.warranty || 'N/A'}
-                                    statusBadgeStatusTitle={statusText}
-                                    statusBadgeItemStatusBadgeVariant={badgeVariant}
-                                    warrantiesItemValidity={validityText}
-                                    warrantiesItemObservations={item.observations || '-'}
+                                    warrantiesItemTitle={item.description || 'Sin descripción'}
+                                    warrantiesQuantity={item.quantity ? String(item.quantity) : '0'}
+                                    warrantiesWarrantyPeriod={item.warranty || 'N/A'}
+                                    warrantiesStatusText={statusText}
+                                    variant={badgeVariant}
+                                    warrantiesWarrantyValidity={validityText}
+                                    warrantiesDetails={item.observations || '-'}
                                 />
                             );
                         })}

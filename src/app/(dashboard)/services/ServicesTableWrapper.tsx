@@ -11,7 +11,7 @@ import {
     createColumnHelper,
     SortingState,
 } from '@tanstack/react-table';
-import { TableHeaderRow, TableBodyRow, TablePagination, TableHeaderCell } from '@/devlink';
+import { TableHeaderRow, TableBodyRow, TablePagination, TableHeaderCell } from '@/devlink/stubs';
 import { ServiceItem, DeviceItem } from '@/lib/service-types';
 import { getStepVariant, getStatusMessage, getAlertConfig } from '@/lib/status-logic';
 import { Block } from '@/devlink/_Builtin';

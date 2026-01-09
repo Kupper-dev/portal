@@ -3,7 +3,8 @@ import { decryptSession, AppSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getUserServiceData } from '@/lib/data-service';
-import { PageHero, ServicesTable } from '@/devlink';
+import { PageHero } from '@/devlink/PageHero';
+import { ServicesTable } from '@/devlink/ServicesTable';
 
 export default async function ServicesPage() {
     const cookieStore = await cookies();

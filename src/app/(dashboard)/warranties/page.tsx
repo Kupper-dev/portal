@@ -3,7 +3,8 @@ import { decryptSession, AppSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getUserWarrantiesData } from '@/lib/data-service';
-import { PageHero, WarrantiesTable } from '@/devlink';
+import { PageHero } from '@/devlink/PageHero';
+import { WarrantiesTable } from '@/devlink/WarrantiesTable';
 import { WarrantyItem } from '@/lib/service-types';
 
 export default async function WarrantiesPage() {

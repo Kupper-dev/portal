@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useState } from "react";
-import { SignupForm } from "@/devlink";
+import { SignupForm } from "@/devlink/stubs";
 import { useRouter } from "next/navigation";
 
 export default function RegisterFormWrapper({ initialEmail, loginType }: { initialEmail: string, loginType?: string }) {

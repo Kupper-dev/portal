@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Sidebar } from '@/devlink';
+import { Sidebar } from '@/devlink/Sidebar';
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 

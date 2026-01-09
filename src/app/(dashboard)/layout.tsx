@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
-import { DevLinkProvider } from "@/devlink";
+import { DevLinkProvider } from "@/devlink/DevLinkProvider";
 import { PortalSidebar } from "@/components/PortalSidebar";
-import { ItemDetails, ExtendedDetails } from "@/devlink";
+import { ItemDetails } from "@/devlink/ItemDetails";
+import { ExtendedDetails } from "@/devlink/ExtendedDetails";
 // import { Sidebar } from "@/devlink"; // Removed as DashboardSection includes it
 // Importing global CSS to ensure DevLink styles are applied
 import '@/devlink/global.css';

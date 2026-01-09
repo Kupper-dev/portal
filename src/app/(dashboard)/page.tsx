@@ -1,7 +1,8 @@
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { PageHero, ServicesTable } from '@/devlink';
+import { PageHero } from '@/devlink/PageHero';
+import { ServicesTable } from '@/devlink/ServicesTable';
 import { getUserServiceData } from '@/lib/data-service';
 
 export default async function DashboardPage() {

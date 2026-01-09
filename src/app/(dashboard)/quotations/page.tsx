@@ -2,7 +2,7 @@
 import { decryptSession, AppSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { PageHero } from '@/devlink';
+import { PageHero } from '@/devlink/PageHero';
 
 export default async function QuotationsPage() {
     const cookieStore = await cookies();

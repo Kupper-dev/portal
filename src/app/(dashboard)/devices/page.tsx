@@ -5,7 +5,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { getUserDevicesData } from '@/lib/data-service';
-import { PageHero, TableDevices } from '@/devlink';
+import { PageHero } from '@/devlink/PageHero';
+import { TableDevices } from '@/devlink/TableDevices';
 import { DeviceItem } from '@/lib/service-types';
 import Link from 'next/link';
 
