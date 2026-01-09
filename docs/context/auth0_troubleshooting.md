@@ -106,3 +106,44 @@ Logging in repeatedly creates new duplicate rows in Supabase and new Items in Po
     -   **Step 2:** Fallback to `email` (normalized to lowercase/trimmed).
     -   **Step 3:** If found by email but ID is missing, **auto-link** (update) the record with the current `auth0id`.
 2.  **Correct Column Names:** Verify exact DB schema. We renamed usages of `auth0_id` to `auth0id` in all Supabase queries (`select`, `insert`, `update`).
+
+## 8. Webflow Deployment & DevLink Issues
+
+### "webflow.json is not present" Error
+**Symptom:**
+Webflow Cloud Deployment fails instantly with `webflow.json is not present` even though the file exists in the repository.
+
+**Cause:**
+1.  **Incorrect Repository:** The Webflow App might be connected to an old repository or a fork.
+2.  **Root Path Configuration:** The Webflow Cloud "Root Directory" settings might be looking in a subfolder.
+3.  **Missing `package.json` Detection:** If `webflow.json` is ignored or malformed, CLI fails.
+
+**Solution:**
+1.  **Update `package.json`:** Add the `"webflow": { "sites": [...] }` configuration block to `package.json` as a fallback.
+2.  **Verify Repo Connection:** Delete and Re-create the Webflow Cloud App, ensuring it connects to the *current* repository (e.g., `Kupper-dev/app`).
+
+### "export *" Build Error in DevLink
+**Symptom:**
+`npm run build` fails with:
+`Error: It's currently unsupported to use "export *" in a client boundary. Please use named exports instead.` referencing `src/devlink/index.js`.
+
+**Cause:**
+Webflow's default DevLink structure uses a barrel file (`index.js`) with `export * from './Component'`. When imported into a Next.js Client Component (`"use client"`), this syntax causes bundler conflicts in newer Next.js versions (15+).
+
+**Solution:**
+1.  **Avoid Barrel Imports:** Do **not** import from `@/devlink`.
+    *   *Bad:* `import { Sidebar } from '@/devlink';`
+    *   *Good:* `import { Sidebar } from '@/devlink/Sidebar';`
+2.  **Use Stubs for Missing Components:** If a component hasn't been synced yet, create a `src/devlink/stubs.tsx` file and import from there to prevent build blocked.
+
+### 401 Unauthorized (Auth0 Token Exchange)
+**Symptom:**
+Login flow redirects to `/auth/login?error=token_exchange_failed` and logs show `{"error":"access_denied","error_description":"Unauthorized"}`.
+
+**Cause:**
+The `AUTH0_CLIENT_SECRET` provided in Webflow Cloud Environment Variables is incorrect, has trailing spaces, or does not match the `AUTH0_CLIENT_ID`.
+
+**Solution:**
+1.  Regenerate or Copy the Client Secret from the Auth0 Dashboard.
+2.  Update the Environment Variable in Webflow Cloud settings.
+3.  Ensure no whitespace exists in the value.
