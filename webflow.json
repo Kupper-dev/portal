@@ -1,12 +1,6 @@
 {
   "cloud": {
     "framework": "nextjs",
-    "path": "./src/app",
-    "sites": [
-      {
-        "siteId": "695c194c86d5e76167047ce4",
-        "name": "portal"
-      }
-    ]
+    "path": "."
   }
 }
