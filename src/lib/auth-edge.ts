@@ -84,21 +84,6 @@ export async function decryptSession(token: string): Promise<AppSession | null> 
 }
 
 export async function getSession(request: NextRequest): Promise<AppSession | null> {
-    // TEMPORARY: MOCK SESSION FOR UI DEVELOPMENT
-    // Remove this block when Auth0 env vars are fixed or when deploying
-    if (process.env.NODE_ENV === 'development') {
-        const mockSession: AppSession = {
-            auth0Id: 'mock-user-123',
-            email: 'developer@kupper.com',
-            name: 'Dev User',
-            picture: 'https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg',
-            flow: 'ready',
-            userType: 'admin',
-            loginType: 'portal',
-        };
-        console.log('[AuthEdge] Using MOCK session for development.');
-        return mockSession;
-    }
 
     const cookieHeader = request.headers.get('Cookie') || '';
     const sessionToken = cookieHeader

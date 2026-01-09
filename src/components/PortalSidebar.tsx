@@ -9,17 +9,7 @@ export async function PortalSidebar() {
     const token = cookieStore.get('app_session')?.value;
     let session = token ? await decryptSession(token) : null;
 
-    if (process.env.NODE_ENV === 'development' && !session) {
-        session = {
-            auth0Id: 'mock-user-123',
-            email: 'developer@kupper.com',
-            name: 'Dev User',
-            picture: 'https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg',
-            flow: 'ready',
-            userType: 'admin',
-            loginType: 'portal',
-        } as any;
-    }
+
 
     const userName = session?.name || "User";
     // Parse picture or use default
