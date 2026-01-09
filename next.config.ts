@@ -1,9 +1,13 @@
+
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+// Added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  basePath: process.env.BASE_PATH || "/app",
-  assetPrefix: process.env.ASSET_PREFIX || "/app",
+  basePath: "/app",
+  assetPrefix: "/app",
   output: "standalone",
 };
 
