@@ -1,6 +1,16 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "outputDirectory": ".next"
+  "cloud": {
+    "framework": "nextjs"
+  },
+  "siteId": "695c194c86d5e76167047ce4",
+  "devlink": {
+    "rootDir": "./src/devlink"
+  },
+  "telemetry": {
+    "global": {
+      "allowTelemetry": false,
+      "lastPrompted": 1766798574521,
+      "version": "1.10.0"
+    }
+  }
 }
