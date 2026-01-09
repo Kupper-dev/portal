@@ -2183,6 +2183,8 @@ textarea.w-select {
 }
 
 body {
+  background-color: var(--_dev---background);
+
   font-family: Inter;
   color: var(--_dev---black);
   font-size: 0.9rem;
@@ -2522,10 +2524,6 @@ a {
   border-left-color: var(--_dev---red-text);
 }
 
-@media screen and (max-width: 767px) {
-
-}
-
 @media screen and (max-width: 479px) {
   .table-row.devices {
     grid-template-columns: 0.25fr 1fr 0.25fr;
@@ -2632,7 +2630,7 @@ a {
 
   display: flex;
   overflow: hidden;
-  max-width: 32rem;
+  max-width: 50rem;
   min-width: 22rem;
   flex-direction: column;
   justify-content: space-between;
@@ -2641,16 +2639,15 @@ a {
   background-color: hsla(0, 0.00%, 100.00%, 0.80);
 }
 
-.sidepanel.is-expanded {
-  width: 50rem;
-  max-width: none;
+.sidepanel.is-expanded.hidden {
+  display: none;
 }
 
 .sidepanel-header {
   position: fixed;
   top: 0px;
   z-index: 2;
-  width: 100%;
+  width: 5rem;
   min-height: 3rem;
 }
 
@@ -2662,9 +2659,9 @@ a {
 }
 
 .panel-layer-base {
-  width: 50%;
+  width: 100%;
   min-height: 3rem;
-  min-width: 3rem;
+  min-width: 25rem;
   padding-top: 5rem;
   padding-right: 2rem;
   padding-left: 2rem;
@@ -2675,9 +2672,7 @@ a {
 }
 
 .panel-layer-extended {
-  width: 50%;
-  min-height: 3rem;
-  min-width: 3rem;
+  min-width: 25rem;
   padding-top: 5rem;
   padding-right: 1.5rem;
   padding-left: 1.5rem;
@@ -2733,6 +2728,10 @@ a {
   background-color: hsla(213, 13.71%, 84.55%, 0.21);
 
   backdrop-filter: blur(4px);
+}
+
+.sidepanel-overlay.hidden {
+  display: none;
 }
 
 .wrapper-button-right {
@@ -3156,10 +3155,6 @@ a {
   align-items: center;
 }
 
-@media screen and (max-width: 767px) {
-
-}
-
 .ui_icon_40 {
   width: 40px;
   height: 40px;
@@ -3395,6 +3390,12 @@ a {
   .text-micro.blue {
     font-size: 0.7rem;
   }
+}
+
+.s {
+  color: var(--_dev---black);
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 

@@ -13,6 +13,7 @@ export * from "./ComplementaryTable";
 export * from "./DevLinkProvider";
 export * from "./ExtendedDetails";
 export * from "./ItemDetails";
+export * from "./MainStructure";
 export * from "./PageHero";
 export * from "./ServicesTable";
 export * from "./Sidebar";

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { DevLinkProvider } from "@/devlink";
+import { PortalSidebar } from "@/components/PortalSidebar";
+import { ItemDetails, ExtendedDetails } from "@/devlink";
 // import { Sidebar } from "@/devlink"; // Removed as DashboardSection includes it
 // Importing global CSS to ensure DevLink styles are applied
 import '@/devlink/global.css';
@@ -16,9 +18,24 @@ export default function DashboardLayout({
 }) {
     return (
         <DevLinkProvider>
-            <main>
-                {children}
-            </main>
+            <div className="main-wrapper">
+                <PortalSidebar />
+                <div className="sidepanel is-expanded">
+                    <div className="sidepanel-header"></div>
+                    <div className="sidepanel-content">
+                        <div className="panel-layer-base">
+                            <ItemDetails />
+                        </div>
+                        <div className="panel-layer-extended">
+                            <ExtendedDetails />
+                        </div>
+                    </div>
+                </div>
+                <div className="sidepanel-overlay"></div>
+                <div className="module">
+                    {children}
+                </div>
+            </div>
         </DevLinkProvider>
     );
 }

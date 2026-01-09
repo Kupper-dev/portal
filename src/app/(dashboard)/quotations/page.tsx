@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { PageHero } from '@/devlink';
 
-export default async function ApprovalsPage() {
+export default async function QuotationsPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get('app_session')?.value;
     let session = token ? await decryptSession(token) : null;
@@ -28,7 +28,7 @@ export default async function ApprovalsPage() {
     return (
         <>
             <PageHero
-                heroTitle="Aprobaciones"
+                heroTitle="Cotizaciones"
                 imageHero1="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/67843644ec2796dc2e9c2f6d_Laptop%20icon.svg"
                 imageHero2="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/678436441ef58474771acb98_PC%20Icon.svg"
             />

@@ -1,15 +1,25 @@
 import { decryptSession } from '@/lib/auth-edge';
 import { cookies } from 'next/headers';
-import { Hero, Header } from '@/devlink';
-import { PortalSidebar } from '@/components/PortalSidebar';
-import ServiceStatusWrapper from './ServiceStatusWrapper';
-import { getUserServiceData } from '@/lib/data-service';
 import { redirect } from 'next/navigation';
+import { PageHero, ServicesTable } from '@/devlink';
+import { getUserServiceData } from '@/lib/data-service';
 
 export default async function DashboardPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get('app_session')?.value;
-    const session = token ? await decryptSession(token) : null;
+    let session = token ? await decryptSession(token) : null;
+
+    if (process.env.NODE_ENV === 'development' && !session) {
+        session = {
+            auth0Id: 'mock-user-123',
+            email: 'developer@kupper.com',
+            name: 'Dev User',
+            picture: 'https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg',
+            flow: 'ready',
+            userType: 'admin',
+            loginType: 'portal',
+        } as any;
+    }
 
     if (!session) {
         redirect('/auth/login');
@@ -17,25 +27,29 @@ export default async function DashboardPage() {
 
     const userName = (session.name || session.email.split('@')[0]).split(' ')[0];
 
-    // Fetch service data (no try/catch needed as function handles errors gracefully)
     // Fetch service data
     const serviceItems = await getUserServiceData();
 
-    // Use session picture or placeholder
-    const userImage = session.picture || "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
-
     return (
-        <div className="dashboard_section">
-            <PortalSidebar />
-            <Header
-                userProfilePicture={{ src: userImage }}
-                userProfileLink={{ href: '/profile' }}
-                userLogOut={{ href: '/app/auth/logout' }}
-            />
-            <Hero
-                heroRecipientName={userName}
-            />
-            <ServiceStatusWrapper items={serviceItems || []} />
-        </div>
+        <>
+            <PageHero heroTitle="Dashboard" />
+            <div className="page-table">
+                <div className="list">
+                    {serviceItems?.map((item) => (
+                        <ServicesTable
+                            key={item.service.podio_item_id}
+                            servicesTitle={item.service.requestorissue || "Service"}
+                            servicesDeviceBrandAndModel={item.device?.brandmodel || "Unknown Device"}
+                            servicesItemIdFormatted={item.service.podio_formatted_id}
+                            servicesDate={new Date(item.service.date).toLocaleDateString()}
+                            servicesStatusText={item.service.status}
+                        />
+                    ))}
+                    {!serviceItems?.length && (
+                        <div className="p-4 text-center text-gray-500">No active services found.</div>
+                    )}
+                </div>
+            </div>
+        </>
     );
 }

@@ -114,7 +114,7 @@ export function Sidebar({
           block="inline"
           options={sidebarDashboard}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Dashboard"}
           </_Builtin.Block>
@@ -124,9 +124,9 @@ export function Sidebar({
           id="w-node-c70f49ca-1934-a9ef-e69e-f14dd016e926-b3ef8624"
           button={false}
           block="inline"
-          options={sidebarDashboard}
+          options={sidebarDevices}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Dispositivos"}
           </_Builtin.Block>
@@ -136,9 +136,9 @@ export function Sidebar({
           id="w-node-_920222b3-69eb-82b1-6bcd-909f1a7d8e81-b3ef8624"
           button={false}
           block="inline"
-          options={sidebarDashboard}
+          options={sidebarServices}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Servicios"}
           </_Builtin.Block>
@@ -148,9 +148,9 @@ export function Sidebar({
           id="w-node-_25ee22c8-af09-a369-ec80-fa4f288a7a6d-b3ef8624"
           button={false}
           block="inline"
-          options={sidebarDashboard}
+          options={sidebarWarranties}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Garantías"}
           </_Builtin.Block>
@@ -160,9 +160,9 @@ export function Sidebar({
           id="w-node-d5d002ff-9c51-f1e6-17a1-ef92c4eaf47a-b3ef8624"
           button={false}
           block="inline"
-          options={sidebarDashboard}
+          options={sidebarApprovals}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Aprobaciones"}
           </_Builtin.Block>
@@ -172,9 +172,9 @@ export function Sidebar({
           id="w-node-_9978ed73-eef8-eb15-a6ae-1c7ba1d518d4-b3ef8624"
           button={false}
           block="inline"
-          options={sidebarDashboard}
+          options={sidebarQuotations}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Cotizaciones"}
           </_Builtin.Block>
@@ -184,9 +184,9 @@ export function Sidebar({
           id="w-node-_49da35f0-3b3d-ba52-0919-b33e57e99688-b3ef8624"
           button={false}
           block="inline"
-          options={sidebarDashboard}
+          options={sidebarInvoices}
         >
-          <_Builtin.NotSupported _atom="Animation" />
+          <_Builtin.Block className="ui_icon_25" tag="div" />
           <_Builtin.Block className="sidebar_text" tag="div">
             {"Facturas"}
           </_Builtin.Block>

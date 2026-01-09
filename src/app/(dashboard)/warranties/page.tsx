@@ -1,38 +1,78 @@
-import { decryptSession } from '@/lib/auth-edge';
-import { cookies } from 'next/headers';
-import { Header } from '@/devlink';
-import { PortalSidebar } from '@/components/PortalSidebar';
-import { redirect } from 'next/navigation';
-import WarrantiesTableWrapper from './WarrantiesTableWrapper';
 
+import { decryptSession, AppSession } from '@/lib/auth-edge';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { getUserWarrantiesData } from '@/lib/data-service';
+import { PageHero, WarrantiesTable } from '@/devlink';
+import { WarrantyItem } from '@/lib/service-types';
 
 export default async function WarrantiesPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get('app_session')?.value;
-    const session = token ? await decryptSession(token) : null;
+    let session = token ? await decryptSession(token) : null;
+
+    if (process.env.NODE_ENV === 'development' && !session) {
+        session = {
+            auth0Id: 'mock-user-123',
+            email: 'developer@kupper.com',
+            name: 'Dev User',
+            picture: 'https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg',
+            flow: 'ready',
+            userType: 'admin',
+            loginType: 'portal',
+        } as AppSession;
+    }
 
     if (!session) {
         redirect('/auth/login');
     }
 
-    const userImage = session.picture || "https://cdn.prod.website-files.com/plugins/Basic/assets/placeholder.60f9b1840c.svg";
-
-    // Fetch warranties data
     const warranties = await getUserWarrantiesData();
 
+    // Helper to calculate Validity
+    const getValidityDetails = (dateEnds: string | undefined) => {
+        if (!dateEnds) return { text: '0 días', isActive: false };
+        const now = new Date();
+        const end = new Date(dateEnds);
+        const diffTime = end.getTime() - now.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const isActive = end > now;
+        return { text: `${diffDays} días`, isActive };
+    };
+
     return (
-        <div className="dashboard_section">
-            <PortalSidebar />
-            <Header
-                userProfilePicture={{ src: userImage }}
-                userProfileLink={{ href: '/profile' }}
-                userLogOut={{ href: '/app/auth/logout' }}
+        <>
+            <PageHero
+                heroTitle="Garantías"
+                imageHero1="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/67843644ec2796dc2e9c2f6d_Laptop%20icon.svg"
+                imageHero2="https://cdn.prod.website-files.com/68d88947f902d5546e5fd07a/678436441ef58474771acb98_PC%20Icon.svg"
             />
-            {/* Main Content Area */}
-            <div className="dashboard_content">
-                <WarrantiesTableWrapper items={warranties} />
+            <div className="page-table">
+                <div className="list">
+                    {warranties && warranties.length > 0 ? (
+                        warranties.map((item: WarrantyItem, index: number) => {
+                            const { text, isActive } = getValidityDetails(item.dateends);
+                            return (
+                                <WarrantiesTable
+                                    key={index}
+                                    variant={isActive ? "Positive" : "Negative"}
+                                    warrantiesItemTitle={item.description || "Garantía"}
+                                    warrantiesDetails={item.observations || "Sin observaciones"}
+                                    warrantiesQuantity={item.quantity ? String(item.quantity) : "0"}
+                                    warrantiesWarrantyPeriod={item.warranty || "N/A"}
+                                    warrantiesStatusText={isActive ? "Activa" : "Inactiva"}
+                                    warrantiesWarrantyValidity={text}
+                                />
+                            );
+                        })
+                    ) : (
+                        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--_dev---text-gray)' }}>
+                            No warranties found.
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
+
