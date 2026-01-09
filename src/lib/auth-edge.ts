@@ -266,6 +266,8 @@ export async function callback(request: Request): Promise<Response> {
     const redirectUri = `${publicUrl}/auth/callback`;
 
     // Exchange for Tokens
+    console.log(`[AuthEdge] Exchanging code for tokens. Client ID: ${AUTH0_CLIENT_ID.substring(0, 5)}..., Secret Len: ${AUTH0_CLIENT_SECRET?.length}, Redirect URI: ${redirectUri}`);
+
     const tokenRes = await fetch(`https://${AUTH0_DOMAIN}/oauth/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -281,6 +283,11 @@ export async function callback(request: Request): Promise<Response> {
     if (!tokenRes.ok) {
         const text = await tokenRes.text();
         console.error('Auth0 Token Exchange Failed:', text);
+        console.error('Debug Info:', {
+            domain: AUTH0_DOMAIN,
+            hasSecret: !!AUTH0_CLIENT_SECRET,
+            redirectUri
+        });
         return new Response(null, {
             status: 302,
             headers: { Location: `${getPublicUrl(request)}/auth/login?error=token_exchange_failed` }
