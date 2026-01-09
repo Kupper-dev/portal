@@ -1,6 +1,15 @@
 {
   "name": "portal",
   "version": "0.1.0",
+  "webflow": {
+    "sites": [
+      {
+        "siteId": "695c194c86d5e76167047ce4",
+        "name": "Kupper Dev",
+        "customDomain": "kupper-34ef94.webflow.io"
+      }
+    ]
+  },
   "type": "module",
   "private": true,
   "scripts": {
