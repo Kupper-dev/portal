@@ -38,5 +38,8 @@
     "eslint-config-next": "^15.1.4",
     "typescript": "^5",
     "wrangler": "^4.56.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
